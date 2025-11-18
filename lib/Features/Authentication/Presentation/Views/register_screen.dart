@@ -1,9 +1,11 @@
 import 'package:easy_life/Core/Extentions/extentions.dart';
+import 'package:easy_life/Core/Helper/input_validator.dart';
 import 'package:easy_life/Features/Authentication/Presentation/cubit/auth_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../Core/Constant/assets_strings.dart';
+import '../../../../Core/Constant/base_constant.dart';
 import '../../../../Core/Routes/app_navigation.dart';
 import '../../../../Core/Routes/app_routes.dart';
 import '../../../../Core/Themes/app_colors.dart';
@@ -56,18 +58,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     CustomTextFormField(
                       controller: authCubit.nameController,
                       hintText: 'اسم المستخدم',
+                      validator: (value) =>
+                          InputValidator.validateNotEmpty(value),
                     ),
                     SizedBox(height: 20),
                     CustomTextFormField(
                       controller: authCubit.emailController,
                       hintText: 'البريد الالكتروني',
                       textInputType: TextInputType.emailAddress,
+                      validator: (value) => InputValidator.validateEmail(value),
                     ),
                     SizedBox(height: 20),
                     CustomTextFormField(
                       controller: authCubit.regPhoneController,
                       hintText: 'رقم الجوال',
                       textInputType: TextInputType.phone,
+                      validator: (value) =>
+                          InputValidator.validateNotEmpty(value),
                       prefixIcon: CustomCountryCode(
                         onChanged: (value) {
                           debugPrint('Country selected ${value.dialCode}');
@@ -82,6 +89,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     CustomTextFormField(
                       controller: authCubit.addressController,
                       hintText: 'العنوان',
+                      validator: (value) =>
+                          InputValidator.validateNotEmpty(value),
                     ),
                     SizedBox(height: 20),
                     CustomTextFormField(
@@ -89,6 +98,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       hintText: 'كلمة المرور',
                       textInputType: TextInputType.visiblePassword,
                       obscureText: isObscure,
+                      validator: (value) =>
+                          InputValidator.validateNotEmpty(value),
                       suffixIcon: IconButton(
                         icon: Icon(
                           !isObscure ? Icons.visibility : Icons.visibility_off,
@@ -108,6 +119,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       hintText: 'تأكيد كلمة المرور',
                       textInputType: TextInputType.visiblePassword,
                       obscureText: isObscure2,
+                      validator: (value) =>
+                          InputValidator.validateConfirmPassword(
+                            value,
+                            authCubit.regPasswordController.text,
+                          ),
                       suffixIcon: IconButton(
                         icon: Icon(
                           !isObscure2 ? Icons.visibility : Icons.visibility_off,
@@ -127,9 +143,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         'انشاء حساب',
                         style: theme.textTheme.bodyMedium!.copyWith(
                           color: AppColors.natural100,
-                          fontWeight: FontWeight.bold,
+                          fontFamily: BaseConstant.cairoBold,
                         ),
                       ),
+                      onTap: () {
+                        if (_formKey.currentState!.validate()) {
+                          authCubit.register(
+                            authCubit: authCubit,
+                            dailCode: dailCode,
+                          );
+                        }
+                      },
                     ),
                     SizedBox(height: 30),
                     GestureDetector(
@@ -150,7 +174,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             'تسجيل الدخول',
                             style: theme.textTheme.bodyMedium!.copyWith(
                               color: AppColors.primary500,
-                              fontWeight: FontWeight.bold,
+                              fontFamily: BaseConstant.cairoBold,
                             ),
                           ),
                         ],

@@ -1,8 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET"/> <!-- Add this -->
     <application
         android:label="Easy Life"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        <!-- Google Maps API Key -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDnNZbIu-aombi_w4MZ6B9ytKJpVwNC4vg"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

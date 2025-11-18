@@ -333,7 +333,6 @@ class TextThemeStyles {
     color: AppColors.primary400,
     fontSize: 25,
     fontFamily: BaseConstant.cairoRegular,
-    fontWeight: FontWeight.bold,
     height: 28 / 20,
   );
 

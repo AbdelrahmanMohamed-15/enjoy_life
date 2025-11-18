@@ -5,7 +5,7 @@ class SliderEntity extends Equatable {
   final String? message;
   final int? status;
 
-  SliderEntity({this.data, this.message, this.status});
+  const SliderEntity({this.data, this.message, this.status});
 
   factory SliderEntity.fromJson(Map<String, dynamic> json) => SliderEntity(
     data: json["data"] == null
@@ -30,33 +30,27 @@ class SliderEntity extends Equatable {
 
 class Datum extends Equatable {
   final int? id;
-  final String? type;
+  final String? name;
   final String? url;
   final String? image;
-  final int? status;
-  final String? name;
 
-  Datum({this.id, this.type, this.url, this.image, this.status, this.name});
+  Datum({this.id, this.url, this.image, this.name});
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
     id: json["id"],
-    type: json["type"],
     url: json["url"],
     image: json["image"],
-    status: json["status"],
     name: json["name"],
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
-    "type": type,
     "url": url,
     "image": image,
-    "status": status,
     "name": name,
   };
 
   @override
   // TODO: implement props
-  List<Object?> get props => [id, type, url, image, status, name];
+  List<Object?> get props => [id, url, image, name];
 }

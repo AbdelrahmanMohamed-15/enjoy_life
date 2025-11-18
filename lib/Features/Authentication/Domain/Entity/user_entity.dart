@@ -108,9 +108,9 @@ class Userdata extends Equatable {
   final int? verificationType;
   final int? clientType;
   final int? countryId;
-  final String? gender;
-  final String? bloodGroup;
-  final String? birthdate;
+  // final String? gender;
+  // final String? bloodGroup;
+  // final String? birthdate;
   final String? fcmToken;
 
   const Userdata({
@@ -129,9 +129,9 @@ class Userdata extends Equatable {
     this.verificationType,
     this.clientType,
     this.countryId,
-    this.gender,
-    this.bloodGroup,
-    this.birthdate,
+    // this.gender,
+    // this.bloodGroup,
+    // this.birthdate,
     this.fcmToken,
   });
 
@@ -151,9 +151,9 @@ class Userdata extends Equatable {
     verificationType: json["verification_type"] ?? 0,
     clientType: json["client_type"] ?? 0,
     countryId: json["country_id"] ?? 0,
-    gender: json["gender"] ?? '',
-    bloodGroup: json["blood_group"] ?? '',
-    birthdate: json["birthdate"] ?? '',
+    // gender: json["gender"] ?? '',
+    // bloodGroup: json["blood_group"] ?? '',
+    // birthdate: json["birthdate"] ?? '',
     fcmToken: json["fcm_token"] ?? '',
   );
 
@@ -171,11 +171,10 @@ class Userdata extends Equatable {
     "longitude": longitude,
     "code": code,
     "verification_type": verificationType,
-    "client_type": clientType,
     "country_id": countryId,
-    "gender": gender,
-    "blood_group": bloodGroup,
-    "birthdate": birthdate,
+    // "gender": gender,
+    // "blood_group": bloodGroup,
+    // "birthdate": birthdate,
     "fcm_token": fcmToken,
   };
 
@@ -197,9 +196,9 @@ class Userdata extends Equatable {
     verificationType,
     clientType,
     countryId,
-    gender,
-    bloodGroup,
-    birthdate,
+    // gender,
+    // bloodGroup,
+    // birthdate,
     fcmToken,
   ];
 }

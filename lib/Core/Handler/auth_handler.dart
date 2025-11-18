@@ -14,15 +14,21 @@ abstract class AuthHandlerInterface {
 
   String? getLanguageCode();
 
+  String? getCookies();
+
   Future<AuthHandlerInterface> init();
 
   Future<void> setToken(String token);
+
+  Future<void> setCookies(String cookies);
 
   Future<void> setOnBoarding(bool isFirst);
 
   Future<void> setLanguageCode(String languageCode);
 
   Future<void> setUserData(Userdata? data);
+
+  Future<void> clearAllData();
 }
 
 class AuthHandler implements AuthHandlerInterface {
@@ -33,6 +39,7 @@ class AuthHandler implements AuthHandlerInterface {
   String? _boardnig;
   String? _languageCode;
   Userdata? _userData;
+  String? _cookies;
 
   @override
   String? getToken() => _token;
@@ -45,6 +52,9 @@ class AuthHandler implements AuthHandlerInterface {
 
   @override
   String? getLanguageCode() => _languageCode;
+
+  @override
+  String? getCookies() => _cookies;
 
   @override
   Future<void> setOnBoarding(bool isFirst) async {
@@ -63,6 +73,7 @@ class AuthHandler implements AuthHandlerInterface {
         : null;
     _boardnig = await secureStorage.read(key: 'boarding');
     _languageCode = await secureStorage.read(key: 'languageCode');
+    _cookies = await secureStorage.read(key: 'cookies');
     return this;
   }
 
@@ -89,5 +100,17 @@ class AuthHandler implements AuthHandlerInterface {
   Future<void> setLanguageCode(String languageCode) async {
     _languageCode = languageCode;
     await secureStorage.write(key: 'languageCode', value: languageCode);
+  }
+
+  @override
+  Future<void> clearAllData() {
+    setUserData(null);
+    return secureStorage.delete(key: 'userData');
+  }
+
+  @override
+  Future<void> setCookies(String cookies) {
+    _cookies = cookies;
+    return secureStorage.write(key: 'cookies', value: cookies);
   }
 }

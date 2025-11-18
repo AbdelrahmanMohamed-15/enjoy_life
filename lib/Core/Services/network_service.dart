@@ -73,6 +73,18 @@ class NetworkService {
           options.headers['Authorization'] =
               'Bearer ${DependencyInjectionHelper().sl<AuthHandlerInterface>().getToken()}';
           options.headers['Content-Type'] = "application/json";
+          if (DependencyInjectionHelper()
+                  .sl<AuthHandlerInterface>()
+                  .getCookies() !=
+              null) {
+            debugPrint(
+              'cookie: ${DependencyInjectionHelper().sl<AuthHandlerInterface>().getCookies()}',
+            );
+            options.headers['Cookie'] = DependencyInjectionHelper()
+                .sl<AuthHandlerInterface>()
+                .getCookies()!;
+          }
+          options.headers['country_id'] = "1";
           debugPrint('send request ${options.uri}');
           debugPrint('headers: ${options.headers}');
           debugPrint('query parameters: ${options.queryParameters}');

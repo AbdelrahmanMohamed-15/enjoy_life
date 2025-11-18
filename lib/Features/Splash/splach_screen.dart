@@ -1,7 +1,6 @@
 import 'package:easy_life/Core/Constant/assets_strings.dart';
 import 'package:easy_life/Core/Extentions/center_ext.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
-import 'package:easy_life/Features/Authentication/Domain/Entity/user_entity.dart';
 import 'package:flutter/material.dart';
 
 import '../../Core/Handler/auth_handler.dart';
@@ -22,17 +21,11 @@ class _SplachScreenState extends State<SplachScreen> {
   void initState() {
     super.initState();
     Future.delayed(Duration(seconds: 2), () {
-      Userdata? userData = _di.sl<AuthHandlerInterface>().getUserData();
-      debugPrint('User Data: ${userData?.toJson()}');
       String onBoarding = _di.sl<AuthHandlerInterface>().getBoarding() ?? '';
       if (onBoarding.isEmpty || onBoarding != 'false') {
         AppNavigation.pushReplacementNamed(AppRoutes.onboarding);
       } else {
-        if (userData == null) {
-          AppNavigation.pushReplacementNamed(AppRoutes.login);
-        } else {
-          AppNavigation.pushReplacementNamed(AppRoutes.mainNav);
-        }
+        AppNavigation.pushReplacementNamed(AppRoutes.mainNav);
       }
     });
   }

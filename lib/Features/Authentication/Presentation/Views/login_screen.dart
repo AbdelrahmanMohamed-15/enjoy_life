@@ -8,6 +8,7 @@ import 'package:easy_life/Features/Authentication/Presentation/cubit/auth_cubit.
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../Core/Constant/base_constant.dart';
 import '../../../../Core/Themes/app_colors.dart';
 import '../../../../Core/Widget/custom_country_code.dart';
 
@@ -103,10 +104,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     Row(
                       children: [
                         Spacer(),
-                        Text(
-                          'نسيت كلمة المرور؟',
-                          style: theme.textTheme.bodyMedium!.copyWith(
-                            color: AppColors.primary300,
+                        GestureDetector(
+                          onTap: () {
+                            AppNavigation.pushNamed(AppRoutes.forgetPassword);
+                          },
+                          child: Text(
+                            'نسيت كلمة المرور؟',
+                            style: theme.textTheme.bodyMedium!.copyWith(
+                              color: AppColors.primary300,
+                            ),
                           ),
                         ),
                       ],
@@ -126,7 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         'تسجيل الدخول',
                         style: theme.textTheme.bodyMedium!.copyWith(
                           color: AppColors.natural100,
-                          fontWeight: FontWeight.bold,
+                          fontFamily: BaseConstant.cairoBold,
                         ),
                       ),
                     ),
