@@ -1,6 +1,16 @@
+import 'package:easy_life/Core/Helper/dependency_injection_helper.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
+import 'package:easy_life/Features/Authentication/Domain/Entity/user_entity.dart';
+import 'package:easy_life/Features/Cart/Presentation/Views/cart_screen.dart';
 import 'package:easy_life/Features/Home/Presentation/Views/home_screen.dart';
+import 'package:easy_life/Features/Home/Presentation/Views/my_favourite_screen.dart';
+import 'package:easy_life/Features/Main/Widget/nav_bar_item_widget.dart';
+import 'package:easy_life/Features/Profile/Presentation/View/account_screen.dart';
 import 'package:flutter/material.dart';
+
+import '../../../Core/Constant/base_constant.dart';
+import '../../../Core/Handler/auth_handler.dart';
+import '../../../Core/Helper/user_validation_helper.dart';
 
 class MainNavScreen extends StatefulWidget {
   const MainNavScreen({super.key});
@@ -12,21 +22,35 @@ class MainNavScreen extends StatefulWidget {
 class _MainNavScreenState extends State<MainNavScreen> {
   int currentIndex = 0;
   PageController pageController = PageController();
-  List<Widget> pages = [HomeScreen(), HomeScreen(), HomeScreen(), HomeScreen()];
-
+  Userdata? userData = DependencyInjectionHelper()
+      .sl<AuthHandlerInterface>()
+      .getUserData();
   @override
   Widget build(BuildContext context) {
+    List<Widget> pages = [
+      HomeScreen(),
+      CartScreen(),
+      MyFavouriteScreen(),
+      AccountScreen(
+        onupdateTap: () {
+          setState(() {
+            currentIndex = 1;
+          });
+        },
+      ),
+    ];
     var theme = Theme.of(context);
     return SafeArea(
       child: Scaffold(
         body: pages[currentIndex],
         bottomNavigationBar: BottomNavigationBar(
+          elevation: 0,
           currentIndex: currentIndex,
           backgroundColor: AppColors.natural100,
           // showUnselectedLabels: true,
           selectedLabelStyle: theme.textTheme.bodySmall?.copyWith(
             color: AppColors.primary400,
-            fontWeight: FontWeight.bold,
+            fontFamily: BaseConstant.cairoBold,
           ),
           unselectedLabelStyle: theme.textTheme.bodySmall?.copyWith(
             color: AppColors.natural400,
@@ -34,50 +58,27 @@ class _MainNavScreenState extends State<MainNavScreen> {
           selectedItemColor: AppColors.primary400,
           unselectedItemColor: AppColors.natural400,
           onTap: (value) {
-            setState(() {
-              currentIndex = value;
-            });
+            if (value == 2 || value == 3) {
+              if (UserValidationHelper.checkUserValidation() == true) {
+                setState(() {
+                  currentIndex = value;
+                });
+              } else {
+                UserValidationHelper.showUserValidation();
+              }
+            } else {
+              setState(() {
+                currentIndex = value;
+              });
+            }
           },
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(
-                currentIndex == 0 ? Icons.home : Icons.home_outlined,
-                color: currentIndex == 0
-                    ? AppColors.primary400
-                    : AppColors.natural400,
-              ),
-              label: 'الرئيسية',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                currentIndex == 1
-                    ? Icons.shopping_bag
-                    : Icons.shopping_bag_outlined,
-                color: currentIndex == 1
-                    ? AppColors.primary400
-                    : AppColors.natural400,
-              ),
-              label: 'السلة',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                currentIndex == 2 ? Icons.favorite : Icons.favorite_border,
-                color: currentIndex == 2
-                    ? AppColors.primary400
-                    : AppColors.natural400,
-              ),
-              label: 'المفضلة',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                currentIndex == 3 ? Icons.person : Icons.person_outline,
-                color: currentIndex == 3
-                    ? AppColors.primary400
-                    : AppColors.natural400,
-              ),
-              label: 'الحساب',
-            ),
-          ],
+          items: userData == null
+              ? NavBarItemWidget(currentIndex: currentIndex).userNavBarItems
+              : userData?.clientType == 0
+              ? NavBarItemWidget(currentIndex: currentIndex).userNavBarItems
+              : NavBarItemWidget(
+                  currentIndex: currentIndex,
+                ).providerNavBarItems,
         ),
       ),
     );

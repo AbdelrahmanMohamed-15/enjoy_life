@@ -74,7 +74,7 @@ class OnboardingThree extends StatelessWidget {
             onTap: () {
               Future.delayed(Duration(milliseconds: 50), () async {
                 await _di.sl<AuthHandlerInterface>().setOnBoarding(false);
-                AppNavigation.pushNamedAndRemoveUntil(AppRoutes.login);
+                AppNavigation.pushNamedAndRemoveUntil(AppRoutes.mainNav);
               });
             },
             child: Text(

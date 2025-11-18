@@ -1,6 +1,7 @@
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 
+import '../Constant/base_constant.dart';
 import '../Themes/app_colors.dart';
 
 class CustomCountryCode extends StatelessWidget {
@@ -26,11 +27,11 @@ class CustomCountryCode extends StatelessWidget {
         // enabled: false,
         textStyle: theme.textTheme.bodyMedium?.copyWith(
           color: AppColors.black700,
-          fontWeight: FontWeight.bold,
+          fontFamily: BaseConstant.cairoBold,
         ),
         dialogTextStyle: theme.textTheme.bodyMedium?.copyWith(
           color: AppColors.black700,
-          fontWeight: FontWeight.bold,
+          fontFamily: BaseConstant.cairoBold,
         ),
         alignLeft: true,
         onChanged: onChanged,

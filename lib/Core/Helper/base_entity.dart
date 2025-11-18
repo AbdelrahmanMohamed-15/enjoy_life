@@ -3,14 +3,14 @@ import 'package:equatable/equatable.dart';
 class BaseEntity extends Equatable {
   final bool? status;
   final int? code;
-  final String? message;
+  final dynamic message;
 
   const BaseEntity({this.status, this.code, this.message});
 
   factory BaseEntity.fromJson(Map<String, dynamic> json) => BaseEntity(
-    status: json["status"] ?? false,
+    status: json["status"] ?? 0,
     code: json["code"] ?? 0,
-    message: json["message"] ?? "",
+    message: json["message"].toString(),
   );
 
   Map<String, dynamic> toJson() => {

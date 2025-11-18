@@ -1,5 +1,6 @@
 import 'package:easy_life/Core/Extentions/extentions.dart';
 import 'package:easy_life/Core/Helper/dependency_injection_helper.dart';
+import 'package:easy_life/Core/Helper/user_validation_helper.dart';
 import 'package:easy_life/Features/Authentication/Domain/Entity/user_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -33,7 +34,9 @@ class MainBar extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    'Welcome ${userData?.fullName}',
+                    UserValidationHelper.checkUserValidation() == true
+                        ? 'مرحبا ${userData?.fullName ?? ''}'
+                        : 'مرحبا زائر',
                     style: theme.textTheme.titleMedium!.copyWith(
                       color: AppColors.primary400,
                     ),
