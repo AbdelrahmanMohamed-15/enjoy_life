@@ -14,6 +14,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../Core/Themes/app_colors.dart';
 import '../../Domain/Usecases/get_all_home_usecases.dart';
+import '../../Domain/Usecases/get_vendor_hotels_usecases.dart';
+import '../../Domain/Usecases/get_vendor_resturant_usecases.dart';
+import '../../Domain/Usecases/get_vendor_trips_usecases.dart';
 
 part 'home_state.dart';
 
@@ -23,6 +26,9 @@ class HomeCubit extends Cubit<HomeState> {
     required this.getResturantUsecases,
     required this.getTripsUsecases,
     required this.getHotelsUsecases,
+    required this.getVendorResturantUsecases,
+    required this.getVendorTripsUsecases,
+    required this.getVendorHotelsUsecases,
     required this.addFavouriteUsecases,
     required this.removeFavouriteUsecases,
     required this.getMyFavouriteUsecases,
@@ -37,6 +43,9 @@ class HomeCubit extends Cubit<HomeState> {
   final GetResturantUsecases getResturantUsecases;
   final GetTripsUsecases getTripsUsecases;
   final GetHotelsUsecases getHotelsUsecases;
+  final GetVendorResturantUsecases getVendorResturantUsecases;
+  final GetVendorTripsUsecases getVendorTripsUsecases;
+  final GetVendorHotelsUsecases getVendorHotelsUsecases;
   final AddFavouriteUsecases addFavouriteUsecases;
   final RemoveFavouriteUsecases removeFavouriteUsecases;
   final GetMyFavouriteUsecases getMyFavouriteUsecases;
@@ -49,12 +58,18 @@ class HomeCubit extends Cubit<HomeState> {
   HomeEntity? hotelsEntity;
   HomeEntity? myFavouriteEntity;
   HomeEntity? totalHomeEntity;
+  HomeEntity? vendorResturantEntity;
+  HomeEntity? vendorTripsEntity;
+  HomeEntity? vendorHotelsEntity;
 
   // request state variable
   RequestState sliderRequestState = RequestState.initial;
   RequestState resturantRequestState = RequestState.initial;
   RequestState tripsRequestState = RequestState.initial;
   RequestState hotelsRequestState = RequestState.initial;
+  RequestState vendorResturantRequestState = RequestState.initial;
+  RequestState vendorTripsRequestState = RequestState.initial;
+  RequestState vendorHotelsRequestState = RequestState.initial;
   RequestState myFavouriteRequestState = RequestState.initial;
   RequestState totalHomeRequestState = RequestState.initial;
 
@@ -136,6 +151,76 @@ class HomeCubit extends Cubit<HomeState> {
         }
       },
     );
+  }
+
+  Future<void> getVendorResturant() async {
+    emit(HomeLoadingState());
+    final result = await getVendorResturantUsecases.call();
+    result.fold(
+      (failure) {
+        vendorResturantRequestState = RequestState.error;
+        emit(
+          HomeResturantErrorState(requestState: vendorResturantRequestState),
+        );
+      },
+      (resturant) {
+        vendorResturantEntity = resturant;
+        if (resturant.data!.isNotEmpty) {
+          emit(HomeResturantSuccessState(resturant: resturant));
+        } else {
+          vendorResturantRequestState = RequestState.empty;
+          emit(
+            HomeResturantErrorState(requestState: vendorResturantRequestState),
+          );
+        }
+      },
+    );
+  }
+
+  Future<void> getVendorTrips() async {
+    emit(HomeLoadingState());
+    final result = await getVendorTripsUsecases.call();
+    result.fold(
+      (failure) {
+        vendorTripsRequestState = RequestState.error;
+        emit(HomeTripsErrorState(requestState: vendorTripsRequestState));
+      },
+      (trips) {
+        vendorTripsEntity = trips;
+        if (trips.data!.isNotEmpty) {
+          emit(HomeTripsSuccessState(trips: trips));
+        } else {
+          vendorTripsRequestState = RequestState.empty;
+          emit(HomeTripsErrorState(requestState: vendorTripsRequestState));
+        }
+      },
+    );
+  }
+
+  Future<void> getVendorHotels() async {
+    emit(HomeLoadingState());
+    final result = await getVendorHotelsUsecases.call();
+    result.fold(
+      (failure) {
+        vendorHotelsRequestState = RequestState.error;
+        emit(HomeHotelsErrorState(requestState: vendorHotelsRequestState));
+      },
+      (hotels) {
+        vendorHotelsEntity = hotels;
+        if (hotels.data!.isNotEmpty) {
+          emit(HomeHotelsSuccessState(hotels: hotels));
+        } else {
+          vendorHotelsRequestState = RequestState.empty;
+          emit(HomeHotelsErrorState(requestState: vendorHotelsRequestState));
+        }
+      },
+    );
+  }
+
+  getAllVendorHome() async {
+    await getVendorResturant();
+    await getVendorTrips();
+    await getVendorHotels();
   }
 
   Future<void> addFavourite({required int id, required String type}) async {

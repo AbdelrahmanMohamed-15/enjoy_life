@@ -1,10 +1,13 @@
+import 'package:easy_life/Core/Helper/dependency_injection_helper.dart';
 import 'package:easy_life/Core/Services/setting_services.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
+import 'package:easy_life/Features/Authentication/Domain/Entity/user_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:like_button/like_button.dart';
 
 import '../Constant/base_constant.dart';
+import '../Handler/auth_handler.dart';
 import '../Helper/user_validation_helper.dart';
 
 class GeneralServiceCard extends StatefulWidget {
@@ -54,6 +57,9 @@ class _GeneralServiceCardState extends State<GeneralServiceCard> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
+    Userdata? userData = DependencyInjectionHelper()
+        .sl<AuthHandlerInterface>()
+        .getUserData();
     return Container(
       height: 240,
       width: 185,
@@ -82,59 +88,61 @@ class _GeneralServiceCardState extends State<GeneralServiceCard> {
                     fit: BoxFit.cover,
                   ),
                 ),
-                Positioned(
-                  top: 10,
-                  left: 10,
-                  child: Container(
-                    padding: EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: AppColors.natural100,
-                      shape: BoxShape.circle,
-                    ),
-                    child: LikeButton(
-                      size: 25, // match your icon size
-                      animationDuration: const Duration(milliseconds: 300),
-                      isLiked: !isServiceFavourite,
-                      likeCountPadding: const EdgeInsets.all(0),
-                      circleColor: const CircleColor(
-                        start: AppColors.iconPrimary,
-                        end: AppColors.iconPrimary,
+                if (userData != null)
+                  if (userData.clientType == 0)
+                    Positioned(
+                      top: 10,
+                      left: 10,
+                      child: Container(
+                        padding: EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: AppColors.natural100,
+                          shape: BoxShape.circle,
+                        ),
+                        child: LikeButton(
+                          size: 25, // match your icon size
+                          animationDuration: const Duration(milliseconds: 300),
+                          isLiked: !isServiceFavourite,
+                          likeCountPadding: const EdgeInsets.all(0),
+                          circleColor: const CircleColor(
+                            start: AppColors.iconPrimary,
+                            end: AppColors.iconPrimary,
+                          ),
+                          bubblesColor: const BubblesColor(
+                            dotPrimaryColor: AppColors.iconPrimary,
+                            dotSecondaryColor: AppColors.iconPrimary,
+                          ),
+                          likeBuilder: (bool isLiked) {
+                            return Icon(
+                              isServiceFavourite
+                                  ? Icons.favorite_outlined
+                                  : Icons.favorite_outline,
+                              color: isServiceFavourite
+                                  ? AppColors.iconPrimary
+                                  : Colors.black,
+                              size: 24, // slightly smaller to fit nicely
+                            );
+                          },
+                          onTap: (isLike) async {
+                            if (UserValidationHelper.checkUserValidation() ==
+                                true) {
+                              if (!isLike) {
+                                widget.removeFavouriteTap();
+                              } else {
+                                widget.addFavouriteTap();
+                              }
+                              setState(() {
+                                isServiceFavourite = !isServiceFavourite;
+                              });
+                              return !isLike;
+                            } else {
+                              UserValidationHelper.showUserValidation();
+                              return false;
+                            }
+                          },
+                        ),
                       ),
-                      bubblesColor: const BubblesColor(
-                        dotPrimaryColor: AppColors.iconPrimary,
-                        dotSecondaryColor: AppColors.iconPrimary,
-                      ),
-                      likeBuilder: (bool isLiked) {
-                        return Icon(
-                          isServiceFavourite
-                              ? Icons.favorite_outlined
-                              : Icons.favorite_outline,
-                          color: isServiceFavourite
-                              ? AppColors.iconPrimary
-                              : Colors.black,
-                          size: 24, // slightly smaller to fit nicely
-                        );
-                      },
-                      onTap: (isLike) async {
-                        if (UserValidationHelper.checkUserValidation() ==
-                            true) {
-                          if (!isLike) {
-                            widget.removeFavouriteTap();
-                          } else {
-                            widget.addFavouriteTap();
-                          }
-                          setState(() {
-                            isServiceFavourite = !isServiceFavourite;
-                          });
-                          return !isLike;
-                        } else {
-                          UserValidationHelper.showUserValidation();
-                          return false;
-                        }
-                      },
                     ),
-                  ),
-                ),
               ],
             ),
           ),

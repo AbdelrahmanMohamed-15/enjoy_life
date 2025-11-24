@@ -14,6 +14,9 @@ import 'package:easy_life/Features/Cart/Domain/Usecases/update_item_quantity_use
 import 'package:easy_life/Features/Home/Data/DataSource/home_datasource.dart';
 import 'package:easy_life/Features/Home/Domain/Usecases/get_all_home_usecases.dart';
 import 'package:easy_life/Features/Home/Domain/Usecases/get_my_favourite_usecases.dart';
+import 'package:easy_life/Features/Home/Domain/Usecases/get_vendor_hotels_usecases.dart';
+import 'package:easy_life/Features/Home/Domain/Usecases/get_vendor_resturant_usecases.dart';
+import 'package:easy_life/Features/Home/Domain/Usecases/get_vendor_trips_usecases.dart';
 import 'package:easy_life/Features/Order/Data/Datasource/order_datasource.dart';
 import 'package:easy_life/Features/Order/Domain/Usecases/get_cancel_order_usecases.dart';
 import 'package:easy_life/Features/Order/Domain/Usecases/get_complete_order_usecases.dart';
@@ -184,6 +187,15 @@ class DependencyInjectionHelper {
     sl.registerLazySingleton<GetHotelsUsecases>(
       () => GetHotelsUsecases(homeRepository: sl<HomeRepository>()),
     );
+    sl.registerLazySingleton<GetVendorResturantUsecases>(
+      () => GetVendorResturantUsecases(homeRepository: sl<HomeRepository>()),
+    );
+    sl.registerLazySingleton<GetVendorHotelsUsecases>(
+      () => GetVendorHotelsUsecases(homeRepository: sl<HomeRepository>()),
+    );
+    sl.registerLazySingleton<GetVendorTripsUsecases>(
+      () => GetVendorTripsUsecases(homeRepository: sl<HomeRepository>()),
+    );
     sl.registerLazySingleton<AddFavouriteUsecases>(
       () => AddFavouriteUsecases(homeRepository: sl<HomeRepository>()),
     );
@@ -283,6 +295,9 @@ class DependencyInjectionHelper {
         getResturantUsecases: sl<GetResturantUsecases>(),
         getTripsUsecases: sl<GetTripsUsecases>(),
         getHotelsUsecases: sl<GetHotelsUsecases>(),
+        getVendorResturantUsecases: sl<GetVendorResturantUsecases>(),
+        getVendorHotelsUsecases: sl<GetVendorHotelsUsecases>(),
+        getVendorTripsUsecases: sl<GetVendorTripsUsecases>(),
         addFavouriteUsecases: sl<AddFavouriteUsecases>(),
         removeFavouriteUsecases: sl<RemoveFavouriteUsecases>(),
         getMyFavouriteUsecases: sl<GetMyFavouriteUsecases>(),

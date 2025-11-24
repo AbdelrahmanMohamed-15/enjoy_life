@@ -2,6 +2,7 @@ import 'package:easy_life/Core/Routes/routes.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
 import 'package:easy_life/Core/Widget/main_app_button.dart';
 import 'package:easy_life/Core/Widget/map_location_widget.dart';
+import 'package:easy_life/Features/Authentication/Domain/Entity/user_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_life/Features/Services/Presentation/cubit/service_cubit.dart';
@@ -11,6 +12,8 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import '../../../../Core/Constant/base_constant.dart';
 import '../../../../Core/Enums/level_message_enums.dart';
+import '../../../../Core/Handler/auth_handler.dart';
+import '../../../../Core/Helper/dependency_injection_helper.dart';
 import '../Widget/select_slot_bottomsheet.dart';
 
 class ServiceDetailsScreen extends StatefulWidget {
@@ -38,6 +41,9 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
+    Userdata? userData = DependencyInjectionHelper()
+        .sl<AuthHandlerInterface>()
+        .getUserData();
     return BlocBuilder<ServiceCubit, ServiceState>(
       builder: (context, state) {
         var serviceCubit = ServiceCubit.get(context);
@@ -89,34 +95,37 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // 🔹 Branch Dropdown
-                    if (branches.isNotEmpty) ...[
-                      const SizedBox(height: 20),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey.shade300),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: DropdownButton<Branch>(
-                          isExpanded: true,
-                          underline: const SizedBox(),
-                          hint: const Text("اختر الفرع"),
-                          value: selectedBranch,
-                          items: uniqueBranches.toSet().map((branch) {
-                            return DropdownMenuItem<Branch>(
-                              value: branch,
-                              child: Text(branch.name ?? branch.name ?? ""),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              selectedBranch = value;
-                            });
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 25),
-                    ],
+                    if (userData != null)
+                      if (userData.clientType == 0) ...[
+                        if (branches.isNotEmpty) ...[
+                          const SizedBox(height: 20),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey.shade300),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: DropdownButton<Branch>(
+                              isExpanded: true,
+                              underline: const SizedBox(),
+                              hint: const Text("اختر الفرع"),
+                              value: selectedBranch,
+                              items: uniqueBranches.toSet().map((branch) {
+                                return DropdownMenuItem<Branch>(
+                                  value: branch,
+                                  child: Text(branch.name ?? branch.name ?? ""),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedBranch = value;
+                                });
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: 25),
+                        ],
+                      ],
 
                     // 🔹 Main Image
                     ClipRRect(
@@ -358,76 +367,79 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                 padding: const EdgeInsets.all(12),
                 child: Row(
                   children: [
-                    // 🔹 Show only if serviceBranches not empty
-                    if (selectedBranch != null) ...[
-                      Expanded(
-                        child: MainAppButton(
-                          bgColor: AppColors.primary400,
-                          child: Text(
-                            "الخدمات",
-                            style: theme.textTheme.bodyMedium!.copyWith(
-                              color: AppColors.natural100,
-                              fontFamily: BaseConstant.cairoBold,
-                            ),
-                          ),
-                          onTap: () {
-                            AppNavigation.pushNamed(
-                              AppRoutes.serviceScreen,
-                              arguments: {
-                                'serviceBranches': uniqueBranchesById,
-                                'title': resturant.name ?? '',
-                                'branchID': selectedBranch?.id ?? 0,
-                                'serviceCubit': serviceCubit,
-                              },
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                    ],
-
-                    Expanded(
-                      child: MainAppButton(
-                        bgColor: AppColors.primary400,
-                        child: Text(
-                          "احجز الان",
-                          style: theme.textTheme.bodyMedium!.copyWith(
-                            color: AppColors.natural100,
-                            fontFamily: BaseConstant.cairoBold,
-                          ),
-                        ),
-                        onTap: () {
-                          if (widget.type.toLowerCase() == 'resturant' ||
-                              widget.type.toLowerCase() == 'مطعم' ||
-                              widget.type.toLowerCase() == 'hotel' ||
-                              widget.type.toLowerCase() == 'فندق') {
-                            showModalBottomSheet(
-                              context: context,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(20),
-                                  topRight: Radius.circular(20),
+                    if (userData != null)
+                      if (userData.clientType == 0) ...[
+                        // 🔹 Show only if serviceBranches not empty
+                        if (selectedBranch != null) ...[
+                          Expanded(
+                            child: MainAppButton(
+                              bgColor: AppColors.primary400,
+                              child: Text(
+                                "الخدمات",
+                                style: theme.textTheme.bodyMedium!.copyWith(
+                                  color: AppColors.natural100,
+                                  fontFamily: BaseConstant.cairoBold,
                                 ),
                               ),
-                              builder: (_) {
-                                return BookingTimeBottomSheet(
-                                  serviceCubit: serviceCubit,
-                                  type: widget.type,
-                                  title: resturant.name ?? '',
-                                  serviceID: resturant.id ?? 0,
+                              onTap: () {
+                                AppNavigation.pushNamed(
+                                  AppRoutes.serviceScreen,
+                                  arguments: {
+                                    'serviceBranches': uniqueBranchesById,
+                                    'title': resturant.name ?? '',
+                                    'branchID': selectedBranch?.id ?? 0,
+                                    'serviceCubit': serviceCubit,
+                                  },
                                 );
                               },
-                            );
-                          } else {
-                            serviceCubit.getAvaliableTrips(
-                              tripID: resturant.id ?? 0,
-                              title: resturant.name ?? '',
-                              serviceCubit: serviceCubit,
-                            );
-                          }
-                        },
-                      ),
-                    ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                        ],
+
+                        Expanded(
+                          child: MainAppButton(
+                            bgColor: AppColors.primary400,
+                            child: Text(
+                              "احجز الان",
+                              style: theme.textTheme.bodyMedium!.copyWith(
+                                color: AppColors.natural100,
+                                fontFamily: BaseConstant.cairoBold,
+                              ),
+                            ),
+                            onTap: () {
+                              if (widget.type.toLowerCase() == 'resturant' ||
+                                  widget.type.toLowerCase() == 'مطعم' ||
+                                  widget.type.toLowerCase() == 'hotel' ||
+                                  widget.type.toLowerCase() == 'فندق') {
+                                showModalBottomSheet(
+                                  context: context,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(20),
+                                      topRight: Radius.circular(20),
+                                    ),
+                                  ),
+                                  builder: (_) {
+                                    return BookingTimeBottomSheet(
+                                      serviceCubit: serviceCubit,
+                                      type: widget.type,
+                                      title: resturant.name ?? '',
+                                      serviceID: resturant.id ?? 0,
+                                    );
+                                  },
+                                );
+                              } else {
+                                serviceCubit.getAvaliableTrips(
+                                  tripID: resturant.id ?? 0,
+                                  title: resturant.name ?? '',
+                                  serviceCubit: serviceCubit,
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                      ],
                   ],
                 ),
               ),

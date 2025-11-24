@@ -12,6 +12,12 @@ abstract class HomeRepository {
 
   Future<Either<Failure, HomeEntity>> getTrips();
 
+  Future<Either<Failure, HomeEntity>> getVendorResturants();
+
+  Future<Either<Failure, HomeEntity>> getVendorHotels();
+
+  Future<Either<Failure, HomeEntity>> getVendorTrips();
+
   Future<Either<Failure, HomeEntity>> getAllFavourite();
 
   Future<Either<Failure, HomeEntity>> getAllHome({required String type});

@@ -4,6 +4,7 @@ import 'package:easy_life/Features/Authentication/Domain/Entity/user_entity.dart
 import 'package:easy_life/Features/Cart/Presentation/Views/cart_screen.dart';
 import 'package:easy_life/Features/Home/Presentation/Views/home_screen.dart';
 import 'package:easy_life/Features/Home/Presentation/Views/my_favourite_screen.dart';
+import 'package:easy_life/Features/Home/Presentation/Views/vendor_homde_screen.dart';
 import 'package:easy_life/Features/Main/Widget/nav_bar_item_widget.dart';
 import 'package:easy_life/Features/Profile/Presentation/View/account_screen.dart';
 import 'package:flutter/material.dart';
@@ -27,8 +28,20 @@ class _MainNavScreenState extends State<MainNavScreen> {
       .getUserData();
   @override
   Widget build(BuildContext context) {
-    List<Widget> pages = [
+    List<Widget> userPages = [
       HomeScreen(),
+      CartScreen(),
+      MyFavouriteScreen(),
+      AccountScreen(
+        onupdateTap: () {
+          setState(() {
+            currentIndex = 1;
+          });
+        },
+      ),
+    ];
+    List<Widget> vendorPages = [
+      VendorHomeScreen(),
       CartScreen(),
       MyFavouriteScreen(),
       AccountScreen(
@@ -42,7 +55,11 @@ class _MainNavScreenState extends State<MainNavScreen> {
     var theme = Theme.of(context);
     return SafeArea(
       child: Scaffold(
-        body: pages[currentIndex],
+        body: userData == null
+            ? userPages[currentIndex]
+            : userData?.clientType == 0
+            ? userPages[currentIndex]
+            : vendorPages[currentIndex],
         bottomNavigationBar: BottomNavigationBar(
           elevation: 0,
           currentIndex: currentIndex,

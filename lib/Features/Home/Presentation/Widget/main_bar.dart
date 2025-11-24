@@ -1,16 +1,19 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'package:easy_life/Core/Extentions/extentions.dart';
 import 'package:easy_life/Core/Helper/dependency_injection_helper.dart';
 import 'package:easy_life/Core/Helper/user_validation_helper.dart';
 import 'package:easy_life/Features/Authentication/Domain/Entity/user_entity.dart';
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../../Core/Handler/auth_handler.dart';
 import '../../../../Core/Themes/app_colors.dart';
 import '../../../../Core/Widget/custom_text_form_field.dart';
 
 class MainBar extends StatelessWidget {
-  const MainBar({super.key});
+  final bool isHaveSearch;
+  const MainBar({super.key, required this.isHaveSearch});
 
   @override
   Widget build(BuildContext context) {
@@ -46,18 +49,20 @@ class MainBar extends StatelessWidget {
                 FaIcon(FontAwesomeIcons.bell, color: AppColors.secondary700),
               ],
             ),
-            SizedBox(height: 15),
-            CustomTextFormField(
-              controller: TextEditingController(),
-              hintText: 'بحث',
-              prefixIcon: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: FaIcon(
-                  FontAwesomeIcons.magnifyingGlass,
-                  color: AppColors.primary400,
+            if (isHaveSearch) ...[
+              SizedBox(height: 15),
+              CustomTextFormField(
+                controller: TextEditingController(),
+                hintText: 'بحث',
+                prefixIcon: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: FaIcon(
+                    FontAwesomeIcons.magnifyingGlass,
+                    color: AppColors.primary400,
+                  ),
                 ),
               ),
-            ),
+            ],
           ],
         ).setHorizontalPadding(context, 15, enableMediaQuery: false),
       ),

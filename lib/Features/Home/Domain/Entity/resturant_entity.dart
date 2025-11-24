@@ -46,7 +46,7 @@ class HomeData extends Equatable {
   final int? clientId;
   final String? clientName;
 
-  HomeData({
+  const HomeData({
     this.id,
     this.itemID,
     this.name,

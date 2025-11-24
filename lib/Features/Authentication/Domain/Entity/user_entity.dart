@@ -171,6 +171,7 @@ class Userdata extends Equatable {
     "longitude": longitude,
     "code": code,
     "verification_type": verificationType,
+    "client_type": clientType,
     "country_id": countryId,
     // "gender": gender,
     // "blood_group": bloodGroup,

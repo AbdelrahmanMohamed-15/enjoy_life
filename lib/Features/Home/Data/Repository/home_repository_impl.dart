@@ -166,6 +166,120 @@ class HomeRepositoryImpl implements HomeRepository {
   }
 
   @override
+  Future<Either<Failure, HomeEntity>> getVendorResturants() async {
+    try {
+      var result = await homeDatasource.getVendorResturant();
+      if (result.statusCode == 200) {
+        return Right(HomeEntity.fromJson(result.data));
+      } else {
+        return Left(
+          Failure(
+            code: result.statusCode ?? APIResponseCode.unknown,
+            message: APIResponseMessages.unknown,
+          ),
+        );
+      }
+    } on DioException catch (dioError) {
+      // For libraries like Dio, this will capture HTTP errors
+      if (dioError.response != null) {
+        // Extract the error message from the response
+        final errorMessage =
+            dioError.response?.data['message'] ?? 'Unknown error occurred';
+        return Left(
+          Failure(
+            code: dioError.response?.statusCode ?? APIResponseCode.unknown,
+            message: errorMessage,
+          ),
+        );
+      } else {
+        // Handle network or other unexpected Dio errors
+        return Left(
+          Failure(
+            code: APIResponseCode.noInternetConnection,
+            message: dioError.message.toString(),
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  Future<Either<Failure, HomeEntity>> getVendorTrips() async {
+    try {
+      var result = await homeDatasource.getVendorTrips();
+      if (result.statusCode == 200) {
+        return Right(HomeEntity.fromJson(result.data));
+      } else {
+        return Left(
+          Failure(
+            code: result.statusCode ?? APIResponseCode.unknown,
+            message: APIResponseMessages.unknown,
+          ),
+        );
+      }
+    } on DioException catch (dioError) {
+      // For libraries like Dio, this will capture HTTP errors
+      if (dioError.response != null) {
+        // Extract the error message from the response
+        final errorMessage =
+            dioError.response?.data['message'] ?? 'Unknown error occurred';
+        return Left(
+          Failure(
+            code: dioError.response?.statusCode ?? APIResponseCode.unknown,
+            message: errorMessage,
+          ),
+        );
+      } else {
+        // Handle network or other unexpected Dio errors
+        return Left(
+          Failure(
+            code: APIResponseCode.noInternetConnection,
+            message: dioError.message.toString(),
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  Future<Either<Failure, HomeEntity>> getVendorHotels() async {
+    try {
+      var result = await homeDatasource.getVendorHotels();
+      if (result.statusCode == 200) {
+        return Right(HomeEntity.fromJson(result.data));
+      } else {
+        return Left(
+          Failure(
+            code: result.statusCode ?? APIResponseCode.unknown,
+            message: APIResponseMessages.unknown,
+          ),
+        );
+      }
+    } on DioException catch (dioError) {
+      // For libraries like Dio, this will capture HTTP errors
+      if (dioError.response != null) {
+        // Extract the error message from the response
+        final errorMessage =
+            dioError.response?.data['message'] ?? 'Unknown error occurred';
+        return Left(
+          Failure(
+            code: dioError.response?.statusCode ?? APIResponseCode.unknown,
+            message: errorMessage,
+          ),
+        );
+      } else {
+        // Handle network or other unexpected Dio errors
+        return Left(
+          Failure(
+            code: APIResponseCode.noInternetConnection,
+            message: dioError.message.toString(),
+          ),
+        );
+      }
+    }
+  }
+
+  @override
   Future<Either<Failure, bool>> addFavourite({
     required int id,
     required String type,

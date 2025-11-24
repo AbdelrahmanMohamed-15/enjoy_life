@@ -24,7 +24,7 @@ class HomeScreen extends StatelessWidget {
           return Scaffold(
             body: Column(
               children: [
-                MainBar(),
+                MainBar(isHaveSearch: true),
                 SizedBox(height: 20),
                 Expanded(
                   child: ListView(
