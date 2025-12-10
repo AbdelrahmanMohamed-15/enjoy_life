@@ -1,3 +1,4 @@
+import 'package:easy_life/Core/Routes/app_navigation.dart';
 import 'package:easy_life/Features/Order/Presentation/Widget/order_card.dart';
 import 'package:easy_life/Features/Order/Presentation/Widget/order_tabs.dart';
 import 'package:easy_life/Features/Order/Presentation/cubit/order_cubit.dart';
@@ -30,6 +31,12 @@ class OrderHistoryScreen extends StatelessWidget {
               ),
               centerTitle: true,
               elevation: 2,
+              leading: GestureDetector(
+                onTap: () {
+                  AppNavigation.pop();
+                },
+                child: Icon(Icons.arrow_back_ios, color: AppColors.primary500),
+              ),
             ),
             body: Column(
               children: [

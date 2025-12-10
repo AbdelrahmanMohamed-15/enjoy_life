@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import '../../../../Core/Constant/base_constant.dart';
 import '../../../../Core/Themes/app_colors.dart';
 import '../../Domain/Entity/order_history_entity.dart';
@@ -67,26 +68,43 @@ class OrderCard extends StatelessWidget {
             const SizedBox(height: 8),
 
             /// Customer info
-            Text(
-              "العميل: ${order.clientName ?? ''}",
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontFamily: BaseConstant.cairoBold,
-                color: AppColors.natural400,
-              ),
-            ),
-            Text(
-              "العنوان: ${order.address ?? ''}",
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontFamily: BaseConstant.cairoBold,
-                color: AppColors.natural300,
-              ),
-            ),
-            Text(
-              "طريقة الدفع: ${order.paymentType ?? ''}",
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontFamily: BaseConstant.cairoBold,
-                color: AppColors.natural300,
-              ),
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "العميل: ${order.clientName ?? ''}",
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontFamily: BaseConstant.cairoBold,
+                          color: AppColors.natural400,
+                        ),
+                      ),
+                      Text(
+                        "العنوان: ${order.address ?? ''}",
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontFamily: BaseConstant.cairoBold,
+                          color: AppColors.natural300,
+                        ),
+                      ),
+                      Text(
+                        "طريقة الدفع: ${order.paymentType ?? ''}",
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontFamily: BaseConstant.cairoBold,
+                          color: AppColors.natural300,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 10),
+                QrImageView(
+                  data: order.orderCode ?? "",
+                  version: QrVersions.auto,
+                  size: 70.0,
+                ),
+              ],
             ),
 
             const Divider(height: 20),
