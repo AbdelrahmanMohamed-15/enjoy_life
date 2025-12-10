@@ -33,6 +33,12 @@ class AllHomeScreen extends StatelessWidget {
                 fontSize: 20,
               ),
             ),
+            leading: GestureDetector(
+              onTap: () {
+                AppNavigation.pop();
+              },
+              child: Icon(Icons.arrow_back_ios, color: AppColors.primary400),
+            ),
             centerTitle: true,
             elevation: 2,
           ),

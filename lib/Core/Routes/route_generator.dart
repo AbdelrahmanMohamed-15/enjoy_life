@@ -17,6 +17,10 @@ import 'package:easy_life/Features/Services/Presentation/Views/service_screen.da
 import 'package:easy_life/Features/Services/Presentation/Views/tables_screen.dart';
 import 'package:easy_life/Features/Services/Presentation/Views/trips_screen.dart';
 import 'package:easy_life/Features/Services/Presentation/cubit/service_cubit.dart';
+import 'package:easy_life/Features/vendorService/Presentation/Views/Service%20Page%20View/main_add_service_screen.dart';
+import 'package:easy_life/Features/vendorService/Presentation/Views/add_branch_screen.dart';
+import 'package:easy_life/Features/vendorService/Presentation/Views/add_category_screen.dart';
+import 'package:easy_life/Features/vendorService/Presentation/cubit/vendor_service_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
@@ -171,6 +175,63 @@ class RouteGenerator {
                 DependencyInjectionHelper().sl<ProfileCubit>()
                   ..getAdditionalPage(type: args['type']),
             child: AdditionalScreen(type: args['type']),
+          ),
+          settings: settings,
+        );
+      case AppRoutes.addCategory:
+        // var args = (settings.arguments as Map<String, dynamic>);
+        return _screenRoute(
+          screen: BlocProvider(
+            create: (context) =>
+                DependencyInjectionHelper().sl<VendorServiceCubit>(),
+            child: AddCategoryScreen(),
+          ),
+          settings: settings,
+        );
+      case AppRoutes.addBranch:
+        // var args = (settings.arguments as Map<String, dynamic>);
+        return _screenRoute(
+          screen: BlocProvider(
+            create: (context) =>
+                DependencyInjectionHelper().sl<VendorServiceCubit>(),
+            child: AddBranchScreen(),
+          ),
+          settings: settings,
+        );
+      case AppRoutes.addService:
+        var args = (settings.arguments as Map<String, dynamic>);
+        return _screenRoute(
+          screen: BlocProvider(
+            create: (context) {
+              final cubit = DependencyInjectionHelper()
+                  .sl<VendorServiceCubit>();
+
+              if (args['type'] == 'resturant') {
+                cubit.getAllBranches();
+                if (args['isEdit'] == true) {
+                  cubit.showResturant(id: args['id']);
+                }
+              } else if (args['type'] == 'hotel') {
+                cubit.getAllBranches();
+                if (args['isEdit'] == true) {
+                  cubit.showHotel(id: args['id']);
+                }
+              } else {
+                debugPrint('serviceID route ${args['id']}');
+                cubit.getAllBranches();
+                cubit.getAllTripSchedual();
+                if (args['isEdit'] == true) {
+                  cubit.showTrip(id: args['id']);
+                }
+              }
+
+              return cubit; // return the Cubit instance
+            },
+            child: MainAddServiceScreen(
+              type: args['type'],
+              isEdit: args['isEdit'],
+              id: args['id'],
+            ),
           ),
           settings: settings,
         );

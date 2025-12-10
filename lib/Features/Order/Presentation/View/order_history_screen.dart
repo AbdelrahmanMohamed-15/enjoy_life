@@ -1,11 +1,9 @@
-import 'package:easy_life/Core/Enums/level_message_enums.dart';
 import 'package:easy_life/Features/Order/Presentation/Widget/order_card.dart';
 import 'package:easy_life/Features/Order/Presentation/Widget/order_tabs.dart';
 import 'package:easy_life/Features/Order/Presentation/cubit/order_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-
 import '../../../../Core/Constant/assets_strings.dart';
 import '../../../../Core/Constant/base_constant.dart';
 import '../../../../Core/Themes/app_colors.dart';
@@ -44,7 +42,7 @@ class OrderHistoryScreen extends StatelessWidget {
                 Expanded(
                   child: orderCubit.orderHistoryEntity == null
                       ? const Center(child: CircularProgressIndicator())
-                      : orderCubit.orderRequestState == RequestState.empty
+                      : orderCubit.orderHistoryEntity!.data!.isEmpty
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [

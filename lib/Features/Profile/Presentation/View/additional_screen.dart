@@ -1,5 +1,4 @@
 import 'package:easy_life/Core/Enums/level_message_enums.dart';
-import 'package:easy_life/Core/Extentions/padding_ext.dart';
 import 'package:easy_life/Features/Profile/Presentation/cubit/profile_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

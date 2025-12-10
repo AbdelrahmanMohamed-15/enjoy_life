@@ -49,4 +49,13 @@ class ApiUrls {
   static const String getProfile = 'api/me';
   static const String updateProfile = 'api/update';
   static const String getAdditionalPage = 'api/additionalpages';
+
+  // Apis Urls For Vendor Service
+  static const String createCategory = 'api/vendor/serviceBranchCategory';
+  static const String createBranch = 'api/vendor/branch';
+  static const String getAllBranch = 'api/vendor/branch';
+  static const String getAllTripSchedule = 'api/vendor/tripSchedule';
+  static const String createResturant = 'api/vendor/restaurant';
+  static const String createHotel = 'api/vendor/hotel';
+  static const String createTrip = 'api/vendor/trip';
 }

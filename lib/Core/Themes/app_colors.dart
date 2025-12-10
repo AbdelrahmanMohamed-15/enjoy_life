@@ -29,6 +29,7 @@ class AppColors {
   static const black700 = Color(0xff1C1F28);
   static const natural300 = Color(0xffD4D4D4);
   static const natural200 = Color(0xffE9E9E9);
+  static const natural50 = Color(0xffF7F7FA);
   static const natural100 = Color(0xffffffff);
   static const slider = Color(0xffDDDDDD);
   static const blue = Color(0xff2675EC);

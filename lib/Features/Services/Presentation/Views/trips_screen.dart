@@ -6,6 +6,7 @@ import 'package:easy_life/Features/Services/Presentation/cubit/service_cubit.dar
 import 'package:flutter/material.dart';
 
 import '../../../../Core/Constant/base_constant.dart';
+import '../../../../Core/Routes/app_navigation.dart';
 
 class TripsScreen extends StatelessWidget {
   final String title;
@@ -27,6 +28,12 @@ class TripsScreen extends StatelessWidget {
           elevation: 2,
           title: Text(title),
           centerTitle: true,
+          leading: GestureDetector(
+            onTap: () {
+              AppNavigation.pop();
+            },
+            child: Icon(Icons.arrow_back_ios, color: AppColors.primary400),
+          ),
           actions: const [
             // Icon(Icons.favorite_border),
             // SizedBox(width: 12),

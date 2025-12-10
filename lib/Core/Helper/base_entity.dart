@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 class BaseEntity extends Equatable {
-  final bool? status;
+  final int? status;
   final int? code;
   final dynamic message;
 

@@ -4,6 +4,7 @@ import 'package:easy_life/Features/Services/Presentation/cubit/service_cubit.dar
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
+import '../../../../Core/Routes/app_navigation.dart';
 import '../../Domain/Entity/service_deatils_entity.dart' hide Image;
 
 class ServiceScreen extends StatelessWidget {
@@ -28,6 +29,12 @@ class ServiceScreen extends StatelessWidget {
           elevation: 2,
           title: Text(title),
           centerTitle: true,
+          leading: GestureDetector(
+            onTap: () {
+              AppNavigation.pop();
+            },
+            child: Icon(Icons.arrow_back_ios, color: AppColors.primary400),
+          ),
           actions: const [
             // Icon(Icons.favorite_border),
             // SizedBox(width: 12),

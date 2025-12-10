@@ -19,10 +19,12 @@ import '../Widget/select_slot_bottomsheet.dart';
 class ServiceDetailsScreen extends StatefulWidget {
   final int serviceID;
   final String type;
+  final int? id;
   const ServiceDetailsScreen({
     super.key,
     required this.serviceID,
     required this.type,
+    this.id,
   });
 
   @override
@@ -82,6 +84,15 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                 elevation: 2,
                 title: Text(resturant.name ?? ""),
                 centerTitle: true,
+                leading: GestureDetector(
+                  onTap: () {
+                    AppNavigation.pop();
+                  },
+                  child: Icon(
+                    Icons.arrow_back_ios,
+                    color: AppColors.primary400,
+                  ),
+                ),
                 actions: const [
                   // Icon(Icons.favorite_border),
                   // SizedBox(width: 12),

@@ -149,7 +149,7 @@ class Userdata extends Equatable {
     longitude: (json["longitude"] ?? 0.0).toString(),
     code: json["code"] ?? '',
     verificationType: json["verification_type"] ?? 0,
-    clientType: json["client_type"] ?? 0,
+    clientType: json["client_type"] ?? 1,
     countryId: json["country_id"] ?? 0,
     // gender: json["gender"] ?? '',
     // bloodGroup: json["blood_group"] ?? '',
