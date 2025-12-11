@@ -8,6 +8,7 @@ class AssetsStrings {
 
   // Banner
   static const String errorImage = 'assets/images/error_image.svg';
+  static const String noImage = 'assets/images/noImage.svg';
 
   // Service
   static const String empty = 'assets/images/empty.svg';

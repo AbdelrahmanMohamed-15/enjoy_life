@@ -97,9 +97,21 @@ class VendorAccountSccreen extends StatelessWidget {
                   },
                 ),
                 Divider(color: AppColors.natural400),
-                TileWidget(icon: Icons.add, title: 'اضافة خدمة'),
+                TileWidget(
+                  icon: Icons.add,
+                  title: 'اضافة خدمة',
+                  onTap: () {
+                    AppNavigation.pushNamed(AppRoutes.addNewServiceScreen);
+                  },
+                ),
                 Divider(color: AppColors.natural400),
-                TileWidget(icon: Icons.add, title: 'اضافة خدمة اضافية'),
+                TileWidget(
+                  icon: Icons.add,
+                  title: 'اضافة خدمة اضافية',
+                  onTap: () {
+                    AppNavigation.pushNamed(AppRoutes.addServiceOption);
+                  },
+                ),
                 Divider(color: AppColors.natural400),
                 TileWidget(icon: Icons.language, title: 'اللغة'),
                 Divider(color: AppColors.natural400),

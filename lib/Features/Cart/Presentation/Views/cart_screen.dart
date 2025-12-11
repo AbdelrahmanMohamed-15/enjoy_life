@@ -124,8 +124,7 @@ class CartScreen extends StatelessWidget {
                                                         stackTrace,
                                                       ) {
                                                         return SvgPicture.asset(
-                                                          AssetsStrings
-                                                              .errorImage,
+                                                          AssetsStrings.noImage,
                                                           height: 100,
                                                           width: 100,
                                                           fit: BoxFit.cover,

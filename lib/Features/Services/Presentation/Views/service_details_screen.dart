@@ -9,7 +9,9 @@ import 'package:easy_life/Features/Services/Presentation/cubit/service_cubit.dar
 import 'package:easy_life/Features/Services/Domain/Entity/service_deatils_entity.dart'
     hide Image;
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../../Core/Constant/assets_strings.dart';
 import '../../../../Core/Constant/base_constant.dart';
 import '../../../../Core/Enums/level_message_enums.dart';
 import '../../../../Core/Handler/auth_handler.dart';
@@ -146,6 +148,12 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                         height: 200,
                         width: double.infinity,
                         fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return SvgPicture.asset(
+                            AssetsStrings.noImage,
+                            fit: BoxFit.fitHeight,
+                          );
+                        },
                       ),
                     ),
 
@@ -175,16 +183,14 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                                 width: 80,
                                 height: 80,
                                 fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => Image.network(
-                                  resturant.logo ?? "",
-                                  width: 80,
-                                  height: 80,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) => const Icon(
-                                    Icons.error,
-                                    color: Colors.red,
-                                  ),
-                                ),
+                                errorBuilder: (context, error, stackTrace) {
+                                  return SvgPicture.asset(
+                                    AssetsStrings.noImage,
+                                    width: 80,
+                                    height: 80,
+                                    fit: BoxFit.fitHeight,
+                                  );
+                                },
                               ),
                             ),
                           );

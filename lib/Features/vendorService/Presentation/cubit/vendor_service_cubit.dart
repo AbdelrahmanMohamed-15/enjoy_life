@@ -7,14 +7,20 @@ import 'package:easy_life/Features/vendorService/Data/Model/hotel_item_model.dar
 import 'package:easy_life/Features/vendorService/Data/Model/resturnat_item_model.dart';
 import 'package:easy_life/Features/vendorService/Data/Model/trip_schedule_item_model.dart';
 import 'package:easy_life/Features/vendorService/Domain/Entities/all_branch_entity.dart';
+import 'package:easy_life/Features/vendorService/Domain/Entities/all_category_entity.dart';
+import 'package:easy_life/Features/vendorService/Domain/Entities/all_service_entity.dart';
 import 'package:easy_life/Features/vendorService/Domain/Entities/hotel_details_entity.dart';
 import 'package:easy_life/Features/vendorService/Domain/Entities/resturant_deatils_entity.dart';
 import 'package:easy_life/Features/vendorService/Domain/Entities/trip_details_entity.dart';
 import 'package:easy_life/Features/vendorService/Domain/Usecases/create_branch_usecases.dart';
 import 'package:easy_life/Features/vendorService/Domain/Usecases/create_category_usecases.dart';
 import 'package:easy_life/Features/vendorService/Domain/Usecases/create_resturant_usecaes.dart';
+import 'package:easy_life/Features/vendorService/Domain/Usecases/create_service_otion_usecases.dart';
+import 'package:easy_life/Features/vendorService/Domain/Usecases/create_service_usecases.dart';
 import 'package:easy_life/Features/vendorService/Domain/Usecases/create_trip_usecases.dart';
 import 'package:easy_life/Features/vendorService/Domain/Usecases/get_all_branch_usecases.dart';
+import 'package:easy_life/Features/vendorService/Domain/Usecases/get_all_category_usecases.dart';
+import 'package:easy_life/Features/vendorService/Domain/Usecases/get_all_service_usecases.dart';
 import 'package:easy_life/Features/vendorService/Domain/Usecases/get_all_trip_schedule_usecases.dart';
 import 'package:easy_life/Features/vendorService/Domain/Usecases/show_hotel_usecases.dart';
 import 'package:easy_life/Features/vendorService/Domain/Usecases/show_resturant_usecase.dart';
@@ -26,6 +32,10 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../Core/Themes/app_colors.dart';
 import '../../../../Core/Widget/custom_snack_bar.dart';
+import '../../../Home/Domain/Entity/resturant_entity.dart';
+import '../../../Home/Domain/Usecases/get_vendor_hotels_usecases.dart';
+import '../../../Home/Domain/Usecases/get_vendor_resturant_usecases.dart';
+import '../../../Home/Domain/Usecases/get_vendor_trips_usecases.dart';
 import '../../Domain/Entities/all_trip_schedual_entity.dart';
 import '../../Domain/Usecases/create_hotel_usecaes.dart';
 part 'vendor_service_state.dart';
@@ -42,6 +52,13 @@ class VendorServiceCubit extends Cubit<VendorServiceState> {
     required this.showHotelUsecases,
     required this.showResturantUsecase,
     required this.showTripUsecases,
+    required this.getVendorResturantUsecases,
+    required this.getVendorTripsUsecases,
+    required this.getVendorHotelsUsecases,
+    required this.getAllCategoryUsecases,
+    required this.getAllServiceUsecases,
+    required this.createServiceUsecases,
+    required this.createServiceOtionUsecases,
   }) : super(VendorServiceInitial());
   static VendorServiceCubit get(context) => BlocProvider.of(context);
   // --------------------------
@@ -56,6 +73,7 @@ class VendorServiceCubit extends Cubit<VendorServiceState> {
   final int maxImages = 3;
   int initialCountryID = 1;
   int initialStatusID = 1;
+  int initialTypeID = 1;
   PageController pageController = PageController();
   int currentPage = 0;
   TextEditingController nameArController = TextEditingController();
@@ -64,6 +82,8 @@ class VendorServiceCubit extends Cubit<VendorServiceState> {
   TextEditingController descriptionEnController = TextEditingController();
   TextEditingController addressArController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
+  TextEditingController priceController = TextEditingController();
+  TextEditingController discountController = TextEditingController();
   AllBranchEntity? allBranchEntity;
   AllTripScheduleEntity? allTripSchedualEntity;
   RequestState branchRequestState = RequestState.initial;
@@ -74,9 +94,23 @@ class VendorServiceCubit extends Cubit<VendorServiceState> {
   ResturantDeatilsEntity? resturantDeatilsEntity;
   HotelDetailsEntity? hotelDetailsEntity;
   TripDetailsEntity? tripDetailsEntity;
+  HomeEntity? vendorResturantEntity;
+  HomeEntity? vendorTripsEntity;
+  HomeEntity? vendorHotelsEntity;
+  AllCategoryEntity? allCategoryEntity;
+  AllServiceEntity? allServiceEntity;
   RequestState resturantRequestState = RequestState.initial;
   RequestState hotelRequestState = RequestState.initial;
   RequestState tripScheduleRequestState = RequestState.initial;
+  RequestState vendorResturantRequestState = RequestState.initial;
+  RequestState vendorTripsRequestState = RequestState.initial;
+  RequestState vendorHotelsRequestState = RequestState.initial;
+  RequestState categoryRequestState = RequestState.initial;
+  RequestState serviceRequestState = RequestState.initial;
+  int branchID = 0;
+  int catID = 0;
+  int serviceID = 0;
+  int selectedService = 0;
 
   // --------------------------
   //     usecaes & Entities
@@ -84,6 +118,7 @@ class VendorServiceCubit extends Cubit<VendorServiceState> {
   final CreateCategoryUsecases createCategoryUsecases;
   final CreateBranchUsecases createBranchUsecases;
   final GetAllBranchUsecases getAllBranchUsecases;
+  final GetAllCategoryUsecases getAllCategoryUsecases;
   final GetAllTripScheduleUsecases getAllTripScheduleUsecases;
   final CreateResturantUsecaes createResturantUsecaes;
   final CreateHotelUsecaes createHotelUsecaes;
@@ -91,6 +126,12 @@ class VendorServiceCubit extends Cubit<VendorServiceState> {
   final ShowResturantUsecase showResturantUsecase;
   final ShowHotelUsecases showHotelUsecases;
   final ShowTripUsecases showTripUsecases;
+  final GetVendorResturantUsecases getVendorResturantUsecases;
+  final GetVendorTripsUsecases getVendorTripsUsecases;
+  final GetVendorHotelsUsecases getVendorHotelsUsecases;
+  final GetAllServiceUsecases getAllServiceUsecases;
+  final CreateServiceUsecases createServiceUsecases;
+  final CreateServiceOtionUsecases createServiceOtionUsecases;
   // --------------------------
   //     Api Methods
   // --------------------------
@@ -714,6 +755,14 @@ class VendorServiceCubit extends Cubit<VendorServiceState> {
     emit(SetStatusState(status: statusID));
   }
 
+  setTypeID({required int type}) {
+    initialTypeID = type;
+    emit(SetTypeState(type: type));
+    if (type == 1) getVendorResturant();
+    if (type == 2) getVendorHotels();
+    if (type == 3) getVendorTrips();
+  }
+
   setCurrentPage({required int page}) {
     currentPage = page;
     emit(SetCurrentPageState(pageIndex: page));
@@ -926,5 +975,230 @@ class VendorServiceCubit extends Cubit<VendorServiceState> {
   clearImages() {
     imageFiles.clear();
     emit(SetImages(images: List.from(imageFiles)));
+  }
+
+  setBranchID({required int brID}) {
+    branchID = brID;
+    emit(SetBranchID(branchID: branchID));
+  }
+
+  setCategoryID({required int categoryID}) {
+    catID = categoryID;
+    emit(SetCategoryID(categoryID: categoryID));
+  }
+
+  setServiceID({required int svID}) {
+    selectedService = svID;
+    emit(SetServiceID(serviceID: svID));
+  }
+
+  getAllCategory() async {
+    var response = await getAllCategoryUsecases.getAllCategory();
+    response.fold(
+      (l) {
+        showCustomSnackBar(
+          l.message.toString(),
+          backgroundColor: AppColors.darkRed,
+        );
+        categoryRequestState = RequestState.error;
+        emit(EmptyCategoryState(requestState: categoryRequestState));
+      },
+      (r) {
+        if (r.status == 200) {
+          allCategoryEntity = r;
+          categoryRequestState = RequestState.loaded;
+          emit(GetAllCategoryState(allCategoryEntity: r));
+          if (r.data!.isEmpty) {
+            categoryRequestState = RequestState.empty;
+            emit(EmptyCategoryState(requestState: categoryRequestState));
+          } else {
+            categoryRequestState = RequestState.loaded;
+            emit(GetAllCategoryState(allCategoryEntity: r));
+          }
+        } else {
+          categoryRequestState = RequestState.error;
+          showCustomSnackBar(
+            r.message ?? '',
+            backgroundColor: AppColors.darkRed,
+          );
+          emit(EmptyCategoryState(requestState: categoryRequestState));
+        }
+      },
+    );
+  }
+
+  Future<void> getVendorResturant() async {
+    final result = await getVendorResturantUsecases.call();
+    result.fold(
+      (failure) {
+        vendorResturantRequestState = RequestState.error;
+        emit(
+          HomeResturantErrorState(requestState: vendorResturantRequestState),
+        );
+      },
+      (resturant) {
+        vendorResturantEntity = resturant;
+        if (resturant.data!.isNotEmpty) {
+          emit(HomeResturantSuccessState(resturant: resturant));
+        } else {
+          vendorResturantRequestState = RequestState.empty;
+          emit(
+            HomeResturantErrorState(requestState: vendorResturantRequestState),
+          );
+        }
+      },
+    );
+  }
+
+  Future<void> getVendorTrips() async {
+    final result = await getVendorTripsUsecases.call();
+    result.fold(
+      (failure) {
+        vendorTripsRequestState = RequestState.error;
+        emit(HomeTripsErrorState(requestState: vendorTripsRequestState));
+      },
+      (trips) {
+        vendorTripsEntity = trips;
+        if (trips.data!.isNotEmpty) {
+          emit(HomeTripsSuccessState(trips: trips));
+        } else {
+          vendorTripsRequestState = RequestState.empty;
+          emit(HomeTripsErrorState(requestState: vendorTripsRequestState));
+        }
+      },
+    );
+  }
+
+  Future<void> getVendorHotels() async {
+    final result = await getVendorHotelsUsecases.call();
+    result.fold(
+      (failure) {
+        vendorHotelsRequestState = RequestState.error;
+        emit(HomeHotelsErrorState(requestState: vendorHotelsRequestState));
+      },
+      (hotels) {
+        vendorHotelsEntity = hotels;
+        if (hotels.data!.isNotEmpty) {
+          emit(HomeHotelsSuccessState(hotels: hotels));
+        } else {
+          vendorHotelsRequestState = RequestState.empty;
+          emit(HomeHotelsErrorState(requestState: vendorHotelsRequestState));
+        }
+      },
+    );
+  }
+
+  createService() async {
+    EasyLoading.show();
+    var data = {
+      'name[ar]': nameArController.text,
+      'name[en]': nameEnController.text,
+      'description[ar]': descriptionArController.text,
+      'description[en]': descriptionEnController.text,
+      'branch_id': branchID,
+      'price': priceController.text,
+      'discount': discountController.text,
+      'service_branch_category_id': catID,
+      'service_id': initialTypeID,
+      'status': initialStatusID,
+      'countries[0]': initialCountryID,
+    };
+    if (initialTypeID == 1) data['restaurant_id'] = serviceID;
+    if (initialTypeID == 2) data['hotel_id'] = serviceID;
+    if (initialTypeID == 3) data['trip_id'] = serviceID;
+    if (logoImage != null) {
+      data['image'] = await MultipartFile.fromFile(logoImage!.path);
+    }
+    FormData formData = FormData.fromMap(data);
+    var response = await createServiceUsecases.call(formData: formData);
+    response.fold(
+      (l) {
+        EasyLoading.dismiss();
+        showCustomSnackBar(
+          l.message.toString(),
+          backgroundColor: AppColors.darkRed,
+        );
+      },
+      (r) {
+        EasyLoading.dismiss();
+        if (r.status == 200) {
+          AppNavigation.pop();
+          showCustomSnackBar(r.message ?? '', backgroundColor: Colors.green);
+        } else {
+          showCustomSnackBar(
+            r.message ?? '',
+            backgroundColor: AppColors.darkRed,
+          );
+        }
+      },
+    );
+  }
+
+  getAllService() async {
+    var response = await getAllServiceUsecases.call();
+    response.fold(
+      (l) {
+        showCustomSnackBar(
+          l.message.toString(),
+          backgroundColor: AppColors.darkRed,
+        );
+        serviceRequestState = RequestState.error;
+        emit(ServiceErrorState(requestState: serviceRequestState));
+      },
+      (r) {
+        if (r.status == 200) {
+          allServiceEntity = r;
+          emit(ServiceSuccessState(allServiceEntity: r));
+        } else {
+          serviceRequestState = RequestState.empty;
+          emit(ServiceErrorState(requestState: serviceRequestState));
+          showCustomSnackBar(
+            r.message ?? '',
+            backgroundColor: AppColors.darkRed,
+          );
+        }
+      },
+    );
+  }
+
+  setCurrentService({required int servID}) {
+    selectedService = servID;
+    emit(SetCurrentService(currentService: servID));
+  }
+
+  createServiceOption() async {
+    EasyLoading.show();
+    var data = {
+      'name[ar]': nameArController.text,
+      'name[en]': nameEnController.text,
+      'service_branch_id': selectedService,
+      'price': priceController.text,
+      'discount': discountController.text,
+      'status': initialStatusID,
+      'countries[0]': initialCountryID,
+    };
+    FormData formData = FormData.fromMap(data);
+    var response = await createServiceOtionUsecases.call(formData: formData);
+    response.fold(
+      (l) {
+        EasyLoading.dismiss();
+        showCustomSnackBar(
+          l.message.toString(),
+          backgroundColor: AppColors.darkRed,
+        );
+      },
+      (r) {
+        EasyLoading.dismiss();
+        if (r.status == 200) {
+          AppNavigation.pop();
+          showCustomSnackBar(r.message ?? '', backgroundColor: Colors.green);
+        } else {
+          showCustomSnackBar(
+            r.message ?? '',
+            backgroundColor: AppColors.darkRed,
+          );
+        }
+      },
+    );
   }
 }

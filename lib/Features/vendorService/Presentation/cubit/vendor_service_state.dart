@@ -68,6 +68,15 @@ final class SetStatusState extends VendorServiceState {
   List<Object> get props => [status];
 }
 
+// state of status Type
+final class SetTypeState extends VendorServiceState {
+  final int type;
+  const SetTypeState({required this.type});
+
+  @override
+  List<Object> get props => [type];
+}
+
 // state of page index
 final class SetCurrentPageState extends VendorServiceState {
   final int pageIndex;
@@ -169,4 +178,129 @@ final class EmptyTripDetailsState extends VendorServiceState {
 
   @override
   List<Object> get props => [requestState];
+}
+
+final class SetBranchID extends VendorServiceState {
+  final int branchID;
+  const SetBranchID({required this.branchID});
+
+  @override
+  List<Object> get props => [branchID];
+}
+
+final class SetCategoryID extends VendorServiceState {
+  final int categoryID;
+  const SetCategoryID({required this.categoryID});
+
+  @override
+  List<Object> get props => [categoryID];
+}
+
+final class SetServiceID extends VendorServiceState {
+  final int serviceID;
+  const SetServiceID({required this.serviceID});
+
+  @override
+  List<Object> get props => [serviceID];
+}
+
+final class GetAllCategoryState extends VendorServiceState {
+  final AllCategoryEntity allCategoryEntity;
+  const GetAllCategoryState({required this.allCategoryEntity});
+
+  @override
+  List<Object> get props => [allCategoryEntity];
+}
+
+final class EmptyCategoryState extends VendorServiceState {
+  final RequestState requestState;
+  const EmptyCategoryState({required this.requestState});
+
+  @override
+  List<Object> get props => [requestState];
+}
+
+// state of get Resturant
+final class HomeResturantLoadingState extends VendorServiceState {}
+
+final class HomeResturantErrorState extends VendorServiceState {
+  final RequestState requestState;
+  const HomeResturantErrorState({required this.requestState});
+
+  @override
+  List<Object> get props => [requestState];
+}
+
+final class HomeResturantSuccessState extends VendorServiceState {
+  final HomeEntity resturant;
+  const HomeResturantSuccessState({required this.resturant});
+
+  @override
+  List<Object> get props => [resturant];
+}
+
+// state of get Trips
+final class HomeTripsLoadingState extends VendorServiceState {}
+
+final class HomeTripsErrorState extends VendorServiceState {
+  final RequestState requestState;
+  const HomeTripsErrorState({required this.requestState});
+
+  @override
+  List<Object> get props => [requestState];
+}
+
+final class HomeTripsSuccessState extends VendorServiceState {
+  final HomeEntity trips;
+  const HomeTripsSuccessState({required this.trips});
+
+  @override
+  List<Object> get props => [trips];
+}
+
+// state of get Hotels
+final class HomeHotelsLoadingState extends VendorServiceState {}
+
+final class HomeHotelsErrorState extends VendorServiceState {
+  final RequestState requestState;
+  const HomeHotelsErrorState({required this.requestState});
+
+  @override
+  List<Object> get props => [requestState];
+}
+
+final class HomeHotelsSuccessState extends VendorServiceState {
+  final HomeEntity hotels;
+  const HomeHotelsSuccessState({required this.hotels});
+
+  @override
+  List<Object> get props => [hotels];
+}
+
+// state of get Service
+final class ServiceLoadingState extends VendorServiceState {}
+
+final class ServiceErrorState extends VendorServiceState {
+  final RequestState requestState;
+  const ServiceErrorState({required this.requestState});
+
+  @override
+  List<Object> get props => [requestState];
+}
+
+final class ServiceSuccessState extends VendorServiceState {
+  final AllServiceEntity allServiceEntity;
+  const ServiceSuccessState({required this.allServiceEntity});
+
+  @override
+  List<Object> get props => [allServiceEntity];
+}
+
+// state of set cureentserive
+final class SetCurrentService extends VendorServiceState {
+  final int currentService;
+  const SetCurrentService({required this.currentService});
+
+  @override
+  List<Object> get props => [currentService];
 }

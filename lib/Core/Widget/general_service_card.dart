@@ -4,8 +4,10 @@ import 'package:easy_life/Core/Themes/app_colors.dart';
 import 'package:easy_life/Features/Authentication/Domain/Entity/user_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:like_button/like_button.dart';
 
+import '../Constant/assets_strings.dart';
 import '../Constant/base_constant.dart';
 import '../Handler/auth_handler.dart';
 import '../Helper/user_validation_helper.dart';
@@ -86,6 +88,12 @@ class _GeneralServiceCardState extends State<GeneralServiceCard> {
                     height: 120,
                     width: 185,
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return SvgPicture.asset(
+                        AssetsStrings.noImage,
+                        fit: BoxFit.fitHeight,
+                      );
+                    },
                   ),
                 ),
                 if (userData != null)

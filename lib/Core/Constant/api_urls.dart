@@ -54,8 +54,12 @@ class ApiUrls {
   static const String createCategory = 'api/vendor/serviceBranchCategory';
   static const String createBranch = 'api/vendor/branch';
   static const String getAllBranch = 'api/vendor/branch';
+  static const String getAllCategory = 'api/vendor/serviceBranchCategory';
   static const String getAllTripSchedule = 'api/vendor/tripSchedule';
   static const String createResturant = 'api/vendor/restaurant';
   static const String createHotel = 'api/vendor/hotel';
   static const String createTrip = 'api/vendor/trip';
+  static const String getAllService = 'api/vendor/serviceBranch';
+  static const String createService = 'api/vendor/serviceBranch';
+  static const String createServiceOtions = 'api/vendor/serviceBranchOption';
 }

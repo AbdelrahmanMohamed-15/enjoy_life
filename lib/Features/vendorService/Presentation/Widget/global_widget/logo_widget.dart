@@ -33,6 +33,7 @@ class LogoWidget extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 15),
+
               vendorServiceCubit.logoImage == null
                   ? GestureDetector(
                       onTap: () {

@@ -30,8 +30,11 @@ import 'package:easy_life/Features/vendorService/Domain/Usecases/create_branch_u
 import 'package:easy_life/Features/vendorService/Domain/Usecases/create_category_usecases.dart';
 import 'package:easy_life/Features/vendorService/Domain/Usecases/create_hotel_usecaes.dart';
 import 'package:easy_life/Features/vendorService/Domain/Usecases/create_resturant_usecaes.dart';
+import 'package:easy_life/Features/vendorService/Domain/Usecases/create_service_otion_usecases.dart';
+import 'package:easy_life/Features/vendorService/Domain/Usecases/create_service_usecases.dart';
 import 'package:easy_life/Features/vendorService/Domain/Usecases/create_trip_usecases.dart';
 import 'package:easy_life/Features/vendorService/Domain/Usecases/get_all_branch_usecases.dart';
+import 'package:easy_life/Features/vendorService/Domain/Usecases/get_all_service_usecases.dart';
 import 'package:easy_life/Features/vendorService/Domain/Usecases/get_all_trip_schedule_usecases.dart';
 import 'package:easy_life/Features/vendorService/Domain/Usecases/show_hotel_usecases.dart';
 import 'package:easy_life/Features/vendorService/Domain/Usecases/show_resturant_usecase.dart';
@@ -75,6 +78,7 @@ import '../../Features/Services/Presentation/cubit/service_cubit.dart';
 import '../../Features/vendorService/Data/DataSource/vendor_service_datasource.dart';
 import '../../Features/vendorService/Data/Repository/vendor_service_repository_impl.dart';
 import '../../Features/vendorService/Domain/Repository/vendor_service_repository.dart';
+import '../../Features/vendorService/Domain/Usecases/get_all_category_usecases.dart';
 import '../Handler/auth_handler.dart';
 import '../Services/network_service.dart';
 
@@ -310,6 +314,11 @@ class DependencyInjectionHelper {
         vendorServiceRepository: sl<VendorServiceRepository>(),
       ),
     );
+    sl.registerLazySingleton<GetAllCategoryUsecases>(
+      () => GetAllCategoryUsecases(
+        vendorServiceRepository: sl<VendorServiceRepository>(),
+      ),
+    );
     sl.registerLazySingleton<GetAllBranchUsecases>(
       () => GetAllBranchUsecases(
         vendorServiceRepository: sl<VendorServiceRepository>(),
@@ -347,6 +356,21 @@ class DependencyInjectionHelper {
     );
     sl.registerLazySingleton<ShowTripUsecases>(
       () => ShowTripUsecases(
+        vendorServiceRepository: sl<VendorServiceRepository>(),
+      ),
+    );
+    sl.registerLazySingleton<GetAllServiceUsecases>(
+      () => GetAllServiceUsecases(
+        vendorServiceRepository: sl<VendorServiceRepository>(),
+      ),
+    );
+    sl.registerLazySingleton<CreateServiceUsecases>(
+      () => CreateServiceUsecases(
+        vendorServiceRepository: sl<VendorServiceRepository>(),
+      ),
+    );
+    sl.registerLazySingleton<CreateServiceOtionUsecases>(
+      () => CreateServiceOtionUsecases(
         vendorServiceRepository: sl<VendorServiceRepository>(),
       ),
     );
@@ -425,6 +449,13 @@ class DependencyInjectionHelper {
         showResturantUsecase: sl<ShowResturantUsecase>(),
         showHotelUsecases: sl<ShowHotelUsecases>(),
         showTripUsecases: sl<ShowTripUsecases>(),
+        getVendorResturantUsecases: sl<GetVendorResturantUsecases>(),
+        getVendorHotelsUsecases: sl<GetVendorHotelsUsecases>(),
+        getVendorTripsUsecases: sl<GetVendorTripsUsecases>(),
+        getAllCategoryUsecases: sl<GetAllCategoryUsecases>(),
+        getAllServiceUsecases: sl<GetAllServiceUsecases>(),
+        createServiceUsecases: sl<CreateServiceUsecases>(),
+        createServiceOtionUsecases: sl<CreateServiceOtionUsecases>(),
       ),
     );
   }

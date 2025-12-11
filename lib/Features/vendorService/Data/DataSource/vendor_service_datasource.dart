@@ -42,6 +42,18 @@ class VendorServiceDatasource {
     }
   }
 
+  Future<Response> getAllCategory() async {
+    try {
+      Response response = await privateDio.get(
+        ApiUrls.getAllCategory,
+        queryParameters: {'per_page': -1},
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<Response> getAllTripSchedule() async {
     try {
       Response response = await privateDio.get(
@@ -127,6 +139,42 @@ class VendorServiceDatasource {
   Future<Response> showTrip({required int id}) async {
     try {
       Response response = await privateDio.get('${ApiUrls.createTrip}/$id');
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> getAllService() async {
+    try {
+      Response response = await privateDio.get(
+        ApiUrls.getAllService,
+        queryParameters: {'per_page': -1},
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> createService({required FormData formData}) async {
+    try {
+      Response response = await privateDio.post(
+        ApiUrls.createService,
+        data: formData,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> createServiceOtion({required FormData formData}) async {
+    try {
+      Response response = await privateDio.post(
+        ApiUrls.createServiceOtions,
+        data: formData,
+      );
       return response;
     } catch (e) {
       rethrow;

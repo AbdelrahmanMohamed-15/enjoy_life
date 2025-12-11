@@ -30,4 +30,6 @@ class AppRoutes {
   static const String addCategory = "/addCategory";
   static const String addBranch = "/addBranch";
   static const String addService = "/addService";
+  static const String addNewServiceScreen = "/AddNewServiceScreen";
+  static const String addServiceOption = "/addServiceOption";
 }

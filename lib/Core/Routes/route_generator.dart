@@ -20,6 +20,8 @@ import 'package:easy_life/Features/Services/Presentation/cubit/service_cubit.dar
 import 'package:easy_life/Features/vendorService/Presentation/Views/Service%20Page%20View/main_add_service_screen.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Views/add_branch_screen.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Views/add_category_screen.dart';
+import 'package:easy_life/Features/vendorService/Presentation/Views/add_new_service_screen.dart';
+import 'package:easy_life/Features/vendorService/Presentation/Views/add_service_option_screen.dart';
 import 'package:easy_life/Features/vendorService/Presentation/cubit/vendor_service_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -232,6 +234,30 @@ class RouteGenerator {
               isEdit: args['isEdit'],
               id: args['id'],
             ),
+          ),
+          settings: settings,
+        );
+      case AppRoutes.addNewServiceScreen:
+        // var args = (settings.arguments as Map<String, dynamic>);
+        return _screenRoute(
+          screen: BlocProvider(
+            create: (context) =>
+                DependencyInjectionHelper().sl<VendorServiceCubit>()
+                  ..getAllBranches()
+                  ..getAllCategory()
+                  ..getVendorResturant(),
+            child: AddNewServiceScreen(),
+          ),
+          settings: settings,
+        );
+      case AppRoutes.addServiceOption:
+        // var args = (settings.arguments as Map<String, dynamic>);
+        return _screenRoute(
+          screen: BlocProvider(
+            create: (context) =>
+                DependencyInjectionHelper().sl<VendorServiceCubit>()
+                  ..getAllService(),
+            child: AddServiceOptionScreen(),
           ),
           settings: settings,
         );

@@ -3,7 +3,9 @@ import 'package:easy_life/Core/Themes/app_colors.dart';
 import 'package:easy_life/Features/Services/Presentation/cubit/service_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../../Core/Constant/assets_strings.dart';
 import '../../../../Core/Routes/app_navigation.dart';
 import '../../Domain/Entity/service_deatils_entity.dart' hide Image;
 
@@ -61,6 +63,14 @@ class ServiceScreen extends StatelessWidget {
                     height: 100,
                     width: 100,
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return SvgPicture.asset(
+                        AssetsStrings.noImage,
+                        height: 100,
+                        width: 100,
+                        fit: BoxFit.fitHeight,
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(width: 12),

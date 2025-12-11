@@ -1,10 +1,11 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:dio/src/form_data.dart';
 import 'package:easy_life/Core/Failures/failures.dart';
 import 'package:easy_life/Core/Helper/base_entity.dart';
 import 'package:easy_life/Features/vendorService/Data/DataSource/vendor_service_datasource.dart';
 import 'package:easy_life/Features/vendorService/Domain/Entities/all_branch_entity.dart';
+import 'package:easy_life/Features/vendorService/Domain/Entities/all_category_entity.dart';
+import 'package:easy_life/Features/vendorService/Domain/Entities/all_service_entity.dart';
 import 'package:easy_life/Features/vendorService/Domain/Entities/all_trip_schedual_entity.dart';
 import 'package:easy_life/Features/vendorService/Domain/Entities/hotel_details_entity.dart';
 import 'package:easy_life/Features/vendorService/Domain/Entities/resturant_deatils_entity.dart';
@@ -433,6 +434,174 @@ class VendorServiceRepositoryImpl implements VendorServiceRepository {
       }
     } on DioException catch (dioError) {
       debugPrint('Show Trip Response Error : ${dioError.response}');
+      // For libraries like Dio, this will capture HTTP errors
+      if (dioError.response != null) {
+        // Extract the error message from the response
+        final errorMessage =
+            dioError.response?.data['message'] ?? 'Unknown error occurred';
+        return Left(
+          Failure(
+            code: dioError.response?.statusCode ?? APIResponseCode.unknown,
+            message: errorMessage,
+          ),
+        );
+      } else {
+        // Handle network or other unexpected Dio errors
+        return Left(
+          Failure(
+            code: APIResponseCode.noInternetConnection,
+            message: dioError.message.toString(),
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  Future<Either<Failure, AllCategoryEntity>> getAllCategory() async {
+    try {
+      var result = await vendorServiceDatasource.getAllCategory();
+      debugPrint('Show All Category Response : ${result.data}');
+      if (result.statusCode == 200) {
+        return Right(AllCategoryEntity.fromJson(result.data));
+      } else {
+        return Left(
+          Failure(
+            code: result.statusCode ?? APIResponseCode.unknown,
+            message: APIResponseMessages.unknown,
+          ),
+        );
+      }
+    } on DioException catch (dioError) {
+      debugPrint('Show All Category Response Error : ${dioError.response}');
+      // For libraries like Dio, this will capture HTTP errors
+      if (dioError.response != null) {
+        // Extract the error message from the response
+        final errorMessage =
+            dioError.response?.data['message'] ?? 'Unknown error occurred';
+        return Left(
+          Failure(
+            code: dioError.response?.statusCode ?? APIResponseCode.unknown,
+            message: errorMessage,
+          ),
+        );
+      } else {
+        // Handle network or other unexpected Dio errors
+        return Left(
+          Failure(
+            code: APIResponseCode.noInternetConnection,
+            message: dioError.message.toString(),
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  Future<Either<Failure, BaseEntity>> createService({
+    required FormData formData,
+  }) async {
+    try {
+      var result = await vendorServiceDatasource.createService(
+        formData: formData,
+      );
+      debugPrint('Create Service Response : ${result.data}');
+      if (result.statusCode == 200) {
+        return Right(BaseEntity.fromJson(result.data));
+      } else {
+        return Left(
+          Failure(
+            code: result.statusCode ?? APIResponseCode.unknown,
+            message: APIResponseMessages.unknown,
+          ),
+        );
+      }
+    } on DioException catch (dioError) {
+      debugPrint('Create Service Response Error : ${dioError.response}');
+      // For libraries like Dio, this will capture HTTP errors
+      if (dioError.response != null) {
+        // Extract the error message from the response
+        final errorMessage =
+            dioError.response?.data['message'] ?? 'Unknown error occurred';
+        return Left(
+          Failure(
+            code: dioError.response?.statusCode ?? APIResponseCode.unknown,
+            message: errorMessage,
+          ),
+        );
+      } else {
+        // Handle network or other unexpected Dio errors
+        return Left(
+          Failure(
+            code: APIResponseCode.noInternetConnection,
+            message: dioError.message.toString(),
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  Future<Either<Failure, BaseEntity>> createServiceOtion({
+    required FormData formData,
+  }) async {
+    try {
+      var result = await vendorServiceDatasource.createServiceOtion(
+        formData: formData,
+      );
+      debugPrint('Create Service Option Response : ${result.data}');
+      if (result.statusCode == 200) {
+        return Right(BaseEntity.fromJson(result.data));
+      } else {
+        return Left(
+          Failure(
+            code: result.statusCode ?? APIResponseCode.unknown,
+            message: APIResponseMessages.unknown,
+          ),
+        );
+      }
+    } on DioException catch (dioError) {
+      debugPrint('Create Service Option Response Error : ${dioError.response}');
+      // For libraries like Dio, this will capture HTTP errors
+      if (dioError.response != null) {
+        // Extract the error message from the response
+        final errorMessage =
+            dioError.response?.data['message'] ?? 'Unknown error occurred';
+        return Left(
+          Failure(
+            code: dioError.response?.statusCode ?? APIResponseCode.unknown,
+            message: errorMessage,
+          ),
+        );
+      } else {
+        // Handle network or other unexpected Dio errors
+        return Left(
+          Failure(
+            code: APIResponseCode.noInternetConnection,
+            message: dioError.message.toString(),
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  Future<Either<Failure, AllServiceEntity>> getAllService() async {
+    try {
+      var result = await vendorServiceDatasource.getAllService();
+      debugPrint('Get All Service Response : ${result.data}');
+      if (result.statusCode == 200) {
+        return Right(AllServiceEntity.fromJson(result.data));
+      } else {
+        return Left(
+          Failure(
+            code: result.statusCode ?? APIResponseCode.unknown,
+            message: APIResponseMessages.unknown,
+          ),
+        );
+      }
+    } on DioException catch (dioError) {
+      debugPrint('Get All Service Response Error : ${dioError.response}');
       // For libraries like Dio, this will capture HTTP errors
       if (dioError.response != null) {
         // Extract the error message from the response
