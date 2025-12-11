@@ -31,7 +31,7 @@ class AddBranchScreen extends StatelessWidget {
               centerTitle: true,
               backgroundColor: AppColors.natural100,
               title: Text(
-                'اضافة فئة',
+                'اضافة فرع',
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: AppColors.primary500,
                   fontFamily: BaseConstant.cairoBold,
@@ -45,101 +45,97 @@ class AddBranchScreen extends StatelessWidget {
                 child: Icon(Icons.arrow_back_ios, color: AppColors.primary500),
               ),
             ),
-            body: Form(
-              key: vendorServiceCubit.formKey,
-              child: ListView(
-                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-                children: [
-                  LanguageWidget(),
-                  NameWidget(formKey: vendorServiceCubit.formKey),
-                  FieldHeaderWidget(
-                    controller: vendorServiceCubit.addressArController,
-                    label: 'العنوان',
-                    hintText: 'ادخل العنوان',
-                    maxLines: 4,
-                    validator: (value) =>
-                        InputValidator.validateNotEmpty(value),
-                  ),
-                  FieldHeaderWidget(
-                    controller: vendorServiceCubit.phoneController,
-                    label: 'رقم الهاتف',
-                    hintText: 'ادخل رقم الهاتف',
-                    keyboardType: TextInputType.phone,
-                    validator: (value) => InputValidator.validateNumbers(value),
-                  ),
-                  const SizedBox(height: 20),
-                  LocationPickerWidget(
-                    onLocationSelected: (lat, lng) {
-                      vendorServiceCubit.setLatitudeLongitude(
-                        latitude: lat,
-                        longitude: lng,
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  LogoWidget(),
-                  ServiceImageWidget(),
-                  CountryWidget(),
-                  StatusWidget(),
-                  const SizedBox(height: 20),
-                  MainAppButton(
-                    child: Text(
-                      'اضافة',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: AppColors.natural50,
-                        fontFamily: BaseConstant.cairoBold,
-                      ),
+            body: ListView(
+              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+              children: [
+                LanguageWidget(),
+                NameWidget(formKey: vendorServiceCubit.formKey),
+                FieldHeaderWidget(
+                  controller: vendorServiceCubit.addressArController,
+                  label: 'العنوان',
+                  hintText: 'ادخل العنوان',
+                  maxLines: 4,
+                  validator: (value) => InputValidator.validateNotEmpty(value),
+                ),
+                FieldHeaderWidget(
+                  controller: vendorServiceCubit.phoneController,
+                  label: 'رقم الهاتف',
+                  hintText: 'ادخل رقم الهاتف',
+                  keyboardType: TextInputType.phone,
+                  validator: (value) => InputValidator.validateNumbers(value),
+                ),
+                const SizedBox(height: 20),
+                LocationPickerWidget(
+                  onLocationSelected: (lat, lng) {
+                    vendorServiceCubit.setLatitudeLongitude(
+                      latitude: lat,
+                      longitude: lng,
+                    );
+                  },
+                ),
+                const SizedBox(height: 20),
+                LogoWidget(),
+                ServiceImageWidget(isEdit: false),
+                CountryWidget(),
+                StatusWidget(),
+                const SizedBox(height: 20),
+                MainAppButton(
+                  child: Text(
+                    'اضافة',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: AppColors.natural50,
+                      fontFamily: BaseConstant.cairoBold,
                     ),
-                    onTap: () {
-                      if (vendorServiceCubit.nameArController.text.isEmpty ||
-                          vendorServiceCubit.nameEnController.text.isEmpty) {
-                        showCustomSnackBar(
-                          'عليك التأكد من ادخال الاسم باللغة العربية والانجليزية',
-                          backgroundColor: AppColors.darkRed,
-                        );
-                        return;
-                      }
-                      if (vendorServiceCubit.addressArController.text.isEmpty) {
-                        showCustomSnackBar(
-                          'عليك التأكد من ادخال العنوان باللغة العربية',
-                          backgroundColor: AppColors.darkRed,
-                        );
-                        return;
-                      }
-                      if (vendorServiceCubit.phoneController.text.isEmpty) {
-                        showCustomSnackBar(
-                          'عليك التأكد من ادخال رقم الهاتف',
-                          backgroundColor: AppColors.darkRed,
-                        );
-                        return;
-                      }
-                      if (vendorServiceCubit.logoImage == null) {
-                        showCustomSnackBar(
-                          'عليك اضافة شعار الفرع',
-                          backgroundColor: AppColors.darkRed,
-                        );
-                        return;
-                      }
-                      if (vendorServiceCubit.imageFiles.isEmpty) {
-                        showCustomSnackBar(
-                          'عليك اضافة صورة الفرع',
-                          backgroundColor: AppColors.darkRed,
-                        );
-                        return;
-                      }
-                      if (vendorServiceCubit.initialLatitude == null ||
-                          vendorServiceCubit.initialLongitude == null) {
-                        showCustomSnackBar(
-                          'عليك تحديد موقع الفرع',
-                          backgroundColor: AppColors.darkRed,
-                        );
-                        return;
-                      }
-                      vendorServiceCubit.createBranch();
-                    },
                   ),
-                ],
-              ),
+                  onTap: () {
+                    if (vendorServiceCubit.nameArController.text.isEmpty ||
+                        vendorServiceCubit.nameEnController.text.isEmpty) {
+                      showCustomSnackBar(
+                        'عليك التأكد من ادخال الاسم باللغة العربية والانجليزية',
+                        backgroundColor: AppColors.darkRed,
+                      );
+                      return;
+                    }
+                    if (vendorServiceCubit.addressArController.text.isEmpty) {
+                      showCustomSnackBar(
+                        'عليك التأكد من ادخال العنوان باللغة العربية',
+                        backgroundColor: AppColors.darkRed,
+                      );
+                      return;
+                    }
+                    if (vendorServiceCubit.phoneController.text.isEmpty) {
+                      showCustomSnackBar(
+                        'عليك التأكد من ادخال رقم الهاتف',
+                        backgroundColor: AppColors.darkRed,
+                      );
+                      return;
+                    }
+                    if (vendorServiceCubit.logoImage == null) {
+                      showCustomSnackBar(
+                        'عليك اضافة شعار الفرع',
+                        backgroundColor: AppColors.darkRed,
+                      );
+                      return;
+                    }
+                    if (vendorServiceCubit.imageFiles.isEmpty) {
+                      showCustomSnackBar(
+                        'عليك اضافة صورة الفرع',
+                        backgroundColor: AppColors.darkRed,
+                      );
+                      return;
+                    }
+                    if (vendorServiceCubit.initialLatitude == null ||
+                        vendorServiceCubit.initialLongitude == null) {
+                      showCustomSnackBar(
+                        'عليك تحديد موقع الفرع',
+                        backgroundColor: AppColors.darkRed,
+                      );
+                      return;
+                    }
+                    vendorServiceCubit.createBranch();
+                  },
+                ),
+              ],
             ),
           ),
         );

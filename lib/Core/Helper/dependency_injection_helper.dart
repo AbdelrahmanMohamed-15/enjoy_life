@@ -22,6 +22,9 @@ import 'package:easy_life/Features/Order/Domain/Usecases/get_cancel_order_usecas
 import 'package:easy_life/Features/Order/Domain/Usecases/get_complete_order_usecases.dart';
 import 'package:easy_life/Features/Order/Domain/Usecases/get_pending_order_usecases.dart';
 import 'package:easy_life/Features/Profile/Data/DataSource/profile_datasource.dart';
+import 'package:easy_life/Features/Reversion/Data/Datasource/reversion_datasource.dart';
+import 'package:easy_life/Features/Reversion/Domain/Usecases/get_all_reversion_usecases.dart';
+import 'package:easy_life/Features/Reversion/Domain/Usecases/scan_order_usecases.dart';
 import 'package:easy_life/Features/Services/Data/DataSource/service_datasource.dart';
 import 'package:easy_life/Features/Services/Domain/Usecases/get_avaliable_tables_usecases.dart';
 import 'package:easy_life/Features/Services/Domain/Usecases/get_avaliable_trips_usecases.dart';
@@ -68,6 +71,9 @@ import '../../Features/Profile/Domain/Usecases/get_additional_usecases.dart';
 import '../../Features/Profile/Domain/Usecases/get_profile_usecases.dart';
 import '../../Features/Profile/Domain/Usecases/update_profile_usecases.dart';
 import '../../Features/Profile/Presentation/cubit/profile_cubit.dart';
+import '../../Features/Reversion/Data/Repository/reversion_repository_impl.dart';
+import '../../Features/Reversion/Domain/Repository/reversion_repository.dart';
+import '../../Features/Reversion/Presentation/cubit/reversion_cubit.dart';
 import '../../Features/Services/Data/Repository/service_repository_impl.dart';
 import '../../Features/Services/Domain/Repository/service_repository.dart';
 import '../../Features/Services/Domain/Usecases/add_to_cart_usecases.dart';
@@ -109,7 +115,11 @@ class DependencyInjectionHelper {
   /// Registers all core components like services
   Future<void> _registerCoreDependencies() async {
     final sharedPreferences = await SharedPreferences.getInstance();
-    const FlutterSecureStorage flutterSecureStorage = FlutterSecureStorage();
+    const FlutterSecureStorage flutterSecureStorage = FlutterSecureStorage(
+      aOptions: AndroidOptions(
+        encryptedSharedPreferences: true,
+      ),
+    );
     sl.registerLazySingleton(() => sharedPreferences);
     sl.registerLazySingleton(() => flutterSecureStorage);
     // sl.registerLazySingleton<AuthService>(
@@ -150,6 +160,9 @@ class DependencyInjectionHelper {
       () =>
           VendorServiceDatasource(privateDio: sl<NetworkService>().privateDio),
     );
+    sl.registerLazySingleton<ReversionDatasource>(
+      () => ReversionDatasource(privateDio: sl<NetworkService>().privateDio),
+    );
   }
 
   /// Registers any [REPOSITORY]
@@ -175,6 +188,11 @@ class DependencyInjectionHelper {
     sl.registerLazySingleton<VendorServiceRepository>(
       () => VendorServiceRepositoryImpl(
         vendorServiceDatasource: sl<VendorServiceDatasource>(),
+      ),
+    );
+    sl.registerLazySingleton<ReversionRepository>(
+      () => ReversionRepositoryImpl(
+        reversionDatasource: sl<ReversionDatasource>(),
       ),
     );
   }
@@ -374,6 +392,15 @@ class DependencyInjectionHelper {
         vendorServiceRepository: sl<VendorServiceRepository>(),
       ),
     );
+    // usecase for Reversion
+    sl.registerLazySingleton<GetAllReversionUsecases>(
+      () => GetAllReversionUsecases(
+        reversionRepository: sl<ReversionRepository>(),
+      ),
+    );
+    sl.registerLazySingleton<ScanOrderUsecases>(
+      () => ScanOrderUsecases(reversionRepository: sl<ReversionRepository>()),
+    );
   }
 
   /// Registers any [Bloc]
@@ -456,6 +483,12 @@ class DependencyInjectionHelper {
         getAllServiceUsecases: sl<GetAllServiceUsecases>(),
         createServiceUsecases: sl<CreateServiceUsecases>(),
         createServiceOtionUsecases: sl<CreateServiceOtionUsecases>(),
+      ),
+    );
+    sl.registerFactory(
+      () => ReversionCubit(
+        getAllReversionUsecases: sl<GetAllReversionUsecases>(),
+        scanOrderUsecases: sl<ScanOrderUsecases>(),
       ),
     );
   }

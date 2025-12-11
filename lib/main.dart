@@ -19,7 +19,12 @@ void main() async {
   await EasyLocalization.ensureInitialized();
   await ScreenUtil.ensureScreenSize();
   await DependencyInjectionHelper().init();
-  await DependencyInjectionHelper().sl<AuthHandlerInterface>().init();
+  try {
+    await DependencyInjectionHelper().sl<AuthHandlerInterface>().init();
+  } catch (e) {
+    // Handle initialization errors gracefully
+    debugPrint('Error initializing AuthHandler in main: $e');
+  }
 
   runApp(
     EasyLocalization(

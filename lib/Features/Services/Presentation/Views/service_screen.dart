@@ -65,10 +65,10 @@ class ServiceScreen extends StatelessWidget {
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return SvgPicture.asset(
-                        AssetsStrings.noImage,
+                        AssetsStrings.noImages,
                         height: 100,
                         width: 100,
-                        fit: BoxFit.fitHeight,
+                        fit: BoxFit.cover,
                       );
                     },
                   ),

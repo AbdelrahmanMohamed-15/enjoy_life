@@ -62,4 +62,8 @@ class ApiUrls {
   static const String getAllService = 'api/vendor/serviceBranch';
   static const String createService = 'api/vendor/serviceBranch';
   static const String createServiceOtions = 'api/vendor/serviceBranchOption';
+
+  // Apis Urls For Reversion
+  static const String getAllReversion = 'api/vendor/reservations';
+  static const String scanOrder = 'api/vendor/completeOrder';
 }

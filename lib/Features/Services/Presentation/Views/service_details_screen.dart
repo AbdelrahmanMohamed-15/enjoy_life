@@ -150,8 +150,8 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
                           return SvgPicture.asset(
-                            AssetsStrings.noImage,
-                            fit: BoxFit.fitHeight,
+                            AssetsStrings.noImages,
+                            fit: BoxFit.cover,
                           );
                         },
                       ),
@@ -185,10 +185,10 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) {
                                   return SvgPicture.asset(
-                                    AssetsStrings.noImage,
+                                    AssetsStrings.noImages,
                                     width: 80,
                                     height: 80,
-                                    fit: BoxFit.fitHeight,
+                                    fit: BoxFit.cover,
                                   );
                                 },
                               ),

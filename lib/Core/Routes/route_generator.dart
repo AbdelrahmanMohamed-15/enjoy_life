@@ -11,6 +11,9 @@ import 'package:easy_life/Features/Home/Presentation/Views/all_home_screen.dart'
 import 'package:easy_life/Features/Profile/Presentation/View/additional_screen.dart';
 import 'package:easy_life/Features/Profile/Presentation/View/edit_profile_screen.dart';
 import 'package:easy_life/Features/Profile/Presentation/cubit/profile_cubit.dart';
+import 'package:easy_life/Features/Reversion/Presentation/Views/qr_scanner_screen.dart';
+import 'package:easy_life/Features/Reversion/Presentation/Views/reversion_details_screen.dart';
+import 'package:easy_life/Features/Reversion/Presentation/cubit/reversion_cubit.dart';
 import 'package:easy_life/Features/Services/Presentation/Views/room_screen.dart';
 import 'package:easy_life/Features/Services/Presentation/Views/service_details_screen.dart';
 import 'package:easy_life/Features/Services/Presentation/Views/service_screen.dart';
@@ -258,6 +261,21 @@ class RouteGenerator {
                 DependencyInjectionHelper().sl<VendorServiceCubit>()
                   ..getAllService(),
             child: AddServiceOptionScreen(),
+          ),
+          settings: settings,
+        );
+      case AppRoutes.reversionDetails:
+        var args = (settings.arguments as Map<String, dynamic>);
+        return _screenRoute(
+          screen: ReversionDetailsScreen(reversionData: args['reversionData']),
+          settings: settings,
+        );
+      case AppRoutes.scanQRScreen:
+        return _screenRoute(
+          screen: BlocProvider(
+            create: (context) =>
+                DependencyInjectionHelper().sl<ReversionCubit>(),
+            child: QRScannerScreen(),
           ),
           settings: settings,
         );

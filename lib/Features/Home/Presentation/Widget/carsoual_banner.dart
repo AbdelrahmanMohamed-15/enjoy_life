@@ -33,8 +33,8 @@ class CarouselBanner extends StatelessWidget {
                 width: double.infinity,
                 height: height,
                 child: SvgPicture.asset(
-                  AssetsStrings.noImage,
-                  fit: BoxFit.fitHeight,
+                  AssetsStrings.noImages,
+                  fit: BoxFit.cover,
                 ),
               );
             },

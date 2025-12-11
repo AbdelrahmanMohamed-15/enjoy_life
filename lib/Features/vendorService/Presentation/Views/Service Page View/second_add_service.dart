@@ -7,7 +7,8 @@ import '../../Widget/global_widget/service_image_widget.dart';
 import '../../Widget/global_widget/status_widget.dart';
 
 class SecondAddService extends StatelessWidget {
-  const SecondAddService({super.key});
+  final bool isEdit;
+  const SecondAddService({super.key, required this.isEdit});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class SecondAddService extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
           children: [
             LogoWidget(),
-            ServiceImageWidget(),
+            ServiceImageWidget(isEdit: isEdit),
             CountryWidget(),
             StatusWidget(),
             const SizedBox(height: 20),

@@ -90,8 +90,8 @@ class _GeneralServiceCardState extends State<GeneralServiceCard> {
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return SvgPicture.asset(
-                        AssetsStrings.noImage,
-                        fit: BoxFit.fitHeight,
+                        AssetsStrings.noImages,
+                        fit: BoxFit.cover,
                       );
                     },
                   ),
@@ -214,7 +214,7 @@ class _GeneralServiceCardState extends State<GeneralServiceCard> {
                   ),
                 ),
 
-                const SizedBox(height: 10),
+                const SizedBox(height: 8),
                 RichText(
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -232,6 +232,7 @@ class _GeneralServiceCardState extends State<GeneralServiceCard> {
                         style: theme.textTheme.bodySmall?.copyWith(
                           fontFamily: BaseConstant.cairoBold,
                           color: AppColors.natural400,
+                          fontSize: 10,
                         ),
                       ),
                     ],

@@ -8,11 +8,13 @@ import 'package:easy_life/Features/Home/Presentation/Views/vendor_homde_screen.d
 import 'package:easy_life/Features/Main/Widget/nav_bar_item_widget.dart';
 import 'package:easy_life/Features/Profile/Presentation/View/account_screen.dart';
 import 'package:easy_life/Features/Profile/Presentation/View/vendor_account_sccreen.dart';
+import 'package:easy_life/Features/Reversion/Presentation/Views/reversion_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../../Core/Constant/base_constant.dart';
 import '../../../Core/Handler/auth_handler.dart';
 import '../../../Core/Helper/user_validation_helper.dart';
+import '../../Reversion/Presentation/Views/scan_order_screen.dart';
 
 class MainNavScreen extends StatefulWidget {
   const MainNavScreen({super.key});
@@ -44,8 +46,8 @@ class _MainNavScreenState extends State<MainNavScreen> {
     ];
     List<Widget> vendorPages = [
       VendorHomeScreen(),
-      CartScreen(),
-      MyFavouriteScreen(),
+      ScanOrderScreen(),
+      ReversionScreen(),
       VendorAccountSccreen(
         onupdateTap: () {
           setState(() {

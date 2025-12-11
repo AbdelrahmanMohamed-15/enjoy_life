@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../../../../Core/Constant/assets_strings.dart';
 import '../../../../Core/Constant/base_constant.dart';
 import '../../../../Core/Handler/auth_handler.dart';
 import '../../../../Core/Helper/dependency_injection_helper.dart';
@@ -23,14 +25,26 @@ class AccountUserCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Container(
-            height: 50,
-            width: 50,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.primary400,
-              image: DecorationImage(
-                image: NetworkImage(userData?.image ?? ''),
+          ClipOval(
+            child: Container(
+              height: 50,
+              width: 50,
+              decoration: BoxDecoration(
+                color: AppColors.primary400,
+                border: Border.all(color: AppColors.primary500, width: 1),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(50),
+                child: Image.network(
+                  userData?.image ?? '',
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return SvgPicture.asset(
+                      AssetsStrings.noImages,
+                      fit: BoxFit.cover,
+                    );
+                  },
+                ),
               ),
             ),
           ),

@@ -8,7 +8,8 @@ import 'pick_vendor_bottom_sheet.dart';
 import 'upload_tile.dart';
 
 class ServiceImageWidget extends StatelessWidget {
-  const ServiceImageWidget({super.key});
+  final bool isEdit;
+  const ServiceImageWidget({super.key, required this.isEdit});
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +30,7 @@ class ServiceImageWidget extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 15),
+
               if (vendorServiceCubit.imageFiles.isEmpty)
                 GestureDetector(
                   onTap: () {
@@ -38,8 +40,8 @@ class ServiceImageWidget extends StatelessWidget {
                     );
                   },
                   child: UploadTile(),
-                )
-              else
+                ),
+              if (vendorServiceCubit.imageFiles.isNotEmpty)
                 GridView.builder(
                   key: ValueKey(vendorServiceCubit.imageFiles.length),
                   shrinkWrap: true,

@@ -83,7 +83,7 @@ class MainAddServiceScreen extends StatelessWidget {
                     physics: const NeverScrollableScrollPhysics(),
                     children: [
                       FirstAddService(),
-                      SecondAddService(),
+                      SecondAddService(isEdit: isEdit),
                       ThirdAddService(type: type),
                     ],
                     onPageChanged: (value) {

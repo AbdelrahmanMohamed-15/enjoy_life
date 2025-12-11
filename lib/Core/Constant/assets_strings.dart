@@ -7,8 +7,7 @@ class AssetsStrings {
   static const String boarding3 = 'assets/images/boarding3.png';
 
   // Banner
-  static const String errorImage = 'assets/images/error_image.svg';
-  static const String noImage = 'assets/images/noImage.svg';
+  static const String noImages = 'assets/images/noImage.svg';
 
   // Service
   static const String empty = 'assets/images/empty.svg';
