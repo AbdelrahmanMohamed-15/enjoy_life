@@ -193,7 +193,7 @@ class EditProfileScreen extends StatelessWidget {
                       }
                     },
                     child: Text(
-                      'إرسال',
+                      'حفظ',
                       style: theme.textTheme.bodyMedium!.copyWith(
                         color: AppColors.natural100,
                       ),

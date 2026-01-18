@@ -55,16 +55,16 @@ class _ServiceTypeWidgetState extends State<ServiceTypeWidget> {
             value: widget.vendorServiceCubit.initialTypeID == 1
                 ? _getSelectedService(
                     widget.vendorServiceCubit.vendorResturantEntity?.data,
-                    widget.vendorServiceCubit.serviceID,
+                    widget.vendorServiceCubit.selectedService,
                   )
                 : widget.vendorServiceCubit.initialTypeID == 2
                 ? _getSelectedService(
                     widget.vendorServiceCubit.vendorHotelsEntity?.data,
-                    widget.vendorServiceCubit.serviceID,
+                    widget.vendorServiceCubit.selectedService,
                   )
                 : _getSelectedService(
                     widget.vendorServiceCubit.vendorTripsEntity?.data,
-                    widget.vendorServiceCubit.serviceID,
+                    widget.vendorServiceCubit.selectedService,
                   ),
             decoration: const InputDecoration(
               border: InputBorder.none,
@@ -99,6 +99,7 @@ class _ServiceTypeWidgetState extends State<ServiceTypeWidget> {
                       )
                       .toList(),
             onChanged: (value) {
+              debugPrint('service id Vendor ${value?.id}');
               if (value != null && value.id != null) {
                 widget.vendorServiceCubit.setServiceID(svID: value.id!);
                 setState(() {});

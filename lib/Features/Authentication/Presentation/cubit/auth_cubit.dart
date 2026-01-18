@@ -117,7 +117,7 @@ class AuthCubit extends Cubit<AuthState> {
       },
       (register) {
         EasyLoading.dismiss();
-        if (register.status == true) {
+        if (register.status == 200) {
           showCustomSnackBar(
             register.message ?? '',
             backgroundColor: AppColors.primary400,
@@ -149,7 +149,7 @@ class AuthCubit extends Cubit<AuthState> {
       },
       (base) {
         EasyLoading.dismiss();
-        if (base.status == true) {
+        if (base.status == 200) {
           AppNavigation.pushNamedAndRemoveUntil(AppRoutes.login);
           showCustomSnackBar(
             base.message ?? '',
@@ -183,7 +183,7 @@ class AuthCubit extends Cubit<AuthState> {
       },
       (base) {
         EasyLoading.dismiss();
-        if (base.status == true) {
+        if (base.status == 200) {
           AppNavigation.pushNamed(
             AppRoutes.verifyResetOtp,
             arguments: {"authCubit": authCubit, 'isRegister': false},
@@ -215,7 +215,7 @@ class AuthCubit extends Cubit<AuthState> {
       },
       (userEntity) {
         EasyLoading.dismiss();
-        if (userEntity.status == true) {
+        if (userEntity.status == 200) {
           showCustomSnackBar(
             userEntity.message ?? '',
             backgroundColor: AppColors.primary400,
@@ -245,7 +245,7 @@ class AuthCubit extends Cubit<AuthState> {
       },
       (userEntity) {
         EasyLoading.dismiss();
-        if (userEntity.status == true) {
+        if (userEntity.status == 200) {
           AppNavigation.pushNamedAndRemoveUntil(AppRoutes.login);
           showCustomSnackBar(
             userEntity.message ?? '',

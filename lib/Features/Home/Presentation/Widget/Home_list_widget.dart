@@ -74,9 +74,10 @@ class HomeListWidget extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: GestureDetector(
                   onTap: () {
+                    debugPrint('UserData ${userData?.clientType}');
                     debugPrint('serviceID ${data.id}');
                     debugPrint('serviceID ${data.serviceName}');
-                    if (userData?.clientType == 0) {
+                    if (userData?.clientType == 0 || userData == null) {
                       debugPrint('serviceID ${data.id}');
                       debugPrint('serviceID ${data.serviceName}');
                       AppNavigation.pushNamed(

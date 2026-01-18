@@ -79,7 +79,7 @@ class _MainNavScreenState extends State<MainNavScreen> {
           selectedItemColor: AppColors.primary400,
           unselectedItemColor: AppColors.natural400,
           onTap: (value) {
-            if (value == 2 || value == 3) {
+            if (value == 2) {
               if (UserValidationHelper.checkUserValidation() == true) {
                 setState(() {
                   currentIndex = value;

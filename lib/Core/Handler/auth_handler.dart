@@ -140,10 +140,10 @@ class AuthHandler implements AuthHandlerInterface {
       await secureStorage.delete(key: 'token');
       await secureStorage.delete(key: 'cookies');
       await secureStorage.delete(key: 'languageCode');
-      await secureStorage.delete(key: 'boarding');
+      // await secureStorage.delete(key: 'boarding');
       _token = null;
       _userData = null;
-      _boardnig = null;
+      // _boardnig = null;
       _languageCode = null;
       _cookies = null;
     } catch (e) {

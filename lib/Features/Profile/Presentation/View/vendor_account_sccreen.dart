@@ -135,6 +135,14 @@ class VendorAccountSccreen extends StatelessWidget {
               ],
             ),
           ),
+          const SizedBox(height: 20),
+          Text(
+            BaseConstant.appVersion,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: AppColors.primary500,
+              fontFamily: BaseConstant.cairoBold,
+            ),
+          ).setCenter(),
         ],
       ),
     );

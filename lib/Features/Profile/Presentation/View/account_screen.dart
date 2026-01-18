@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../../../../Core/Constant/base_constant.dart';
 import '../../../../Core/Handler/auth_handler.dart';
 import '../../../../Core/Helper/dependency_injection_helper.dart';
+import '../../../../Core/Helper/user_validation_helper.dart';
 import '../../../../Core/Themes/app_colors.dart';
 
 class AccountScreen extends StatelessWidget {
@@ -47,21 +48,24 @@ class AccountScreen extends StatelessWidget {
             ),
             child: Column(
               children: [
-                TileWidget(icon: Icons.credit_card, title: 'طرق الدفع'),
-                Divider(color: AppColors.natural400),
-                TileWidget(
-                  icon: Icons.wallet_giftcard_rounded,
-                  title: 'الطلبات',
-                  onTap: () {
-                    AppNavigation.pushNamed(AppRoutes.orderHistory);
-                  },
-                ),
-                Divider(color: AppColors.natural400),
-                TileWidget(
-                  icon: Icons.notifications_active_outlined,
-                  title: 'الاشعارات',
-                ),
-                Divider(color: AppColors.natural400),
+                if (UserValidationHelper.checkUserValidation() == true) ...[
+                  TileWidget(icon: Icons.credit_card, title: 'طرق الدفع'),
+                  Divider(color: AppColors.natural400),
+                  TileWidget(
+                    icon: Icons.wallet_giftcard_rounded,
+                    title: 'الطلبات',
+                    onTap: () {
+                      AppNavigation.pushNamed(AppRoutes.orderHistory);
+                    },
+                  ),
+                  Divider(color: AppColors.natural400),
+                  TileWidget(
+                    icon: Icons.notifications_active_outlined,
+                    title: 'الاشعارات',
+                  ),
+                  Divider(color: AppColors.natural400),
+                ],
+
                 TileWidget(icon: Icons.language, title: 'اللغة'),
                 Divider(color: AppColors.natural400),
                 TileWidget(
@@ -96,27 +100,37 @@ class AccountScreen extends StatelessWidget {
                     );
                   },
                 ),
-                Divider(color: AppColors.natural400),
-                TileWidget(
-                  icon: Icons.power_settings_new,
-                  title: 'تسجيل الخروج',
-                  onTap: () async {
-                    await DependencyInjectionHelper()
-                        .sl<AuthHandlerInterface>()
-                        .clearAllData();
-                    AppNavigation.pushNamedAndRemoveUntil(AppRoutes.splash);
-                  },
-                ),
-                Divider(color: AppColors.natural400),
-                TileWidget(
-                  icon: Icons.delete_sweep,
-                  title: 'حذف الحساب',
-                  iconColor: Colors.red,
-                  textColor: Colors.red,
-                ),
+                if (UserValidationHelper.checkUserValidation() == true) ...[
+                  Divider(color: AppColors.natural400),
+                  TileWidget(
+                    icon: Icons.power_settings_new,
+                    title: 'تسجيل الخروج',
+                    onTap: () async {
+                      await DependencyInjectionHelper()
+                          .sl<AuthHandlerInterface>()
+                          .clearAllData();
+                      AppNavigation.pushNamedAndRemoveUntil(AppRoutes.splash);
+                    },
+                  ),
+                  Divider(color: AppColors.natural400),
+                  TileWidget(
+                    icon: Icons.delete_sweep,
+                    title: 'حذف الحساب',
+                    iconColor: Colors.red,
+                    textColor: Colors.red,
+                  ),
+                ],
               ],
             ),
           ),
+          const SizedBox(height: 20),
+          Text(
+            BaseConstant.appVersion,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: AppColors.primary500,
+              fontFamily: BaseConstant.cairoBold,
+            ),
+          ).setCenter(),
         ],
       ),
     );

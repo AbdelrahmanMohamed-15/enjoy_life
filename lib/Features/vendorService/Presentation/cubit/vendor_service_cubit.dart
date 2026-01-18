@@ -989,7 +989,9 @@ class VendorServiceCubit extends Cubit<VendorServiceState> {
 
   setServiceID({required int svID}) {
     selectedService = svID;
+
     emit(SetServiceID(serviceID: svID));
+    debugPrint('service id Vendor $serviceID');
   }
 
   getAllCategory() async {
@@ -1103,9 +1105,9 @@ class VendorServiceCubit extends Cubit<VendorServiceState> {
       'status': initialStatusID,
       'countries[0]': initialCountryID,
     };
-    if (initialTypeID == 1) data['restaurant_id'] = serviceID;
-    if (initialTypeID == 2) data['hotel_id'] = serviceID;
-    if (initialTypeID == 3) data['trip_id'] = serviceID;
+    if (initialTypeID == 1) data['restaurant_id'] = selectedService;
+    if (initialTypeID == 2) data['hotel_id'] = selectedService;
+    if (initialTypeID == 3) data['trip_id'] = selectedService;
     if (logoImage != null) {
       data['image'] = await MultipartFile.fromFile(logoImage!.path);
     }

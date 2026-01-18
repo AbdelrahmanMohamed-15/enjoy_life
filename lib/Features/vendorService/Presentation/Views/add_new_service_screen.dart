@@ -111,7 +111,7 @@ class _AddNewServiceScreenState extends State<AddNewServiceScreen> {
                       );
                       return;
                     }
-                    if (vendorServiceCubit.serviceID == 0) {
+                    if (vendorServiceCubit.selectedService == 0) {
                       showCustomSnackBar(
                         'يرجى تحديد نوع الخدمة',
                         backgroundColor: AppColors.darkRed,
