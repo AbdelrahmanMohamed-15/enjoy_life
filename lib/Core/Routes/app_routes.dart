@@ -11,6 +11,8 @@ class AppRoutes {
   static const String home = "/home";
   static const String mainNav = "/main-nav";
   static const String allHome = "/allHome";
+  static const String search = "/search";
+  static const String notification = "/notification";
 
   // Routes For Resturant
   static const String resturantDetails = "/resturantDetails";

@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../Core/Constant/assets_strings.dart';
 import '../../../../Core/Routes/app_navigation.dart';
 import '../../Domain/Entity/service_deatils_entity.dart' hide Image;
+import '../Widget/service_branch_options_bottomsheet.dart';
 
 class ServiceScreen extends StatelessWidget {
   final String title;
@@ -138,11 +139,29 @@ class ServiceScreen extends StatelessWidget {
                 const SizedBox(width: 12),
                 GestureDetector(
                   onTap: () {
-                    serviceCubit.addToCart(
-                      type: 'service',
-                      id: service.id!,
-                      branchID: branchID,
-                    );
+                    // Check if service has options
+                    if (service.serviceBranchOptions != null &&
+                        service.serviceBranchOptions!.isNotEmpty) {
+                      // Show bottom sheet with options
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => ServiceBranchOptionsBottomSheet(
+                          serviceBranch: service,
+                          branchID: branchID,
+                          serviceCubit: serviceCubit,
+                          serviceName: service.name ?? '',
+                        ),
+                      );
+                    } else {
+                      // No options, add directly to cart
+                      serviceCubit.addToCart(
+                        type: 'service',
+                        id: service.id!,
+                        branchID: branchID,
+                      );
+                    }
                   },
                   child: Container(
                     decoration: BoxDecoration(

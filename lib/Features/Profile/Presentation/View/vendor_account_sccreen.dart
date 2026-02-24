@@ -8,6 +8,8 @@ import '../../../../Core/Constant/base_constant.dart';
 import '../../../../Core/Handler/auth_handler.dart';
 import '../../../../Core/Helper/dependency_injection_helper.dart';
 import '../../../../Core/Themes/app_colors.dart';
+import '../Widget/delete_bottom_sheet.dart';
+import '../cubit/profile_cubit.dart';
 
 class VendorAccountSccreen extends StatelessWidget {
   final VoidCallback onupdateTap;
@@ -15,6 +17,7 @@ class VendorAccountSccreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final profileCubit = ProfileCubit.get(context);
     var theme = Theme.of(context);
     return Scaffold(
       backgroundColor: Colors.grey[100],
@@ -131,6 +134,19 @@ class VendorAccountSccreen extends StatelessWidget {
                   title: 'حذف الحساب',
                   iconColor: Colors.red,
                   textColor: Colors.red,
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(20),
+                        ),
+                      ),
+                      builder: (context) {
+                        return DeleteBottomSheet(profileCubit: profileCubit);
+                      },
+                    );
+                  },
                 ),
               ],
             ),

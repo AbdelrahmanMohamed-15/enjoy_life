@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:easy_life/Features/Authentication/Data/DataSource/auth_datasource.dart';
 import 'package:easy_life/Features/Authentication/Data/Repository/auth_repository_impl.dart';
@@ -17,11 +19,13 @@ import 'package:easy_life/Features/Home/Domain/Usecases/get_my_favourite_usecase
 import 'package:easy_life/Features/Home/Domain/Usecases/get_vendor_hotels_usecases.dart';
 import 'package:easy_life/Features/Home/Domain/Usecases/get_vendor_resturant_usecases.dart';
 import 'package:easy_life/Features/Home/Domain/Usecases/get_vendor_trips_usecases.dart';
+import 'package:easy_life/Features/Home/Domain/Usecases/search_usecases.dart';
 import 'package:easy_life/Features/Order/Data/Datasource/order_datasource.dart';
 import 'package:easy_life/Features/Order/Domain/Usecases/get_cancel_order_usecases.dart';
 import 'package:easy_life/Features/Order/Domain/Usecases/get_complete_order_usecases.dart';
 import 'package:easy_life/Features/Order/Domain/Usecases/get_pending_order_usecases.dart';
 import 'package:easy_life/Features/Profile/Data/DataSource/profile_datasource.dart';
+import 'package:easy_life/Features/Profile/Domain/Usecases/delete_account_usecases.dart';
 import 'package:easy_life/Features/Reversion/Data/Datasource/reversion_datasource.dart';
 import 'package:easy_life/Features/Reversion/Domain/Usecases/get_all_reversion_usecases.dart';
 import 'package:easy_life/Features/Reversion/Domain/Usecases/scan_order_usecases.dart';
@@ -43,6 +47,9 @@ import 'package:easy_life/Features/vendorService/Domain/Usecases/show_hotel_usec
 import 'package:easy_life/Features/vendorService/Domain/Usecases/show_resturant_usecase.dart';
 import 'package:easy_life/Features/vendorService/Domain/Usecases/show_trip_usecases.dart';
 import 'package:easy_life/Features/vendorService/Presentation/cubit/vendor_service_cubit.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -87,6 +94,7 @@ import '../../Features/vendorService/Domain/Repository/vendor_service_repository
 import '../../Features/vendorService/Domain/Usecases/get_all_category_usecases.dart';
 import '../Handler/auth_handler.dart';
 import '../Services/network_service.dart';
+import 'default_firebase_option.dart';
 
 class DependencyInjectionHelper {
   final sl = GetIt.instance; // sl = service locator
@@ -100,25 +108,29 @@ class DependencyInjectionHelper {
     await _registerRepositories();
     await _registerUseCases();
     await _registerBloc();
-    // await _initFirebase();
+    await _initFirebase();
   }
 
-  // Future<void> _initFirebase() async {
-  //   await Firebase.initializeApp();
-  //   final fcmToken = Platform.isAndroid
-  //       ? await FirebaseMessaging.instance.getToken()
-  //       : await FirebaseMessaging.instance.getAPNSToken();
-  //   await _notificationService.setupNotifications();
-  //   print("fcmToken$fcmToken");
-  // }
+  Future<void> _initFirebase() async {
+    try {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      final fcmToken = Platform.isAndroid
+          ? await FirebaseMessaging.instance.getToken()
+          : await FirebaseMessaging.instance.getAPNSToken();
+      debugPrint("firebase fcmToken data : $fcmToken");
+      await sl<AuthDatasource>().updateFCM(fcmToken: fcmToken!);
+    } catch (e) {
+      debugPrint("Firebase initialization error: $e");
+    }
+  }
 
   /// Registers all core components like services
   Future<void> _registerCoreDependencies() async {
     final sharedPreferences = await SharedPreferences.getInstance();
     const FlutterSecureStorage flutterSecureStorage = FlutterSecureStorage(
-      aOptions: AndroidOptions(
-        encryptedSharedPreferences: true,
-      ),
+      aOptions: AndroidOptions(encryptedSharedPreferences: true),
     );
     sl.registerLazySingleton(() => sharedPreferences);
     sl.registerLazySingleton(() => flutterSecureStorage);
@@ -253,6 +265,9 @@ class DependencyInjectionHelper {
     sl.registerLazySingleton<GetAllHomeUsecases>(
       () => GetAllHomeUsecases(homeRepository: sl<HomeRepository>()),
     );
+    sl.registerLazySingleton<SearchUsecases>(
+      () => SearchUsecases(homeRepository: sl<HomeRepository>()),
+    );
     // usecase for Service
     sl.registerLazySingleton<GetResturantDetailsUsecases>(
       () => GetResturantDetailsUsecases(
@@ -320,7 +335,9 @@ class DependencyInjectionHelper {
     sl.registerLazySingleton<GetAdditionalUsecases>(
       () => GetAdditionalUsecases(profileRepository: sl<ProfileRepository>()),
     );
-
+    sl.registerLazySingleton<DeleteAccountUsecases>(
+      () => DeleteAccountUsecases(profileRepository: sl<ProfileRepository>()),
+    );
     // usecase for Vendor Service
     sl.registerLazySingleton<CreateCategoryUsecases>(
       () => CreateCategoryUsecases(
@@ -462,6 +479,7 @@ class DependencyInjectionHelper {
         getProfileUsecases: sl<GetProfileUsecases>(),
         updateProfileUsecases: sl<UpdateProfileUsecases>(),
         getAdditionalUsecases: sl<GetAdditionalUsecases>(),
+        deleteAccountUsecases: sl<DeleteAccountUsecases>(),
       ),
     );
     sl.registerFactory(

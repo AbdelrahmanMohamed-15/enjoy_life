@@ -6,6 +6,7 @@ class ApiUrls {
   static const String forgetPassword = 'api/sendPasswordResetCode';
   static const String verifyRestCode = 'api/checkResetPasswordCode';
   static const String resetPassword = 'api/resetPassword';
+  static const String updateFCM = 'api/fcm-token';
 
   // Apis Urls For Home
   static const String sliders = 'api/sliders';
@@ -18,6 +19,9 @@ class ApiUrls {
   static const String addFavourite = 'api/addFavourite';
   static const String removeFavourite = 'api/removeFavourite';
   static const String getAllFavourite = 'api/getMyFavourites';
+
+  // Apis Urls For Search
+  static const String search = 'api/search';
 
   // Apis Urls For Service
 
@@ -49,6 +53,7 @@ class ApiUrls {
   static const String getProfile = 'api/me';
   static const String updateProfile = 'api/update';
   static const String getAdditionalPage = 'api/additionalpages';
+  static const String deleteAccount = 'api/deleteAccount';
 
   // Apis Urls For Vendor Service
   static const String createCategory = 'api/vendor/serviceBranchCategory';

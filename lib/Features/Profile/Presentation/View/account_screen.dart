@@ -2,7 +2,9 @@ import 'package:easy_life/Core/Extentions/center_ext.dart';
 import 'package:easy_life/Core/Routes/app_navigation.dart';
 import 'package:easy_life/Core/Routes/app_routes.dart';
 import 'package:easy_life/Features/Profile/Presentation/Widget/account_user_card.dart';
+import 'package:easy_life/Features/Profile/Presentation/Widget/delete_bottom_sheet.dart';
 import 'package:easy_life/Features/Profile/Presentation/Widget/tile_widget.dart';
+import 'package:easy_life/Features/Profile/Presentation/cubit/profile_cubit.dart';
 import 'package:flutter/material.dart';
 import '../../../../Core/Constant/base_constant.dart';
 import '../../../../Core/Handler/auth_handler.dart';
@@ -16,6 +18,7 @@ class AccountScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final profileCubit = ProfileCubit.get(context);
     var theme = Theme.of(context);
     return Scaffold(
       backgroundColor: Colors.grey[100],
@@ -33,10 +36,14 @@ class AccountScreen extends StatelessWidget {
           const SizedBox(height: 20),
           AccountUserCard(
             onEdit: () {
-              AppNavigation.pushNamed(
-                AppRoutes.editProfile,
-                arguments: {'onupdate': onupdateTap},
-              );
+              if (UserValidationHelper.checkUserValidation() == true) {
+                AppNavigation.pushNamed(
+                  AppRoutes.editProfile,
+                  arguments: {'onupdate': onupdateTap},
+                );
+              } else {
+                UserValidationHelper.showUserValidation();
+              }
             },
           ),
           const SizedBox(height: 20),
@@ -118,6 +125,19 @@ class AccountScreen extends StatelessWidget {
                     title: 'حذف الحساب',
                     iconColor: Colors.red,
                     textColor: Colors.red,
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(20),
+                          ),
+                        ),
+                        builder: (context) {
+                          return DeleteBottomSheet(profileCubit: profileCubit);
+                        },
+                      );
+                    },
                   ),
                 ],
               ],

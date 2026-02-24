@@ -7,9 +7,11 @@ import 'package:easy_life/Features/Home/Presentation/Views/my_favourite_screen.d
 import 'package:easy_life/Features/Home/Presentation/Views/vendor_homde_screen.dart';
 import 'package:easy_life/Features/Main/Widget/nav_bar_item_widget.dart';
 import 'package:easy_life/Features/Profile/Presentation/View/account_screen.dart';
+import 'package:easy_life/Features/Profile/Presentation/cubit/profile_cubit.dart';
 import 'package:easy_life/Features/Profile/Presentation/View/vendor_account_sccreen.dart';
 import 'package:easy_life/Features/Reversion/Presentation/Views/reversion_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../Core/Constant/base_constant.dart';
 import '../../../Core/Handler/auth_handler.dart';
@@ -36,24 +38,32 @@ class _MainNavScreenState extends State<MainNavScreen> {
       HomeScreen(),
       CartScreen(),
       MyFavouriteScreen(),
-      AccountScreen(
-        onupdateTap: () {
-          setState(() {
-            currentIndex = 1;
-          });
-        },
+      BlocProvider(
+        create: (context) =>
+            DependencyInjectionHelper().sl<ProfileCubit>()..getProfileData(),
+        child: AccountScreen(
+          onupdateTap: () {
+            setState(() {
+              currentIndex = 1;
+            });
+          },
+        ),
       ),
     ];
     List<Widget> vendorPages = [
       VendorHomeScreen(),
       ScanOrderScreen(),
       ReversionScreen(),
-      VendorAccountSccreen(
-        onupdateTap: () {
-          setState(() {
-            currentIndex = 1;
-          });
-        },
+      BlocProvider(
+        create: (context) =>
+            DependencyInjectionHelper().sl<ProfileCubit>()..getProfileData(),
+        child: VendorAccountSccreen(
+          onupdateTap: () {
+            setState(() {
+              currentIndex = 1;
+            });
+          },
+        ),
       ),
     ];
     var theme = Theme.of(context);

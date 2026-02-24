@@ -266,7 +266,7 @@ class ServiceCubit extends Cubit<ServiceState> {
     );
   }
 
-  addToCart({
+  Future<bool> addToCart({
     required String type,
     int? id,
     int? branchID,
@@ -275,8 +275,13 @@ class ServiceCubit extends Cubit<ServiceState> {
     int? tripID,
     String? startDate,
     String? endDate,
+    int? optionID,
+    bool showLoading = true,
+    bool showMessage = true,
   }) async {
-    EasyLoading.show();
+    if (showLoading) {
+      EasyLoading.show();
+    }
     final res = await addToCartUsecases.call(
       type: type,
       id: id,
@@ -286,25 +291,33 @@ class ServiceCubit extends Cubit<ServiceState> {
       tripID: tripID,
       startDate: startDate,
       endDate: endDate,
+      optionID: optionID,
     );
-    res.fold(
+    return res.fold(
       (failure) {
-        EasyLoading.dismiss();
-        showCustomSnackBar(failure.message, backgroundColor: AppColors.darkRed);
-      },
-      (cart) {
-        EasyLoading.dismiss();
-        if (cart.status == 200) {
+        if (showLoading) {
+          EasyLoading.dismiss();
+        }
+        if (showMessage) {
           showCustomSnackBar(
-            cart.message ?? '',
-            backgroundColor: AppColors.primary400,
-          );
-        } else {
-          showCustomSnackBar(
-            cart.message ?? '',
+            failure.message,
             backgroundColor: AppColors.darkRed,
           );
         }
+        return false;
+      },
+      (cart) {
+        if (showLoading) {
+          EasyLoading.dismiss();
+        }
+        final success = cart.status == 200;
+        if (showMessage) {
+          showCustomSnackBar(
+            cart.message ?? '',
+            backgroundColor: success ? AppColors.primary400 : AppColors.darkRed,
+          );
+        }
+        return success;
       },
     );
   }

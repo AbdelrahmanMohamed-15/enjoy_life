@@ -242,6 +242,7 @@ class ServiceRepositoryImpl implements ServiceRepository {
     int? tripID,
     String? startDate,
     String? endDate,
+    int? optionID,
   }) async {
     try {
       var result = await serviceDatasource.addToCart(
@@ -253,6 +254,7 @@ class ServiceRepositoryImpl implements ServiceRepository {
         tripID: tripID,
         startDate: startDate,
         endDate: endDate,
+        optionID: optionID,
       );
       if (result.statusCode == 200) {
         if (DependencyInjectionHelper()

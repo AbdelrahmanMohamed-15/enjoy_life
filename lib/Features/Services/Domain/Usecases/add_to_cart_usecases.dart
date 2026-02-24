@@ -18,6 +18,7 @@ class AddToCartUsecases {
     int? tripID,
     String? startDate,
     String? endDate,
+    int? optionID,
   }) async => await serviceRepository.addToCart(
     type: type,
     id: id,
@@ -27,5 +28,6 @@ class AddToCartUsecases {
     tripID: tripID,
     startDate: startDate,
     endDate: endDate,
+    optionID: optionID,
   );
 }

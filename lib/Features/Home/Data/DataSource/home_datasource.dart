@@ -104,4 +104,11 @@ class HomeDatasource {
           : {'type': 'trip', 'trip_id': id},
     );
   }
+
+  Future<Response> search({required String query}) async {
+    return await privateDio.get(
+      ApiUrls.search,
+      queryParameters: {'search': query},
+    );
+  }
 }

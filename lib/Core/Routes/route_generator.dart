@@ -3,7 +3,9 @@ import 'package:easy_life/Features/Authentication/Presentation/Views/ForgetPassw
 import 'package:easy_life/Features/Authentication/Presentation/Views/ForgetPassword/rest_otp_screen.dart';
 import 'package:easy_life/Features/Authentication/Presentation/Views/register_screen.dart';
 import 'package:easy_life/Features/Authentication/Presentation/cubit/auth_cubit.dart';
+import 'package:easy_life/Features/Home/Presentation/Views/notification_screen.dart';
 import 'package:easy_life/Features/Home/Presentation/cubit/home_cubit.dart';
+import 'package:easy_life/Features/Home/Presentation/Views/search_screen.dart';
 import 'package:easy_life/Features/Main/View/main_nav_screen.dart';
 import 'package:easy_life/Features/Order/Presentation/View/order_history_screen.dart';
 import 'package:easy_life/Features/Order/Presentation/cubit/order_cubit.dart';
@@ -92,6 +94,13 @@ class RouteGenerator {
                   ..getAllHome(type: args['type']),
             child: AllHomeScreen(type: args['type']),
           ),
+          settings: settings,
+        );
+      case AppRoutes.search:
+        return _screenRoute(screen: const SearchScreen(), settings: settings);
+      case AppRoutes.notification:
+        return _screenRoute(
+          screen: const NotificationScreen(),
           settings: settings,
         );
       case AppRoutes.mainNav:

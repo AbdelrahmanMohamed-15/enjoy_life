@@ -8,6 +8,8 @@ import 'package:easy_life/Core/Helper/user_validation_helper.dart';
 import 'package:easy_life/Features/Authentication/Domain/Entity/user_entity.dart';
 
 import '../../../../Core/Handler/auth_handler.dart';
+import '../../../../Core/Routes/app_navigation.dart';
+import '../../../../Core/Routes/app_routes.dart';
 import '../../../../Core/Themes/app_colors.dart';
 import '../../../../Core/Widget/custom_text_form_field.dart';
 
@@ -46,19 +48,34 @@ class MainBar extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 10),
-                FaIcon(FontAwesomeIcons.bell, color: AppColors.secondary700),
+                GestureDetector(
+                  onTap: () {
+                    AppNavigation.pushNamed(AppRoutes.notification);
+                  },
+                  child: FaIcon(
+                    FontAwesomeIcons.bell,
+                    color: AppColors.black700,
+                  ),
+                ),
               ],
             ),
             if (isHaveSearch) ...[
               SizedBox(height: 15),
-              CustomTextFormField(
-                controller: TextEditingController(),
-                hintText: 'بحث',
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: FaIcon(
-                    FontAwesomeIcons.magnifyingGlass,
-                    color: AppColors.primary400,
+              GestureDetector(
+                onTap: () {
+                  AppNavigation.pushNamed(AppRoutes.search);
+                },
+                child: AbsorbPointer(
+                  child: CustomTextFormField(
+                    controller: TextEditingController(),
+                    hintText: 'ابحث عن مطعم، فندق أو رحلة',
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: FaIcon(
+                        FontAwesomeIcons.magnifyingGlass,
+                        color: AppColors.primary400,
+                      ),
+                    ),
                   ),
                 ),
               ),

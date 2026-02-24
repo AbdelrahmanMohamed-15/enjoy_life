@@ -43,5 +43,6 @@ abstract class ServiceRepository {
     int? tripID,
     String? startDate,
     String? endDate,
+    int? optionID,
   });
 }
