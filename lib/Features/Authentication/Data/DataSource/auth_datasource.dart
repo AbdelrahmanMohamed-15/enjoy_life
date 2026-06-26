@@ -80,4 +80,11 @@ class AuthDatasource {
       },
     );
   }
+
+  Future<Response> updateFCM({required String fcmToken}) async {
+    return await publicDio.post(
+      ApiUrls.updateFCM,
+      data: {'fcm_token': fcmToken},
+    );
+  }
 }

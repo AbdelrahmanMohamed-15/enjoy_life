@@ -1,16 +1,23 @@
-import 'package:easy_life/Core/Extentions/extentions.dart';
-import 'package:easy_life/Core/Helper/dependency_injection_helper.dart';
-import 'package:easy_life/Core/Helper/user_validation_helper.dart';
-import 'package:easy_life/Features/Authentication/Domain/Entity/user_entity.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import 'package:easy_life/Core/Extentions/extentions.dart';
+import 'package:easy_life/Core/Helper/dependency_injection_helper.dart';
+import 'package:easy_life/Core/Helper/user_validation_helper.dart';
+import 'package:easy_life/Core/L10n/locale_keys.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:easy_life/Features/Authentication/Domain/Entity/user_entity.dart';
+
 import '../../../../Core/Handler/auth_handler.dart';
+import '../../../../Core/Routes/app_navigation.dart';
+import '../../../../Core/Routes/app_routes.dart';
 import '../../../../Core/Themes/app_colors.dart';
 import '../../../../Core/Widget/custom_text_form_field.dart';
 
 class MainBar extends StatelessWidget {
-  const MainBar({super.key});
+  final bool isHaveSearch;
+  const MainBar({super.key, required this.isHaveSearch});
 
   @override
   Widget build(BuildContext context) {
@@ -35,29 +42,48 @@ class MainBar extends StatelessWidget {
                 Expanded(
                   child: Text(
                     UserValidationHelper.checkUserValidation() == true
-                        ? 'مرحبا ${userData?.fullName ?? ''}'
-                        : 'مرحبا زائر',
+                        ? LocaleKeys.homeWelcomeUser.tr(
+                            namedArgs: {'name': userData?.fullName ?? ''},
+                          )
+                        : LocaleKeys.homeWelcomeGuest.tr(),
                     style: theme.textTheme.titleMedium!.copyWith(
                       color: AppColors.primary400,
                     ),
                   ),
                 ),
                 const SizedBox(width: 10),
-                FaIcon(FontAwesomeIcons.bell, color: AppColors.secondary700),
+                GestureDetector(
+                  onTap: () {
+                    AppNavigation.pushNamed(AppRoutes.notification);
+                  },
+                  child: FaIcon(
+                    FontAwesomeIcons.bell,
+                    color: AppColors.black700,
+                  ),
+                ),
               ],
             ),
-            SizedBox(height: 15),
-            CustomTextFormField(
-              controller: TextEditingController(),
-              hintText: 'بحث',
-              prefixIcon: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: FaIcon(
-                  FontAwesomeIcons.magnifyingGlass,
-                  color: AppColors.primary400,
+            if (isHaveSearch) ...[
+              SizedBox(height: 15),
+              GestureDetector(
+                onTap: () {
+                  AppNavigation.pushNamed(AppRoutes.search);
+                },
+                child: AbsorbPointer(
+                  child: CustomTextFormField(
+                    controller: TextEditingController(),
+                    hintText: LocaleKeys.homeSearchHint.tr(),
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: FaIcon(
+                        FontAwesomeIcons.magnifyingGlass,
+                        color: AppColors.primary400,
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ),
+            ],
           ],
         ).setHorizontalPadding(context, 15, enableMediaQuery: false),
       ),

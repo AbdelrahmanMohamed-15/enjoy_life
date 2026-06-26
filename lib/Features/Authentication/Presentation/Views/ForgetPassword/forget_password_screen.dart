@@ -1,6 +1,8 @@
 import 'package:easy_life/Core/Extentions/extentions.dart';
 import 'package:easy_life/Core/Helper/input_validator.dart';
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Features/Authentication/Presentation/cubit/auth_cubit.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -37,7 +39,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
             child: Scaffold(
               appBar: AppBar(
                 elevation: 0,
-                title: Text('استعادة كلمة المرور'),
+                title: Text(LocaleKeys.authForgotAppBar.tr()),
                 centerTitle: true,
                 leading: GestureDetector(
                   onTap: () {
@@ -64,7 +66,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                     ),
                     SizedBox(height: 20),
                     Text(
-                      'نسيت كلمة المرور',
+                      LocaleKeys.authForgotTitle.tr(),
                       style: theme.textTheme.headlineSmall!.copyWith(
                         color: AppColors.black700,
                       ),
@@ -72,14 +74,14 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                     SizedBox(height: 50),
                     CustomTextFormField(
                       controller: authCubit.emailRestController,
-                      hintText: 'البريد الالكتروني',
+                      hintText: LocaleKeys.authForgotEmailHint.tr(),
                       validator: (value) => InputValidator.validateEmail(value),
                     ),
 
                     SizedBox(height: 20),
                     CustomTextFormField(
                       controller: authCubit.newPasswordController,
-                      hintText: 'كلمة المرور',
+                      hintText: LocaleKeys.authForgotPasswordHint.tr(),
                       textInputType: TextInputType.visiblePassword,
                       obscureText: isObscure,
                       validator: (value) =>
@@ -100,7 +102,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                     SizedBox(height: 20),
                     CustomTextFormField(
                       controller: authCubit.confirmPasswordController,
-                      hintText: 'تأكيد كلمة المرور',
+                      hintText: LocaleKeys.authForgotConfirmHint.tr(),
                       textInputType: TextInputType.visiblePassword,
                       obscureText: isObscure2,
                       validator: (value) =>
@@ -124,7 +126,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                     SizedBox(height: 20),
                     MainAppButton(
                       child: Text(
-                        'استعادة كلمة المرور',
+                        LocaleKeys.authForgotButton.tr(),
                         style: theme.textTheme.bodyMedium!.copyWith(
                           color: AppColors.natural100,
                           fontFamily: BaseConstant.cairoBold,

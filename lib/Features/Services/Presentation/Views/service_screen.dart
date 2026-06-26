@@ -3,8 +3,12 @@ import 'package:easy_life/Core/Themes/app_colors.dart';
 import 'package:easy_life/Features/Services/Presentation/cubit/service_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../../Core/Constant/assets_strings.dart';
+import '../../../../Core/Routes/app_navigation.dart';
 import '../../Domain/Entity/service_deatils_entity.dart' hide Image;
+import '../Widget/service_branch_options_bottomsheet.dart';
 
 class ServiceScreen extends StatelessWidget {
   final String title;
@@ -28,6 +32,12 @@ class ServiceScreen extends StatelessWidget {
           elevation: 2,
           title: Text(title),
           centerTitle: true,
+          leading: GestureDetector(
+            onTap: () {
+              AppNavigation.pop();
+            },
+            child: Icon(Icons.arrow_back_ios, color: AppColors.primary400),
+          ),
           actions: const [
             // Icon(Icons.favorite_border),
             // SizedBox(width: 12),
@@ -54,6 +64,14 @@ class ServiceScreen extends StatelessWidget {
                     height: 100,
                     width: 100,
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return SvgPicture.asset(
+                        AssetsStrings.noImages,
+                        height: 100,
+                        width: 100,
+                        fit: BoxFit.cover,
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -121,11 +139,29 @@ class ServiceScreen extends StatelessWidget {
                 const SizedBox(width: 12),
                 GestureDetector(
                   onTap: () {
-                    serviceCubit.addToCart(
-                      type: 'service',
-                      id: service.id!,
-                      branchID: branchID,
-                    );
+                    // Check if service has options
+                    if (service.serviceBranchOptions != null &&
+                        service.serviceBranchOptions!.isNotEmpty) {
+                      // Show bottom sheet with options
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => ServiceBranchOptionsBottomSheet(
+                          serviceBranch: service,
+                          branchID: branchID,
+                          serviceCubit: serviceCubit,
+                          serviceName: service.name ?? '',
+                        ),
+                      );
+                    } else {
+                      // No options, add directly to cart
+                      serviceCubit.addToCart(
+                        type: 'service',
+                        id: service.id!,
+                        branchID: branchID,
+                      );
+                    }
                   },
                   child: Container(
                     decoration: BoxDecoration(

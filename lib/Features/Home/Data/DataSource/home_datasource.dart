@@ -33,6 +33,27 @@ class HomeDatasource {
     );
   }
 
+  Future<Response> getVendorResturant() async {
+    return await privateDio.get(
+      ApiUrls.getVendorResturant,
+      queryParameters: {'per_page': -1, 'take': 4},
+    );
+  }
+
+  Future<Response> getVendorHotels() async {
+    return await privateDio.get(
+      ApiUrls.getVendoHotels,
+      queryParameters: {'per_page': -1, 'take': 4},
+    );
+  }
+
+  Future<Response> getVendorTrips() async {
+    return await privateDio.get(
+      ApiUrls.getVendoTrips,
+      queryParameters: {'per_page': -1, 'take': 4},
+    );
+  }
+
   Future<Response> getTotalHome({required String type}) async {
     if (type.toLowerCase() == 'resturant' || type.toLowerCase() == 'مطعم') {
       return await privateDio.get(
@@ -81,6 +102,13 @@ class HomeDatasource {
           : type.toLowerCase() == 'hotel' || type.toLowerCase() == 'فندق'
           ? {'type': 'hotel', 'hotel_id': id}
           : {'type': 'trip', 'trip_id': id},
+    );
+  }
+
+  Future<Response> search({required String query}) async {
+    return await privateDio.get(
+      ApiUrls.search,
+      queryParameters: {'search': query},
     );
   }
 }

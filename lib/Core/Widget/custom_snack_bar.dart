@@ -9,6 +9,12 @@ void showCustomSnackBar(
   Color? backgroundColor,
   Color? color,
 }) {
+  final context = AppNavigation.navigatorKey.currentContext;
+  if (context == null) return;
+
+  // Check if the context is still mounted
+  if (!context.mounted) return;
+
   final snackBar = SnackBar(
     duration: const Duration(seconds: 2),
     content: Text(
@@ -27,12 +33,20 @@ void showCustomSnackBar(
       label: '',
       disabledTextColor: Colors.white,
       textColor: AppColors.secondary100,
-      onPressed: () => ScaffoldMessenger.of(
-        AppNavigation.navigatorKey.currentContext!,
-      ).clearSnackBars(),
+      onPressed: () {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+        }
+      },
     ),
   );
-  ScaffoldMessenger.of(
-    AppNavigation.navigatorKey.currentContext!,
-  ).showSnackBar(snackBar);
+
+  try {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  } catch (e) {
+    // Silently fail if context is no longer valid
+    debugPrint('Error showing snackbar: $e');
+  }
 }

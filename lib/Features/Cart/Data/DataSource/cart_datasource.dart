@@ -30,10 +30,18 @@ class CartDatasource {
   }
 
   Future<Response> createOrder() async {
-    String? session = DependencyInjectionHelper()
+    final session = DependencyInjectionHelper()
         .sl<AuthHandlerInterface>()
         .getCookies();
-    String token = session!.split(";").first.split("=").last;
+
+    if (session == null || session.trim().isEmpty) {
+      throw DioException(
+        requestOptions: RequestOptions(path: ApiUrls.createOrder),
+        message: 'Cart session is not available',
+      );
+    }
+
+    final token = session.split(';').first.split('=').last;
     return await privateDio.post(ApiUrls.createOrder, data: {'session': token});
   }
 

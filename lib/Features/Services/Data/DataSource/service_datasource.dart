@@ -59,24 +59,28 @@ class ServiceDatasource {
     int? tripID,
     String? startDate,
     String? endDate,
+    int? optionID,
   }) async {
-    return await privateDio.post(
-      ApiUrls.addToCart,
-      data: type == 'service'
-          ? {'service_id': id, 'branch_id': branchID}
-          : type == 'table'
-          ? {
-              'restaurantTable_id': tableID,
-              'start_time': startDate,
-              'end_time': endDate,
-            }
-          : type == 'room'
-          ? {
-              'hotelRoom_id': roomID,
-              'start_time': startDate,
-              'end_time': endDate,
-            }
-          : {'tripSchedule_id': tripID},
-    );
+    Map<String, dynamic> data;
+    if (type == 'service') {
+      data = {'service_id': id, 'branch_id': branchID};
+    } else if (type == 'service_option') {
+      data = {'service_id': optionID, 'branch_id': branchID};
+    } else if (type == 'table') {
+      data = {
+        'restaurantTable_id': tableID,
+        'start_time': startDate,
+        'end_time': endDate,
+      };
+    } else if (type == 'room') {
+      data = {
+        'hotelRoom_id': roomID,
+        'start_time': startDate,
+        'end_time': endDate,
+      };
+    } else {
+      data = {'tripSchedule_id': tripID};
+    }
+    return await privateDio.post(ApiUrls.addToCart, data: data);
   }
 }

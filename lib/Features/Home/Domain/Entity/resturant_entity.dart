@@ -46,7 +46,7 @@ class HomeData extends Equatable {
   final int? clientId;
   final String? clientName;
 
-  HomeData({
+  const HomeData({
     this.id,
     this.itemID,
     this.name,
@@ -81,7 +81,7 @@ class HomeData extends Equatable {
         ? []
         : List<Image>.from(json["images"]!.map((x) => Image.fromJson(x))),
     serviceId: json["service_id"] ?? 0,
-    serviceName: json["service_name"] ?? "",
+    serviceName: json["service_name"] ?? "hotel",
     clientId: json["client_id"] ?? 0,
     clientName: json["client_name"] ?? "",
   );

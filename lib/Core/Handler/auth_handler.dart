@@ -3,6 +3,7 @@ library auth_handler;
 import 'dart:convert';
 
 import 'package:easy_life/Features/Authentication/Domain/Entity/user_entity.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 abstract class AuthHandlerInterface {
@@ -58,59 +59,104 @@ class AuthHandler implements AuthHandlerInterface {
 
   @override
   Future<void> setOnBoarding(bool isFirst) async {
-    _boardnig = isFirst.toString();
-    await secureStorage.write(key: 'boarding', value: isFirst.toString());
+    try {
+      _boardnig = isFirst.toString();
+      await secureStorage.write(key: 'boarding', value: isFirst.toString());
+    } catch (e) {
+      debugPrint('Error setting onboarding: $e');
+    }
   }
 
   @override
   Future<AuthHandlerInterface> init() async {
-    _token = await secureStorage.read(key: 'token');
-    final userDataString = await secureStorage.read(key: 'userData');
-    _userData = userDataString != null
-        ? Userdata.fromJson(
-            Map<String, dynamic>.from(json.decode(userDataString)),
-          )
-        : null;
-    _boardnig = await secureStorage.read(key: 'boarding');
-    _languageCode = await secureStorage.read(key: 'languageCode');
-    _cookies = await secureStorage.read(key: 'cookies');
+    try {
+      _token = await secureStorage.read(key: 'token');
+      final userDataString = await secureStorage.read(key: 'userData');
+      _userData = userDataString != null
+          ? Userdata.fromJson(
+              Map<String, dynamic>.from(json.decode(userDataString)),
+            )
+          : null;
+      _boardnig = await secureStorage.read(key: 'boarding');
+      _languageCode = await secureStorage.read(key: 'languageCode');
+      _cookies = await secureStorage.read(key: 'cookies');
+    } catch (e) {
+      // Handle platform channel errors gracefully
+      // If secure storage fails, continue with null values
+      // This can happen if KeyStore is not available or during app initialization
+      debugPrint('Error initializing AuthHandler: $e');
+      // Set default values to prevent null reference errors
+      _token = null;
+      _userData = null;
+      _boardnig = null;
+      _languageCode = null;
+      _cookies = null;
+    }
     return this;
   }
 
   @override
   Future<void> setUserData(Userdata? data) async {
-    _userData = data;
-    if (data == null) {
-      await secureStorage.delete(key: 'userData');
-      return;
+    try {
+      _userData = data;
+      if (data == null) {
+        await secureStorage.delete(key: 'userData');
+        return;
+      }
+      await secureStorage.write(
+        key: 'userData',
+        value: json.encode(data.toJson()),
+      );
+    } catch (e) {
+      debugPrint('Error setting user data: $e');
     }
-    await secureStorage.write(
-      key: 'userData',
-      value: json.encode(data.toJson()),
-    );
   }
 
   @override
   Future<void> setToken(String token) async {
-    _token = token;
-    await secureStorage.write(key: 'token', value: token);
+    try {
+      _token = token;
+      await secureStorage.write(key: 'token', value: token);
+    } catch (e) {
+      debugPrint('Error setting token: $e');
+    }
   }
 
   @override
   Future<void> setLanguageCode(String languageCode) async {
-    _languageCode = languageCode;
-    await secureStorage.write(key: 'languageCode', value: languageCode);
+    try {
+      _languageCode = languageCode;
+      await secureStorage.write(key: 'languageCode', value: languageCode);
+    } catch (e) {
+      debugPrint('Error setting language code: $e');
+    }
   }
 
   @override
-  Future<void> clearAllData() {
-    setUserData(null);
-    return secureStorage.delete(key: 'userData');
+  Future<void> clearAllData() async {
+    try {
+      await setUserData(null);
+      await secureStorage.delete(key: 'userData');
+      await secureStorage.delete(key: 'token');
+      await secureStorage.delete(key: 'cookies');
+      // Language preference is stored in SharedPreferences and kept on logout.
+      // await secureStorage.delete(key: 'boarding');
+      _token = null;
+      _userData = null;
+      // _boardnig = null;
+      _cookies = null;
+    } catch (e) {
+      debugPrint('Error clearing data: $e');
+    }
   }
 
   @override
-  Future<void> setCookies(String cookies) {
-    _cookies = cookies;
-    return secureStorage.write(key: 'cookies', value: cookies);
+  Future<void> setCookies(String cookies) async {
+    try {
+      _cookies = cookies;
+      await secureStorage.write(key: 'cookies', value: cookies);
+    } catch (e) {
+      debugPrint('Error setting cookies: $e');
+    }
   }
 }

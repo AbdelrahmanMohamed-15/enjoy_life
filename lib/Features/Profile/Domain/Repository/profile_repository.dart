@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_life/Core/Failures/failures.dart';
+import 'package:easy_life/Core/Helper/base_entity.dart';
 import 'package:easy_life/Features/Profile/Domain/Entity/profile_entity.dart';
 
 import '../Entity/additional_entity.dart';
@@ -13,4 +14,6 @@ abstract class ProfileRepository {
   Future<Either<Failure, AdditionalEntity>> getAdditionalPage({
     required String type,
   });
+
+  Future<Either<Failure, BaseEntity>> deleteAccount();
 }

@@ -11,6 +11,8 @@ class AppRoutes {
   static const String home = "/home";
   static const String mainNav = "/main-nav";
   static const String allHome = "/allHome";
+  static const String search = "/search";
+  static const String notification = "/notification";
 
   // Routes For Resturant
   static const String resturantDetails = "/resturantDetails";
@@ -25,4 +27,14 @@ class AppRoutes {
   // Routes For Profile
   static const String editProfile = "/editProfile";
   static const String additionalScreen = "/additionalScreen";
+  static const String supportScreen = "/supportScreen";
+
+  // Routes For Vendor Services
+  static const String addCategory = "/addCategory";
+  static const String addBranch = "/addBranch";
+  static const String addService = "/addService";
+  static const String addNewServiceScreen = "/AddNewServiceScreen";
+  static const String addServiceOption = "/addServiceOption";
+  static const String reversionDetails = "/reversionDetails";
+  static const String scanQRScreen = "/scanQRScreen";
 }

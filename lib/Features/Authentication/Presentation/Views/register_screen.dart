@@ -1,6 +1,8 @@
 import 'package:easy_life/Core/Extentions/extentions.dart';
 import 'package:easy_life/Core/Helper/input_validator.dart';
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Features/Authentication/Presentation/cubit/auth_cubit.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -49,7 +51,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     SizedBox(height: 20),
                     Text(
-                      'انشاء حساب جديد',
+                      LocaleKeys.authRegisterTitle.tr(),
                       style: theme.textTheme.headlineSmall!.copyWith(
                         color: AppColors.black700,
                       ),
@@ -57,21 +59,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     SizedBox(height: 50),
                     CustomTextFormField(
                       controller: authCubit.nameController,
-                      hintText: 'اسم المستخدم',
+                      hintText: LocaleKeys.authRegisterUsernameHint.tr(),
                       validator: (value) =>
                           InputValidator.validateNotEmpty(value),
                     ),
                     SizedBox(height: 20),
                     CustomTextFormField(
                       controller: authCubit.emailController,
-                      hintText: 'البريد الالكتروني',
+                      hintText: LocaleKeys.authRegisterEmailHint.tr(),
                       textInputType: TextInputType.emailAddress,
                       validator: (value) => InputValidator.validateEmail(value),
                     ),
                     SizedBox(height: 20),
                     CustomTextFormField(
                       controller: authCubit.regPhoneController,
-                      hintText: 'رقم الجوال',
+                      hintText: LocaleKeys.authRegisterPhoneHint.tr(),
                       textInputType: TextInputType.phone,
                       validator: (value) =>
                           InputValidator.validateNotEmpty(value),
@@ -88,14 +90,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     SizedBox(height: 20),
                     CustomTextFormField(
                       controller: authCubit.addressController,
-                      hintText: 'العنوان',
+                      hintText: LocaleKeys.authRegisterAddressHint.tr(),
                       validator: (value) =>
                           InputValidator.validateNotEmpty(value),
                     ),
                     SizedBox(height: 20),
                     CustomTextFormField(
                       controller: authCubit.regPasswordController,
-                      hintText: 'كلمة المرور',
+                      hintText: LocaleKeys.authRegisterPasswordHint.tr(),
                       textInputType: TextInputType.visiblePassword,
                       obscureText: isObscure,
                       validator: (value) =>
@@ -116,7 +118,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     SizedBox(height: 20),
                     CustomTextFormField(
                       controller: authCubit.confirmPasswordController,
-                      hintText: 'تأكيد كلمة المرور',
+                      hintText: LocaleKeys.authRegisterConfirmPasswordHint.tr(),
                       textInputType: TextInputType.visiblePassword,
                       obscureText: isObscure2,
                       validator: (value) =>
@@ -140,7 +142,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     SizedBox(height: 20),
                     MainAppButton(
                       child: Text(
-                        'انشاء حساب',
+                        LocaleKeys.authRegisterButton.tr(),
                         style: theme.textTheme.bodyMedium!.copyWith(
                           color: AppColors.natural100,
                           fontFamily: BaseConstant.cairoBold,
@@ -164,14 +166,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'لديك حساب بالفعل؟',
+                            LocaleKeys.authRegisterHaveAccount.tr(),
                             style: theme.textTheme.bodyMedium!.copyWith(
                               color: AppColors.black700,
                             ),
                           ),
                           SizedBox(width: 5),
                           Text(
-                            'تسجيل الدخول',
+                            LocaleKeys.authRegisterLoginLink.tr(),
                             style: theme.textTheme.bodyMedium!.copyWith(
                               color: AppColors.primary500,
                               fontFamily: BaseConstant.cairoBold,

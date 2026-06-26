@@ -3,7 +3,9 @@ import 'package:easy_life/Features/Authentication/Presentation/Views/ForgetPassw
 import 'package:easy_life/Features/Authentication/Presentation/Views/ForgetPassword/rest_otp_screen.dart';
 import 'package:easy_life/Features/Authentication/Presentation/Views/register_screen.dart';
 import 'package:easy_life/Features/Authentication/Presentation/cubit/auth_cubit.dart';
+import 'package:easy_life/Features/Home/Presentation/Views/notification_screen.dart';
 import 'package:easy_life/Features/Home/Presentation/cubit/home_cubit.dart';
+import 'package:easy_life/Features/Home/Presentation/Views/search_screen.dart';
 import 'package:easy_life/Features/Main/View/main_nav_screen.dart';
 import 'package:easy_life/Features/Order/Presentation/View/order_history_screen.dart';
 import 'package:easy_life/Features/Order/Presentation/cubit/order_cubit.dart';
@@ -11,17 +13,27 @@ import 'package:easy_life/Features/Home/Presentation/Views/all_home_screen.dart'
 import 'package:easy_life/Features/Profile/Presentation/View/additional_screen.dart';
 import 'package:easy_life/Features/Profile/Presentation/View/edit_profile_screen.dart';
 import 'package:easy_life/Features/Profile/Presentation/cubit/profile_cubit.dart';
+import 'package:easy_life/Features/Reversion/Presentation/Views/qr_scanner_screen.dart';
+import 'package:easy_life/Features/Reversion/Presentation/Views/reversion_details_screen.dart';
+import 'package:easy_life/Features/Reversion/Presentation/cubit/reversion_cubit.dart';
 import 'package:easy_life/Features/Services/Presentation/Views/room_screen.dart';
 import 'package:easy_life/Features/Services/Presentation/Views/service_details_screen.dart';
 import 'package:easy_life/Features/Services/Presentation/Views/service_screen.dart';
 import 'package:easy_life/Features/Services/Presentation/Views/tables_screen.dart';
 import 'package:easy_life/Features/Services/Presentation/Views/trips_screen.dart';
 import 'package:easy_life/Features/Services/Presentation/cubit/service_cubit.dart';
+import 'package:easy_life/Features/vendorService/Presentation/Views/Service%20Page%20View/main_add_service_screen.dart';
+import 'package:easy_life/Features/vendorService/Presentation/Views/add_branch_screen.dart';
+import 'package:easy_life/Features/vendorService/Presentation/Views/add_category_screen.dart';
+import 'package:easy_life/Features/vendorService/Presentation/Views/add_new_service_screen.dart';
+import 'package:easy_life/Features/vendorService/Presentation/Views/add_service_option_screen.dart';
+import 'package:easy_life/Features/vendorService/Presentation/cubit/vendor_service_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import '../../Features/Authentication/Presentation/Views/login_screen.dart';
 import '../../Features/OnBoarding/Presentation/View/onboarding_screen.dart';
+import '../../Features/Profile/Presentation/View/support_screen.dart';
 import '../../Features/Splash/splach_screen.dart';
 import '../Constant/base_constant.dart';
 import 'app_navigation.dart';
@@ -83,6 +95,13 @@ class RouteGenerator {
                   ..getAllHome(type: args['type']),
             child: AllHomeScreen(type: args['type']),
           ),
+          settings: settings,
+        );
+      case AppRoutes.search:
+        return _screenRoute(screen: const SearchScreen(), settings: settings);
+      case AppRoutes.notification:
+        return _screenRoute(
+          screen: const NotificationScreen(),
           settings: settings,
         );
       case AppRoutes.mainNav:
@@ -171,6 +190,104 @@ class RouteGenerator {
                 DependencyInjectionHelper().sl<ProfileCubit>()
                   ..getAdditionalPage(type: args['type']),
             child: AdditionalScreen(type: args['type']),
+          ),
+          settings: settings,
+        );
+      case AppRoutes.supportScreen:
+        return _screenRoute(screen: SupportScreen(), settings: settings);
+      case AppRoutes.addCategory:
+        // var args = (settings.arguments as Map<String, dynamic>);
+        return _screenRoute(
+          screen: BlocProvider(
+            create: (context) =>
+                DependencyInjectionHelper().sl<VendorServiceCubit>(),
+            child: AddCategoryScreen(),
+          ),
+          settings: settings,
+        );
+      case AppRoutes.addBranch:
+        // var args = (settings.arguments as Map<String, dynamic>);
+        return _screenRoute(
+          screen: BlocProvider(
+            create: (context) =>
+                DependencyInjectionHelper().sl<VendorServiceCubit>(),
+            child: AddBranchScreen(),
+          ),
+          settings: settings,
+        );
+      case AppRoutes.addService:
+        var args = (settings.arguments as Map<String, dynamic>);
+        return _screenRoute(
+          screen: BlocProvider(
+            create: (context) {
+              final cubit = DependencyInjectionHelper()
+                  .sl<VendorServiceCubit>();
+
+              if (args['type'] == 'resturant') {
+                cubit.getAllBranches();
+                if (args['isEdit'] == true) {
+                  cubit.showResturant(id: args['id']);
+                }
+              } else if (args['type'] == 'hotel') {
+                cubit.getAllBranches();
+                if (args['isEdit'] == true) {
+                  cubit.showHotel(id: args['id']);
+                }
+              } else {
+                debugPrint('serviceID route ${args['id']}');
+                cubit.getAllBranches();
+                cubit.getAllTripSchedual();
+                if (args['isEdit'] == true) {
+                  cubit.showTrip(id: args['id']);
+                }
+              }
+
+              return cubit; // return the Cubit instance
+            },
+            child: MainAddServiceScreen(
+              type: args['type'],
+              isEdit: args['isEdit'],
+              id: args['id'],
+            ),
+          ),
+          settings: settings,
+        );
+      case AppRoutes.addNewServiceScreen:
+        // var args = (settings.arguments as Map<String, dynamic>);
+        return _screenRoute(
+          screen: BlocProvider(
+            create: (context) =>
+                DependencyInjectionHelper().sl<VendorServiceCubit>()
+                  ..getAllBranches()
+                  ..getAllCategory()
+                  ..getVendorResturant(),
+            child: AddNewServiceScreen(),
+          ),
+          settings: settings,
+        );
+      case AppRoutes.addServiceOption:
+        // var args = (settings.arguments as Map<String, dynamic>);
+        return _screenRoute(
+          screen: BlocProvider(
+            create: (context) =>
+                DependencyInjectionHelper().sl<VendorServiceCubit>()
+                  ..getAllService(),
+            child: AddServiceOptionScreen(),
+          ),
+          settings: settings,
+        );
+      case AppRoutes.reversionDetails:
+        var args = (settings.arguments as Map<String, dynamic>);
+        return _screenRoute(
+          screen: ReversionDetailsScreen(reversionData: args['reversionData']),
+          settings: settings,
+        );
+      case AppRoutes.scanQRScreen:
+        return _screenRoute(
+          screen: BlocProvider(
+            create: (context) =>
+                DependencyInjectionHelper().sl<ReversionCubit>(),
+            child: QRScannerScreen(),
           ),
           settings: settings,
         );

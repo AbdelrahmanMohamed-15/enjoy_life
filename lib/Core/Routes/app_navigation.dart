@@ -46,7 +46,9 @@ class AppNavigation {
       navigatorKey.currentState!.popUntil(func);
 
   static void pop({List? args}) {
-    return navigatorKey.currentState!.pop(args);
+    if (navigatorKey.currentState != null) {
+      navigatorKey.currentState!.pop(args);
+    }
   }
 
   static bool canPop(BuildContext context) {

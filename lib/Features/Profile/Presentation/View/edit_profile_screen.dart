@@ -1,4 +1,6 @@
 import 'package:easy_life/Core/Extentions/extentions.dart';
+import 'package:easy_life/Core/L10n/locale_keys.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_life/Features/Profile/Presentation/cubit/profile_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,7 +29,7 @@ class EditProfileScreen extends StatelessWidget {
               centerTitle: true,
               backgroundColor: AppColors.natural100,
               title: Text(
-                'عرض الملف الشخصي',
+                LocaleKeys.profileEditTitle.tr(),
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: AppColors.primary500,
                   fontFamily: BaseConstant.cairoBold,
@@ -132,7 +134,7 @@ class EditProfileScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              ' إضافة صورة شخصية',
+                              LocaleKeys.profileEditAddPhoto.tr(),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: theme.textTheme.bodyMedium?.copyWith(
@@ -142,7 +144,7 @@ class EditProfileScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 5),
                             Text(
-                              'برجاء التأكد من الخلفية البيضاء ووضوح الصورة',
+                              LocaleKeys.profileEditPhotoHint.tr(),
                               overflow: TextOverflow.ellipsis,
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: AppColors.natural400,
@@ -156,7 +158,7 @@ class EditProfileScreen extends StatelessWidget {
                   const SizedBox(height: 40),
                   CustomTextFormField(
                     controller: profileCubit.nameController,
-                    labelText: 'اسم المستخدم',
+                    labelText: LocaleKeys.profileEditUsername.tr(),
                     // readOnly: true,
                     validator: (value) =>
                         InputValidator.validateNotEmpty(value),
@@ -164,7 +166,7 @@ class EditProfileScreen extends StatelessWidget {
                   const SizedBox(height: 20),
                   CustomTextFormField(
                     controller: profileCubit.phoneController,
-                    labelText: 'رقم الجوال',
+                    labelText: LocaleKeys.profileEditPhone.tr(),
                     readOnly: true,
                     validator: (value) =>
                         InputValidator.validateNotEmpty(value),
@@ -172,7 +174,7 @@ class EditProfileScreen extends StatelessWidget {
                   const SizedBox(height: 20),
                   CustomTextFormField(
                     controller: profileCubit.emailController,
-                    labelText: 'البريد الالكتروني',
+                    labelText: LocaleKeys.profileEditEmail.tr(),
                     readOnly: true,
                     validator: (value) =>
                         InputValidator.validateNotEmpty(value),
@@ -180,7 +182,7 @@ class EditProfileScreen extends StatelessWidget {
                   const SizedBox(height: 20),
                   CustomTextFormField(
                     controller: profileCubit.addressController,
-                    labelText: 'العنوان',
+                    labelText: LocaleKeys.profileEditAddress.tr(),
                     validator: (value) =>
                         InputValidator.validateNotEmpty(value),
                   ),
@@ -193,7 +195,7 @@ class EditProfileScreen extends StatelessWidget {
                       }
                     },
                     child: Text(
-                      'إرسال',
+                      LocaleKeys.profileEditSave.tr(),
                       style: theme.textTheme.bodyMedium!.copyWith(
                         color: AppColors.natural100,
                       ),

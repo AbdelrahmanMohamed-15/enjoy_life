@@ -1,4 +1,6 @@
 import 'package:easy_life/Core/Helper/dependency_injection_helper.dart';
+import 'package:easy_life/Core/L10n/locale_keys.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_life/Features/Home/Presentation/Widget/main_bar.dart';
 import 'package:easy_life/Features/Home/Presentation/cubit/home_cubit.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +26,7 @@ class HomeScreen extends StatelessWidget {
           return Scaffold(
             body: Column(
               children: [
-                MainBar(),
+                MainBar(isHaveSearch: true),
                 SizedBox(height: 20),
                 Expanded(
                   child: ListView(
@@ -59,7 +61,7 @@ class HomeScreen extends StatelessWidget {
                                 RequestState.empty
                           ? const SizedBox()
                           : HomeListWidget(
-                              title: 'احجز مطعمك المفضل',
+                              title: LocaleKeys.homeSectionRestaurants.tr(),
                               homeData: homeCubit.resturantEntity!.data!,
                               homeCubit: homeCubit,
                               type: 'resturant',
@@ -78,7 +80,7 @@ class HomeScreen extends StatelessWidget {
                           : homeCubit.hotelsRequestState == RequestState.empty
                           ? const SizedBox()
                           : HomeListWidget(
-                              title: 'احجز فندقك المفضل',
+                              title: LocaleKeys.homeSectionHotels.tr(),
                               homeData: homeCubit.hotelsEntity!.data!,
                               homeCubit: homeCubit,
                               type: 'Hotel',
@@ -97,7 +99,7 @@ class HomeScreen extends StatelessWidget {
                           : homeCubit.tripsRequestState == RequestState.empty
                           ? const SizedBox()
                           : HomeListWidget(
-                              title: 'احجز رحلتك المفضلة',
+                              title: LocaleKeys.homeSectionTrips.tr(),
                               homeData: homeCubit.tripsEntity!.data!,
                               homeCubit: homeCubit,
                               type: 'Trip',

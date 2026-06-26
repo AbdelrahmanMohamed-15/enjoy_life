@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:easy_life/Core/Enums/level_message_enums.dart';
+import 'package:easy_life/Core/Helper/base_entity.dart';
 import 'package:easy_life/Core/Helper/dependency_injection_helper.dart';
 import 'package:easy_life/Core/Routes/app_navigation.dart';
 import 'package:easy_life/Core/Widget/custom_snack_bar.dart';
 import 'package:easy_life/Features/Authentication/Domain/Entity/user_entity.dart';
 import 'package:easy_life/Features/Profile/Domain/Entity/additional_entity.dart';
+import 'package:easy_life/Features/Profile/Domain/Usecases/delete_account_usecases.dart';
 import 'package:easy_life/Features/Profile/Domain/Usecases/get_profile_usecases.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +28,7 @@ class ProfileCubit extends Cubit<ProfileState> {
     required this.getProfileUsecases,
     required this.updateProfileUsecases,
     required this.getAdditionalUsecases,
+    required this.deleteAccountUsecases,
   }) : super(ProfileInitial());
   static ProfileCubit get(context) => BlocProvider.of(context);
   Userdata? userData = DependencyInjectionHelper()
@@ -36,6 +39,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   final GetProfileUsecases getProfileUsecases;
   final UpdateProfileUsecases updateProfileUsecases;
   final GetAdditionalUsecases getAdditionalUsecases;
+  final DeleteAccountUsecases deleteAccountUsecases;
 
   // varaiable of entity
   ProfileEntity? profileEntity;
@@ -162,6 +166,26 @@ class ProfileCubit extends Cubit<ProfileState> {
           additionalRequestState = RequestState.loaded;
           emit(GetAdditionalPageSuccess(additionalPageEntity: additional));
         }
+      },
+    );
+  }
+
+  Future<BaseEntity?> deleteAccount() async {
+    EasyLoading.show();
+    final res = await deleteAccountUsecases.call();
+    return res.fold(
+      (failure) {
+        EasyLoading.dismiss();
+        showCustomSnackBar(failure.message, backgroundColor: AppColors.darkRed);
+        return null;
+      },
+      (entity) {
+        EasyLoading.dismiss();
+        showCustomSnackBar(
+          entity.message ?? '',
+          backgroundColor: AppColors.primary400,
+        );
+        return entity;
       },
     );
   }

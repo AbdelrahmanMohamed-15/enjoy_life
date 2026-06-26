@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "993965726755",
+    "project_id": "easylive-bec35",
+    "storage_bucket": "easylive-bec35.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:993965726755:android:1bdfb0c1f7f2cdcf1ee596",
+        "android_client_info": {
+          "package_name": "com.enjoylife.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYRdG1X2tsxQJQCWTF22QvGprt6neciJA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

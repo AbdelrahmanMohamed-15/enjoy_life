@@ -1,4 +1,6 @@
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
+import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:easy_life/Core/Widget/custom_snack_bar.dart';
 import 'package:easy_life/Core/Widget/main_app_button.dart';
 import 'package:easy_life/Features/Services/Presentation/cubit/service_cubit.dart';
@@ -116,7 +118,7 @@ class _BookingTimeBottomSheetState extends State<BookingTimeBottomSheet> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // From date/time
-              const Text("التاريخ من"),
+              Text(LocaleKeys.servicesBookingDateFrom.tr()),
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -150,7 +152,7 @@ class _BookingTimeBottomSheetState extends State<BookingTimeBottomSheet> {
               ),
               const SizedBox(height: 20),
               // To date/time
-              const Text("التاريخ الى"),
+              Text(LocaleKeys.servicesBookingDateTo.tr()),
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -186,9 +188,9 @@ class _BookingTimeBottomSheetState extends State<BookingTimeBottomSheet> {
               // Continue button
               MainAppButton(
                 bgColor: AppColors.primary400,
-                child: const Text(
-                  "أستمر",
-                  style: TextStyle(fontSize: 18, color: Colors.white),
+                child: Text(
+                  LocaleKeys.servicesBookingContinue.tr(),
+                  style: const TextStyle(fontSize: 18, color: Colors.white),
                 ),
                 onTap: () {
                   if (fromDate == null ||
@@ -196,7 +198,7 @@ class _BookingTimeBottomSheetState extends State<BookingTimeBottomSheet> {
                       fromTime == null ||
                       toDate == null) {
                     showCustomSnackBar(
-                      'الرجاء اختيار التوقيت',
+                      LocaleKeys.servicesBookingTimeRequired.tr(),
                       backgroundColor: AppColors.darkRed,
                     );
                   } else {
@@ -247,7 +249,7 @@ class _BookingTimeBottomSheetState extends State<BookingTimeBottomSheet> {
           const SizedBox(width: 6),
           Expanded(
             child: Text(
-              text.isEmpty ? "اختر" : text,
+              text.isEmpty ? LocaleKeys.commonSelect.tr() : text,
               style: const TextStyle(color: Colors.black),
             ),
           ),

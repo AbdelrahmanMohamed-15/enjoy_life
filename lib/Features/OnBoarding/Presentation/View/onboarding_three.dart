@@ -1,4 +1,6 @@
 import 'package:easy_life/Core/Extentions/extentions.dart';
+import 'package:easy_life/Core/L10n/locale_keys.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../Core/Constant/assets_strings.dart';
 import '../../../../Core/Handler/auth_handler.dart';
@@ -47,21 +49,21 @@ class OnboardingThree extends StatelessWidget {
               ),
               children: [
                 TextSpan(
-                  text: 'اصنع',
+                  text: LocaleKeys.onboardingThreeHeadline1.tr(),
                   style: theme.textTheme.headlineMedium!.copyWith(
                     color: AppColors.primary500,
                   ),
                 ),
                 TextSpan(text: ' '),
-                TextSpan(text: 'ذكريات'),
+                TextSpan(text: LocaleKeys.onboardingThreeHeadline2.tr()),
                 TextSpan(text: ' '),
-                TextSpan(text: 'لا تُنسى!'),
+                TextSpan(text: LocaleKeys.onboardingThreeHeadline3.tr()),
               ],
             ),
           ),
           const SizedBox(height: 20),
           Text(
-            'احجز الآن واستمتع بأوقات مميزة مع أحبابك في وجهاتك المفضلة!',
+            LocaleKeys.onboardingThreeDescription.tr(),
             style: theme.textTheme.bodyMedium!.copyWith(
               color: AppColors.natural400,
             ),
@@ -78,7 +80,7 @@ class OnboardingThree extends StatelessWidget {
               });
             },
             child: Text(
-              'ابدا',
+              LocaleKeys.onboardingStart.tr(),
               style: theme.textTheme.bodyMedium!.copyWith(
                 color: AppColors.natural100,
               ),

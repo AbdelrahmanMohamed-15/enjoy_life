@@ -1,4 +1,6 @@
 import 'package:easy_life/Core/Constant/assets_strings.dart';
+import 'package:easy_life/Core/L10n/locale_keys.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_life/Core/Extentions/padding_ext.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
 import 'package:easy_life/Features/Services/Domain/Entity/room_entity.dart';
@@ -6,6 +8,7 @@ import 'package:easy_life/Features/Services/Presentation/cubit/service_cubit.dar
 import 'package:flutter/material.dart';
 
 import '../../../../Core/Constant/base_constant.dart';
+import '../../../../Core/Routes/app_navigation.dart';
 
 class RoomScreen extends StatelessWidget {
   final String title;
@@ -32,6 +35,12 @@ class RoomScreen extends StatelessWidget {
           elevation: 2,
           title: Text(title),
           centerTitle: true,
+          leading: GestureDetector(
+            onTap: () {
+              AppNavigation.pop();
+            },
+            child: Icon(Icons.arrow_back_ios, color: AppColors.primary400),
+          ),
           actions: const [
             // Icon(Icons.favorite_border),
             // SizedBox(width: 12),
@@ -69,7 +78,7 @@ class RoomScreen extends StatelessWidget {
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text: 'رقم الغرفة: ',
+                              text: LocaleKeys.servicesRoomNumber.tr(),
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 color: AppColors.primary400,
                                 fontFamily: BaseConstant.cairoBold,
@@ -90,7 +99,7 @@ class RoomScreen extends StatelessWidget {
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text: 'عدد الافراد: ',
+                              text: LocaleKeys.servicesCapacity.tr(),
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 color: AppColors.primary400,
                                 fontFamily: BaseConstant.cairoBold,

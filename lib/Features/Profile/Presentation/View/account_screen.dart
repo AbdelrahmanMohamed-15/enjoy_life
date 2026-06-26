@@ -1,12 +1,18 @@
 import 'package:easy_life/Core/Extentions/center_ext.dart';
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Routes/app_navigation.dart';
 import 'package:easy_life/Core/Routes/app_routes.dart';
 import 'package:easy_life/Features/Profile/Presentation/Widget/account_user_card.dart';
+import 'package:easy_life/Features/Profile/Presentation/Widget/delete_bottom_sheet.dart';
+import 'package:easy_life/Features/Profile/Presentation/Widget/language_bottom_sheet.dart';
 import 'package:easy_life/Features/Profile/Presentation/Widget/tile_widget.dart';
+import 'package:easy_life/Features/Profile/Presentation/cubit/profile_cubit.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../Core/Constant/base_constant.dart';
 import '../../../../Core/Handler/auth_handler.dart';
 import '../../../../Core/Helper/dependency_injection_helper.dart';
+import '../../../../Core/Helper/user_validation_helper.dart';
 import '../../../../Core/Themes/app_colors.dart';
 
 class AccountScreen extends StatelessWidget {
@@ -15,6 +21,7 @@ class AccountScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final profileCubit = ProfileCubit.get(context);
     var theme = Theme.of(context);
     return Scaffold(
       backgroundColor: Colors.grey[100],
@@ -22,7 +29,7 @@ class AccountScreen extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
         children: [
           Text(
-            'الملف الشخصي',
+            LocaleKeys.profileTitle.tr(),
             style: theme.textTheme.bodyMedium?.copyWith(
               fontFamily: BaseConstant.cairoBold,
               color: AppColors.black700,
@@ -32,10 +39,14 @@ class AccountScreen extends StatelessWidget {
           const SizedBox(height: 20),
           AccountUserCard(
             onEdit: () {
-              AppNavigation.pushNamed(
-                AppRoutes.editProfile,
-                arguments: {'onupdate': onupdateTap},
-              );
+              if (UserValidationHelper.checkUserValidation() == true) {
+                AppNavigation.pushNamed(
+                  AppRoutes.editProfile,
+                  arguments: {'onupdate': onupdateTap},
+                );
+              } else {
+                UserValidationHelper.showUserValidation();
+              }
             },
           ),
           const SizedBox(height: 20),
@@ -47,37 +58,51 @@ class AccountScreen extends StatelessWidget {
             ),
             child: Column(
               children: [
-                TileWidget(icon: Icons.credit_card, title: 'طرق الدفع'),
-                Divider(color: AppColors.natural400),
+                if (UserValidationHelper.checkUserValidation() == true) ...[
+                  TileWidget(icon: Icons.credit_card, title: LocaleKeys.profilePaymentMethods.tr()),
+                  Divider(color: AppColors.natural400),
+                  TileWidget(
+                    icon: Icons.wallet_giftcard_rounded,
+                    title: LocaleKeys.profileOrders.tr(),
+                    onTap: () {
+                      AppNavigation.pushNamed(AppRoutes.orderHistory);
+                    },
+                  ),
+                  Divider(color: AppColors.natural400),
+                  TileWidget(
+                    icon: Icons.notifications_active_outlined,
+                    title: LocaleKeys.profileNotifications.tr(),
+                  ),
+                  Divider(color: AppColors.natural400),
+                ],
+
                 TileWidget(
-                  icon: Icons.wallet_giftcard_rounded,
-                  title: 'الطلبات',
+                  icon: Icons.language,
+                  title: LocaleKeys.profileLanguage.tr(),
                   onTap: () {
-                    AppNavigation.pushNamed(AppRoutes.orderHistory);
-                  },
-                ),
-                Divider(color: AppColors.natural400),
-                TileWidget(
-                  icon: Icons.notifications_active_outlined,
-                  title: 'الاشعارات',
-                ),
-                Divider(color: AppColors.natural400),
-                TileWidget(icon: Icons.language, title: 'اللغة'),
-                Divider(color: AppColors.natural400),
-                TileWidget(
-                  icon: Icons.support_agent,
-                  title: 'الدعم والمساعدة',
-                  onTap: () {
-                    AppNavigation.pushNamed(
-                      AppRoutes.additionalScreen,
-                      arguments: {'type': 'terms_of_use'},
+                    showModalBottomSheet(
+                      context: context,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(20),
+                        ),
+                      ),
+                      builder: (context) => const LanguageBottomSheet(),
                     );
                   },
                 ),
                 Divider(color: AppColors.natural400),
                 TileWidget(
+                  icon: Icons.support_agent,
+                  title: LocaleKeys.profileSupport.tr(),
+                  onTap: () {
+                    AppNavigation.pushNamed(AppRoutes.supportScreen);
+                  },
+                ),
+                Divider(color: AppColors.natural400),
+                TileWidget(
                   icon: Icons.privacy_tip_outlined,
-                  title: 'سياسة الخصوصية',
+                  title: LocaleKeys.profilePrivacy.tr(),
                   onTap: () {
                     AppNavigation.pushNamed(
                       AppRoutes.additionalScreen,
@@ -88,7 +113,7 @@ class AccountScreen extends StatelessWidget {
                 Divider(color: AppColors.natural400),
                 TileWidget(
                   icon: Icons.question_mark,
-                  title: 'الاسئلة الشائعة',
+                  title: LocaleKeys.profileFaq.tr(),
                   onTap: () {
                     AppNavigation.pushNamed(
                       AppRoutes.additionalScreen,
@@ -96,27 +121,50 @@ class AccountScreen extends StatelessWidget {
                     );
                   },
                 ),
-                Divider(color: AppColors.natural400),
-                TileWidget(
-                  icon: Icons.power_settings_new,
-                  title: 'تسجيل الخروج',
-                  onTap: () async {
-                    await DependencyInjectionHelper()
-                        .sl<AuthHandlerInterface>()
-                        .clearAllData();
-                    AppNavigation.pushNamedAndRemoveUntil(AppRoutes.splash);
-                  },
-                ),
-                Divider(color: AppColors.natural400),
-                TileWidget(
-                  icon: Icons.delete_sweep,
-                  title: 'حذف الحساب',
-                  iconColor: Colors.red,
-                  textColor: Colors.red,
-                ),
+                if (UserValidationHelper.checkUserValidation() == true) ...[
+                  Divider(color: AppColors.natural400),
+                  TileWidget(
+                    icon: Icons.power_settings_new,
+                    title: LocaleKeys.profileLogout.tr(),
+                    onTap: () async {
+                      await DependencyInjectionHelper()
+                          .sl<AuthHandlerInterface>()
+                          .clearAllData();
+                      AppNavigation.pushNamedAndRemoveUntil(AppRoutes.splash);
+                    },
+                  ),
+                  Divider(color: AppColors.natural400),
+                  TileWidget(
+                    icon: Icons.delete_sweep,
+                    title: LocaleKeys.profileDeleteAccount.tr(),
+                    iconColor: Colors.red,
+                    textColor: Colors.red,
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(20),
+                          ),
+                        ),
+                        builder: (context) {
+                          return DeleteBottomSheet(profileCubit: profileCubit);
+                        },
+                      );
+                    },
+                  ),
+                ],
               ],
             ),
           ),
+          const SizedBox(height: 20),
+          Text(
+            BaseConstant.appVersion,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: AppColors.primary500,
+              fontFamily: BaseConstant.cairoBold,
+            ),
+          ).setCenter(),
         ],
       ),
     );

@@ -20,4 +20,8 @@ class ProfileDatasource {
       data: {'type': type},
     );
   }
+
+  Future<Response> deleteAccount() async {
+    return await privateDio.delete(ApiUrls.deleteAccount);
+  }
 }

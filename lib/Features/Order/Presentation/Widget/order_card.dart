@@ -1,4 +1,7 @@
+import 'package:easy_life/Core/L10n/locale_keys.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import '../../../../Core/Constant/base_constant.dart';
 import '../../../../Core/Themes/app_colors.dart';
 import '../../Domain/Entity/order_history_entity.dart';
@@ -21,6 +24,19 @@ class OrderCard extends StatelessWidget {
     }
   }
 
+  String _statusLabel(String? status) {
+    switch (status?.toLowerCase()) {
+      case 'pending':
+        return LocaleKeys.orderTabPending.tr();
+      case 'completed':
+        return LocaleKeys.orderTabCompleted.tr();
+      case 'cancelled':
+        return LocaleKeys.orderTabCancelled.tr();
+      default:
+        return status ?? '';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
@@ -34,12 +50,13 @@ class OrderCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// Order header
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "رقم الطلب: ${order.orderCode}",
+                  LocaleKeys.orderNumber.tr(
+                    namedArgs: {'code': order.orderCode ?? ''},
+                  ),
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontFamily: BaseConstant.cairoBold,
                     color: AppColors.black700,
@@ -55,7 +72,7 @@ class OrderCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    order.status ?? "",
+                    _statusLabel(order.status),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: _statusColor(order.status ?? ""),
                       fontWeight: FontWeight.w600,
@@ -65,41 +82,58 @@ class OrderCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-
-            /// Customer info
-            Text(
-              "العميل: ${order.clientName ?? ''}",
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontFamily: BaseConstant.cairoBold,
-                color: AppColors.natural400,
-              ),
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        LocaleKeys.orderCustomer.tr(
+                          namedArgs: {'name': order.clientName ?? ''},
+                        ),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontFamily: BaseConstant.cairoBold,
+                          color: AppColors.natural400,
+                        ),
+                      ),
+                      Text(
+                        LocaleKeys.orderAddress.tr(
+                          namedArgs: {'address': order.address ?? ''},
+                        ),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontFamily: BaseConstant.cairoBold,
+                          color: AppColors.natural300,
+                        ),
+                      ),
+                      Text(
+                        LocaleKeys.orderPayment.tr(
+                          namedArgs: {'type': order.paymentType ?? ''},
+                        ),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontFamily: BaseConstant.cairoBold,
+                          color: AppColors.natural300,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 10),
+                QrImageView(
+                  data: order.orderCode ?? "",
+                  version: QrVersions.auto,
+                  size: 70.0,
+                ),
+              ],
             ),
-            Text(
-              "العنوان: ${order.address ?? ''}",
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontFamily: BaseConstant.cairoBold,
-                color: AppColors.natural300,
-              ),
-            ),
-            Text(
-              "طريقة الدفع: ${order.paymentType ?? ''}",
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontFamily: BaseConstant.cairoBold,
-                color: AppColors.natural300,
-              ),
-            ),
-
             const Divider(height: 20),
-
-            /// Items list
             Text(
-              "العناصر:",
+              LocaleKeys.orderItems.tr(),
               style: theme.textTheme.titleSmall?.copyWith(
                 fontFamily: BaseConstant.cairoBold,
               ),
             ),
             const SizedBox(height: 6),
-
             ...order.items!.map(
               (item) => Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4),
@@ -114,7 +148,7 @@ class OrderCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        "${item.name} - ${item.price} ج.م",
+                        '${item.name} - ${item.price} ${LocaleKeys.commonCurrencyEgp.tr()}',
                         style: theme.textTheme.bodyMedium?.copyWith(
                           fontFamily: BaseConstant.cairoBold,
                           color: AppColors.natural300,
@@ -125,21 +159,18 @@ class OrderCard extends StatelessWidget {
                 ),
               ),
             ),
-
             const Divider(height: 20),
-
-            /// Summary
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "الإجمالي",
+                  LocaleKeys.orderTotal.tr(),
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontFamily: BaseConstant.cairoBold,
                   ),
                 ),
                 Text(
-                  "${order.totalPrice} ج.م",
+                  '${order.totalPrice} ${LocaleKeys.commonCurrencyEgp.tr()}',
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontFamily: BaseConstant.cairoBold,
                     color: AppColors.primary400,
@@ -147,12 +178,15 @@ class OrderCard extends StatelessWidget {
                 ),
               ],
             ),
-
             const SizedBox(height: 6),
             Align(
               alignment: Alignment.centerRight,
               child: Text(
-                "تاريخ:  ${(order.createdAt ?? '').split('T').first}",
+                LocaleKeys.orderDate.tr(
+                  namedArgs: {
+                    'date': (order.createdAt ?? '').split('T').first,
+                  },
+                ),
                 style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
               ),
             ),

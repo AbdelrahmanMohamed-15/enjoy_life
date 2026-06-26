@@ -1,7 +1,7 @@
 name: easy_life
 description: "A new Flutter project."
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
-version: 1.0.0+1
+version: 1.0.2+2
 
 environment:
   sdk: ^3.8.1
@@ -30,12 +30,14 @@ dependencies:
   flutter_html: ^3.0.0
   #Package for Languague and localiztion
   easy_localization: ^3.0.7+1
+  flutter_localizations:
+    sdk: flutter
+  intl: any
   #Package for Rest pi
   dio: ^5.8.0+1
   dartz: ^0.10.1
-  equatable: ^2.0.7
+  equatable: ^2.0.8
   logger: ^2.5.0
-  google_maps_flutter: ^2.12.3
   like_button: ^2.1.0
   #Package for Storage
   shared_preferences: ^2.5.3
@@ -44,6 +46,16 @@ dependencies:
   shimmer: ^3.0.0
   image_picker: ^1.2.0
   http_parser: ^4.1.2
+  google_maps_flutter: ^2.5.0
+  location: ^8.0.1
+  google_places_flutter: ^2.0.9
+  permission_handler: ^12.0.1
+  qr_flutter: ^4.1.0
+  mobile_scanner: ^7.1.3
+  # Package for Firebase
+  firebase_core: ^4.4.0
+  firebase_messaging: ^16.1.1
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   flutter_test:

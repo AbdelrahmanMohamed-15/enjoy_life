@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:easy_life/Features/Authentication/Data/DataSource/auth_datasource.dart';
 import 'package:easy_life/Features/Authentication/Data/Repository/auth_repository_impl.dart';
@@ -14,15 +16,40 @@ import 'package:easy_life/Features/Cart/Domain/Usecases/update_item_quantity_use
 import 'package:easy_life/Features/Home/Data/DataSource/home_datasource.dart';
 import 'package:easy_life/Features/Home/Domain/Usecases/get_all_home_usecases.dart';
 import 'package:easy_life/Features/Home/Domain/Usecases/get_my_favourite_usecases.dart';
+import 'package:easy_life/Features/Home/Domain/Usecases/get_vendor_hotels_usecases.dart';
+import 'package:easy_life/Features/Home/Domain/Usecases/get_vendor_resturant_usecases.dart';
+import 'package:easy_life/Features/Home/Domain/Usecases/get_vendor_trips_usecases.dart';
+import 'package:easy_life/Features/Home/Domain/Usecases/search_usecases.dart';
 import 'package:easy_life/Features/Order/Data/Datasource/order_datasource.dart';
 import 'package:easy_life/Features/Order/Domain/Usecases/get_cancel_order_usecases.dart';
 import 'package:easy_life/Features/Order/Domain/Usecases/get_complete_order_usecases.dart';
 import 'package:easy_life/Features/Order/Domain/Usecases/get_pending_order_usecases.dart';
 import 'package:easy_life/Features/Profile/Data/DataSource/profile_datasource.dart';
+import 'package:easy_life/Features/Profile/Domain/Usecases/delete_account_usecases.dart';
+import 'package:easy_life/Features/Reversion/Data/Datasource/reversion_datasource.dart';
+import 'package:easy_life/Features/Reversion/Domain/Usecases/get_all_reversion_usecases.dart';
+import 'package:easy_life/Features/Reversion/Domain/Usecases/scan_order_usecases.dart';
 import 'package:easy_life/Features/Services/Data/DataSource/service_datasource.dart';
 import 'package:easy_life/Features/Services/Domain/Usecases/get_avaliable_tables_usecases.dart';
 import 'package:easy_life/Features/Services/Domain/Usecases/get_avaliable_trips_usecases.dart';
 import 'package:easy_life/Features/Services/Domain/Usecases/get_hotel_details_usecases.dart';
+import 'package:easy_life/Features/vendorService/Domain/Usecases/create_branch_usecases.dart';
+import 'package:easy_life/Features/vendorService/Domain/Usecases/create_category_usecases.dart';
+import 'package:easy_life/Features/vendorService/Domain/Usecases/create_hotel_usecaes.dart';
+import 'package:easy_life/Features/vendorService/Domain/Usecases/create_resturant_usecaes.dart';
+import 'package:easy_life/Features/vendorService/Domain/Usecases/create_service_otion_usecases.dart';
+import 'package:easy_life/Features/vendorService/Domain/Usecases/create_service_usecases.dart';
+import 'package:easy_life/Features/vendorService/Domain/Usecases/create_trip_usecases.dart';
+import 'package:easy_life/Features/vendorService/Domain/Usecases/get_all_branch_usecases.dart';
+import 'package:easy_life/Features/vendorService/Domain/Usecases/get_all_service_usecases.dart';
+import 'package:easy_life/Features/vendorService/Domain/Usecases/get_all_trip_schedule_usecases.dart';
+import 'package:easy_life/Features/vendorService/Domain/Usecases/show_hotel_usecases.dart';
+import 'package:easy_life/Features/vendorService/Domain/Usecases/show_resturant_usecase.dart';
+import 'package:easy_life/Features/vendorService/Domain/Usecases/show_trip_usecases.dart';
+import 'package:easy_life/Features/vendorService/Presentation/cubit/vendor_service_cubit.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -51,6 +78,9 @@ import '../../Features/Profile/Domain/Usecases/get_additional_usecases.dart';
 import '../../Features/Profile/Domain/Usecases/get_profile_usecases.dart';
 import '../../Features/Profile/Domain/Usecases/update_profile_usecases.dart';
 import '../../Features/Profile/Presentation/cubit/profile_cubit.dart';
+import '../../Features/Reversion/Data/Repository/reversion_repository_impl.dart';
+import '../../Features/Reversion/Domain/Repository/reversion_repository.dart';
+import '../../Features/Reversion/Presentation/cubit/reversion_cubit.dart';
 import '../../Features/Services/Data/Repository/service_repository_impl.dart';
 import '../../Features/Services/Domain/Repository/service_repository.dart';
 import '../../Features/Services/Domain/Usecases/add_to_cart_usecases.dart';
@@ -58,8 +88,15 @@ import '../../Features/Services/Domain/Usecases/get_avaliable_rooms_usecases.dar
 import '../../Features/Services/Domain/Usecases/get_resturant_details_usecases.dart';
 import '../../Features/Services/Domain/Usecases/get_trip_details_usecases.dart';
 import '../../Features/Services/Presentation/cubit/service_cubit.dart';
+import '../../Features/vendorService/Data/DataSource/vendor_service_datasource.dart';
+import '../../Features/vendorService/Data/Repository/vendor_service_repository_impl.dart';
+import '../../Features/vendorService/Domain/Repository/vendor_service_repository.dart';
+import '../../Features/vendorService/Domain/Usecases/get_all_category_usecases.dart';
 import '../Handler/auth_handler.dart';
+import '../Helper/locale_storage.dart';
+import '../main cubit/cubit/language_cubit.dart';
 import '../Services/network_service.dart';
+import 'default_firebase_option.dart';
 
 class DependencyInjectionHelper {
   final sl = GetIt.instance; // sl = service locator
@@ -73,24 +110,35 @@ class DependencyInjectionHelper {
     await _registerRepositories();
     await _registerUseCases();
     await _registerBloc();
-    // await _initFirebase();
+    await _initFirebase();
   }
 
-  // Future<void> _initFirebase() async {
-  //   await Firebase.initializeApp();
-  //   final fcmToken = Platform.isAndroid
-  //       ? await FirebaseMessaging.instance.getToken()
-  //       : await FirebaseMessaging.instance.getAPNSToken();
-  //   await _notificationService.setupNotifications();
-  //   print("fcmToken$fcmToken");
-  // }
+  Future<void> _initFirebase() async {
+    try {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      final fcmToken = Platform.isAndroid
+          ? await FirebaseMessaging.instance.getToken()
+          : await FirebaseMessaging.instance.getAPNSToken();
+      debugPrint("firebase fcmToken data : $fcmToken");
+      await sl<AuthDatasource>().updateFCM(fcmToken: fcmToken!);
+    } catch (e) {
+      debugPrint("Firebase initialization error: $e");
+    }
+  }
 
   /// Registers all core components like services
   Future<void> _registerCoreDependencies() async {
     final sharedPreferences = await SharedPreferences.getInstance();
-    const FlutterSecureStorage flutterSecureStorage = FlutterSecureStorage();
+    const FlutterSecureStorage flutterSecureStorage = FlutterSecureStorage(
+      aOptions: AndroidOptions(encryptedSharedPreferences: true),
+    );
     sl.registerLazySingleton(() => sharedPreferences);
     sl.registerLazySingleton(() => flutterSecureStorage);
+    sl.registerLazySingleton(
+      () => LocaleStorage(sl<SharedPreferences>()),
+    );
     // sl.registerLazySingleton<AuthService>(
     //   () => AuthService(sl()),
     // );
@@ -125,6 +173,13 @@ class DependencyInjectionHelper {
     sl.registerLazySingleton<ProfileDatasource>(
       () => ProfileDatasource(privateDio: sl<NetworkService>().privateDio),
     );
+    sl.registerLazySingleton<VendorServiceDatasource>(
+      () =>
+          VendorServiceDatasource(privateDio: sl<NetworkService>().privateDio),
+    );
+    sl.registerLazySingleton<ReversionDatasource>(
+      () => ReversionDatasource(privateDio: sl<NetworkService>().privateDio),
+    );
   }
 
   /// Registers any [REPOSITORY]
@@ -146,6 +201,16 @@ class DependencyInjectionHelper {
     );
     sl.registerLazySingleton<ProfileRepository>(
       () => ProfileRepositoryImpl(profileDatasource: sl<ProfileDatasource>()),
+    );
+    sl.registerLazySingleton<VendorServiceRepository>(
+      () => VendorServiceRepositoryImpl(
+        vendorServiceDatasource: sl<VendorServiceDatasource>(),
+      ),
+    );
+    sl.registerLazySingleton<ReversionRepository>(
+      () => ReversionRepositoryImpl(
+        reversionDatasource: sl<ReversionDatasource>(),
+      ),
     );
   }
 
@@ -184,6 +249,15 @@ class DependencyInjectionHelper {
     sl.registerLazySingleton<GetHotelsUsecases>(
       () => GetHotelsUsecases(homeRepository: sl<HomeRepository>()),
     );
+    sl.registerLazySingleton<GetVendorResturantUsecases>(
+      () => GetVendorResturantUsecases(homeRepository: sl<HomeRepository>()),
+    );
+    sl.registerLazySingleton<GetVendorHotelsUsecases>(
+      () => GetVendorHotelsUsecases(homeRepository: sl<HomeRepository>()),
+    );
+    sl.registerLazySingleton<GetVendorTripsUsecases>(
+      () => GetVendorTripsUsecases(homeRepository: sl<HomeRepository>()),
+    );
     sl.registerLazySingleton<AddFavouriteUsecases>(
       () => AddFavouriteUsecases(homeRepository: sl<HomeRepository>()),
     );
@@ -195,6 +269,9 @@ class DependencyInjectionHelper {
     );
     sl.registerLazySingleton<GetAllHomeUsecases>(
       () => GetAllHomeUsecases(homeRepository: sl<HomeRepository>()),
+    );
+    sl.registerLazySingleton<SearchUsecases>(
+      () => SearchUsecases(homeRepository: sl<HomeRepository>()),
     );
     // usecase for Service
     sl.registerLazySingleton<GetResturantDetailsUsecases>(
@@ -263,10 +340,99 @@ class DependencyInjectionHelper {
     sl.registerLazySingleton<GetAdditionalUsecases>(
       () => GetAdditionalUsecases(profileRepository: sl<ProfileRepository>()),
     );
+    sl.registerLazySingleton<DeleteAccountUsecases>(
+      () => DeleteAccountUsecases(profileRepository: sl<ProfileRepository>()),
+    );
+    // usecase for Vendor Service
+    sl.registerLazySingleton<CreateCategoryUsecases>(
+      () => CreateCategoryUsecases(
+        vendorServiceRepository: sl<VendorServiceRepository>(),
+      ),
+    );
+    sl.registerLazySingleton<CreateBranchUsecases>(
+      () => CreateBranchUsecases(
+        vendorServiceRepository: sl<VendorServiceRepository>(),
+      ),
+    );
+    sl.registerLazySingleton<GetAllCategoryUsecases>(
+      () => GetAllCategoryUsecases(
+        vendorServiceRepository: sl<VendorServiceRepository>(),
+      ),
+    );
+    sl.registerLazySingleton<GetAllBranchUsecases>(
+      () => GetAllBranchUsecases(
+        vendorServiceRepository: sl<VendorServiceRepository>(),
+      ),
+    );
+    sl.registerLazySingleton<GetAllTripScheduleUsecases>(
+      () => GetAllTripScheduleUsecases(
+        vendorServiceRepository: sl<VendorServiceRepository>(),
+      ),
+    );
+    sl.registerLazySingleton<CreateResturantUsecaes>(
+      () => CreateResturantUsecaes(
+        vendorServiceRepository: sl<VendorServiceRepository>(),
+      ),
+    );
+    sl.registerLazySingleton<CreateHotelUsecaes>(
+      () => CreateHotelUsecaes(
+        vendorServiceRepository: sl<VendorServiceRepository>(),
+      ),
+    );
+    sl.registerLazySingleton<CreateTripUsecases>(
+      () => CreateTripUsecases(
+        vendorServiceRepository: sl<VendorServiceRepository>(),
+      ),
+    );
+    sl.registerLazySingleton<ShowResturantUsecase>(
+      () => ShowResturantUsecase(
+        vendorServiceRepository: sl<VendorServiceRepository>(),
+      ),
+    );
+    sl.registerLazySingleton<ShowHotelUsecases>(
+      () => ShowHotelUsecases(
+        vendorServiceRepository: sl<VendorServiceRepository>(),
+      ),
+    );
+    sl.registerLazySingleton<ShowTripUsecases>(
+      () => ShowTripUsecases(
+        vendorServiceRepository: sl<VendorServiceRepository>(),
+      ),
+    );
+    sl.registerLazySingleton<GetAllServiceUsecases>(
+      () => GetAllServiceUsecases(
+        vendorServiceRepository: sl<VendorServiceRepository>(),
+      ),
+    );
+    sl.registerLazySingleton<CreateServiceUsecases>(
+      () => CreateServiceUsecases(
+        vendorServiceRepository: sl<VendorServiceRepository>(),
+      ),
+    );
+    sl.registerLazySingleton<CreateServiceOtionUsecases>(
+      () => CreateServiceOtionUsecases(
+        vendorServiceRepository: sl<VendorServiceRepository>(),
+      ),
+    );
+    // usecase for Reversion
+    sl.registerLazySingleton<GetAllReversionUsecases>(
+      () => GetAllReversionUsecases(
+        reversionRepository: sl<ReversionRepository>(),
+      ),
+    );
+    sl.registerLazySingleton<ScanOrderUsecases>(
+      () => ScanOrderUsecases(reversionRepository: sl<ReversionRepository>()),
+    );
   }
 
   /// Registers any [Bloc]
   Future<void> _registerBloc() async {
+    sl.registerLazySingleton<LanguageCubit>(
+      () => LanguageCubit(
+        localeStorage: sl<LocaleStorage>(),
+        authHandler: sl<AuthHandlerInterface>(),
+      ),
+    );
     sl.registerFactory(
       () => AuthCubit(
         loginUsecases: sl<LoginUsecases>(),
@@ -283,6 +449,9 @@ class DependencyInjectionHelper {
         getResturantUsecases: sl<GetResturantUsecases>(),
         getTripsUsecases: sl<GetTripsUsecases>(),
         getHotelsUsecases: sl<GetHotelsUsecases>(),
+        getVendorResturantUsecases: sl<GetVendorResturantUsecases>(),
+        getVendorHotelsUsecases: sl<GetVendorHotelsUsecases>(),
+        getVendorTripsUsecases: sl<GetVendorTripsUsecases>(),
         addFavouriteUsecases: sl<AddFavouriteUsecases>(),
         removeFavouriteUsecases: sl<RemoveFavouriteUsecases>(),
         getMyFavouriteUsecases: sl<GetMyFavouriteUsecases>(),
@@ -321,6 +490,34 @@ class DependencyInjectionHelper {
         getProfileUsecases: sl<GetProfileUsecases>(),
         updateProfileUsecases: sl<UpdateProfileUsecases>(),
         getAdditionalUsecases: sl<GetAdditionalUsecases>(),
+        deleteAccountUsecases: sl<DeleteAccountUsecases>(),
+      ),
+    );
+    sl.registerFactory(
+      () => VendorServiceCubit(
+        createBranchUsecases: sl<CreateBranchUsecases>(),
+        createCategoryUsecases: sl<CreateCategoryUsecases>(),
+        getAllBranchUsecases: sl<GetAllBranchUsecases>(),
+        getAllTripScheduleUsecases: sl<GetAllTripScheduleUsecases>(),
+        createResturantUsecaes: sl<CreateResturantUsecaes>(),
+        createHotelUsecaes: sl<CreateHotelUsecaes>(),
+        createTripUsecases: sl<CreateTripUsecases>(),
+        showResturantUsecase: sl<ShowResturantUsecase>(),
+        showHotelUsecases: sl<ShowHotelUsecases>(),
+        showTripUsecases: sl<ShowTripUsecases>(),
+        getVendorResturantUsecases: sl<GetVendorResturantUsecases>(),
+        getVendorHotelsUsecases: sl<GetVendorHotelsUsecases>(),
+        getVendorTripsUsecases: sl<GetVendorTripsUsecases>(),
+        getAllCategoryUsecases: sl<GetAllCategoryUsecases>(),
+        getAllServiceUsecases: sl<GetAllServiceUsecases>(),
+        createServiceUsecases: sl<CreateServiceUsecases>(),
+        createServiceOtionUsecases: sl<CreateServiceOtionUsecases>(),
+      ),
+    );
+    sl.registerFactory(
+      () => ReversionCubit(
+        getAllReversionUsecases: sl<GetAllReversionUsecases>(),
+        scanOrderUsecases: sl<ScanOrderUsecases>(),
       ),
     );
   }
