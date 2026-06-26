@@ -1,4 +1,6 @@
 import 'package:easy_life/Core/Enums/level_message_enums.dart';
+import 'package:easy_life/Core/L10n/locale_keys.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_life/Features/Profile/Presentation/cubit/profile_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,10 +26,12 @@ class AdditionalScreen extends StatelessWidget {
               backgroundColor: AppColors.natural100,
               title: Text(
                 type == 'terms_of_use'
-                    ? 'الشروط والاحكام'
+                    ? LocaleKeys.profileTerms.tr()
                     : type == 'privace_police'
-                    ? 'سياسة الخصوصية'
-                    : 'الاسئلة الشائعة',
+                    ? LocaleKeys.profilePrivacy.tr()
+                    : type == 'faq'
+                    ? LocaleKeys.profileFaq.tr()
+                    : LocaleKeys.supportTitle.tr(),
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: AppColors.primary500,
                   fontFamily: BaseConstant.cairoBold,
@@ -44,7 +48,7 @@ class AdditionalScreen extends StatelessWidget {
             body: profileCubit.additionalEntity == null
                 ? const Center(child: CircularProgressIndicator())
                 : profileCubit.additionalRequestState == RequestState.empty
-                ? const Center(child: Text('لا يوجد بيانات'))
+                ? Center(child: Text(LocaleKeys.profileAdditionalEmpty.tr()))
                 : ListView(
                     padding: const EdgeInsets.all(15),
                     children: [

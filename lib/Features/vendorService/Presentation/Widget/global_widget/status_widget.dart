@@ -1,4 +1,6 @@
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../Core/Constant/base_constant.dart';
@@ -19,14 +21,13 @@ class StatusWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'الحالة',
+                LocaleKeys.vendorStatus.tr(),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: AppColors.black700,
                   fontFamily: BaseConstant.cairoBold,
                 ),
               ),
               SizedBox(height: 15),
-              // ---------------- STATE DROPDOWN ----------------
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 decoration: BoxDecoration(
@@ -42,11 +43,16 @@ class StatusWidget extends StatelessWidget {
                     disabledBorder: InputBorder.none,
                     enabledBorder: InputBorder.none,
                   ),
-
-                  hint: const Text("اختر الحالة"),
-                  items: const [
-                    DropdownMenuItem(value: 1, child: Text("نعم")),
-                    DropdownMenuItem(value: 0, child: Text("لا")),
+                  hint: Text(LocaleKeys.vendorSelectStatus.tr()),
+                  items: [
+                    DropdownMenuItem(
+                      value: 1,
+                      child: Text(LocaleKeys.commonYes.tr()),
+                    ),
+                    DropdownMenuItem(
+                      value: 0,
+                      child: Text(LocaleKeys.commonNo.tr()),
+                    ),
                   ],
                   onChanged: (value) {
                     vendorServiceCubit.setStatusID(statusID: value!);

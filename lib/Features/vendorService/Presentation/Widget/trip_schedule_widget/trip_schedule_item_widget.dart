@@ -1,8 +1,10 @@
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
 import 'package:easy_life/Features/vendorService/Data/Model/trip_schedule_item_model.dart';
 import 'package:easy_life/Features/vendorService/Domain/Entities/all_branch_entity.dart';
 import 'package:easy_life/Features/vendorService/Domain/Entities/all_trip_schedual_entity.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Widget/global_widget/field_header_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../Core/Constant/base_constant.dart';
@@ -206,7 +208,7 @@ class _TripScheduleItemWidgetState extends State<TripScheduleItemWidget> {
               children: [
                 Text(
                   controller.text.isEmpty
-                      ? 'اختر التاريخ والوقت'
+                      ? LocaleKeys.vendorSelectDateTime.tr()
                       : controller.text,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: controller.text.isEmpty
@@ -261,7 +263,7 @@ class _TripScheduleItemWidgetState extends State<TripScheduleItemWidget> {
                           border: Border.all(color: AppColors.natural200),
                         ),
                         child: DropdownButtonFormField<BranchData>(
-                          hint: const Text("اختر الفرع"),
+                          hint: Text(LocaleKeys.vendorSelectBranch.tr()),
                           value: _getSelectedBranch(
                             vendorServiceCubit.allBranchEntity?.data,
                             item.branchID,
@@ -308,7 +310,7 @@ class _TripScheduleItemWidgetState extends State<TripScheduleItemWidget> {
                           border: Border.all(color: AppColors.natural200),
                         ),
                         child: DropdownButtonFormField<TripScheduleData>(
-                          hint: const Text("اختر جدول الرحلة"),
+                          hint: Text(LocaleKeys.vendorSelectTripSchedule.tr()),
                           value: _getSelectedTripSchedule(
                             vendorServiceCubit.allTripSchedualEntity?.data,
                             item.tripScheduleID,
@@ -353,16 +355,16 @@ class _TripScheduleItemWidgetState extends State<TripScheduleItemWidget> {
                     Expanded(
                       child: FieldHeaderWidget(
                         controller: item.startPlace,
-                        label: 'مكان الانطلاق',
-                        hintText: 'مكان الانطلاق',
+                        label: LocaleKeys.vendorDeparturePlace.tr(),
+                        hintText: LocaleKeys.vendorDeparturePlace.tr(),
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: FieldHeaderWidget(
                         controller: item.endPlace,
-                        label: 'مكان الوصول',
-                        hintText: 'مكان الوصول',
+                        label: LocaleKeys.vendorArrivalPlace.tr(),
+                        hintText: LocaleKeys.vendorArrivalPlace.tr(),
                       ),
                     ),
                   ],
@@ -373,7 +375,7 @@ class _TripScheduleItemWidgetState extends State<TripScheduleItemWidget> {
                     Expanded(
                       child: _buildDateTimePicker(
                         context: context,
-                        label: 'تاريخ الانطلاق',
+                        label: LocaleKeys.vendorDepartureDate.tr(),
                         controller: item.startDate,
                         onDateSelected: (date, time) {
                           final formatted = _formatDateTime(date, time);
@@ -386,7 +388,7 @@ class _TripScheduleItemWidgetState extends State<TripScheduleItemWidget> {
                     Expanded(
                       child: _buildDateTimePicker(
                         context: context,
-                        label: 'تاريخ الوصول',
+                        label: LocaleKeys.vendorArrivalDate.tr(),
                         controller: item.endDate,
                         onDateSelected: (date, time) {
                           final formatted = _formatDateTime(date, time);
@@ -404,8 +406,8 @@ class _TripScheduleItemWidgetState extends State<TripScheduleItemWidget> {
                       child: FieldHeaderWidget(
                         controller: item.price,
                         keyboardType: TextInputType.number,
-                        label: 'السعر',
-                        hintText: 'السعر',
+                        label: LocaleKeys.vendorPrice.tr(),
+                        hintText: LocaleKeys.vendorPrice.tr(),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -413,8 +415,8 @@ class _TripScheduleItemWidgetState extends State<TripScheduleItemWidget> {
                       child: FieldHeaderWidget(
                         controller: item.deposit,
                         keyboardType: TextInputType.number,
-                        label: 'المقدم',
-                        hintText: 'المقدم',
+                        label: LocaleKeys.vendorDeposit.tr(),
+                        hintText: LocaleKeys.vendorDeposit.tr(),
                       ),
                     ),
                   ],
@@ -423,8 +425,8 @@ class _TripScheduleItemWidgetState extends State<TripScheduleItemWidget> {
                 FieldHeaderWidget(
                   controller: item.capacity,
                   keyboardType: TextInputType.number,
-                  label: 'الاستيعاب',
-                  hintText: 'الاستيعاب',
+                  label: LocaleKeys.vendorCapacity.tr(),
+                  hintText: LocaleKeys.vendorCapacity.tr(),
                 ),
                 const SizedBox(height: 20),
                 Row(

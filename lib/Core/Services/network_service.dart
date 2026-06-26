@@ -6,6 +6,8 @@ import '../Handler/auth_handler.dart';
 import '../Handler/error_handler.dart';
 import '../Handler/response_code.dart';
 import '../Helper/dependency_injection_helper.dart';
+import '../Helper/locale_storage.dart';
+import '../main cubit/cubit/language_cubit.dart';
 
 /// Used to handle the network clients all over the app
 class NetworkService {
@@ -45,6 +47,7 @@ class NetworkService {
       InterceptorsWrapper(
         onRequest: (options, handler) async {
           options.headers['Content-Type'] = "application/json";
+          _setLanguageHeader(options);
           debugPrint('send request ${options.uri}');
           debugPrint('headers: ${options.headers}');
           debugPrint('query parameters: ${options.queryParameters}');
@@ -85,6 +88,7 @@ class NetworkService {
                 .getCookies()!;
           }
           options.headers['country_id'] = "1";
+          _setLanguageHeader(options);
           debugPrint('send request ${options.uri}');
           debugPrint('headers: ${options.headers}');
           debugPrint('query parameters: ${options.queryParameters}');
@@ -114,5 +118,14 @@ class NetworkService {
         },
       ),
     );
+  }
+
+  void _setLanguageHeader(RequestOptions options) {
+    final languageCode = DependencyInjectionHelper()
+            .sl<LocaleStorage>()
+            .getLanguageCode() ??
+        LanguageCubit.defaultLocale.languageCode;
+    options.headers['language'] = languageCode;
+    options.headers['Accept-Language'] = languageCode;
   }
 }

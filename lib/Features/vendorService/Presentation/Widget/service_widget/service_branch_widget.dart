@@ -1,7 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:flutter/material.dart';
-
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Features/vendorService/Presentation/cubit/vendor_service_cubit.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../../Core/Constant/base_constant.dart';
 import '../../../../../Core/Themes/app_colors.dart';
@@ -38,7 +39,7 @@ class _ServiceBranchWidgetState extends State<ServiceBranchWidget> {
       children: [
         const SizedBox(height: 15),
         Text(
-          'اختر الفرع',
+          LocaleKeys.vendorSelectBranch.tr(),
           style: theme.textTheme.bodyMedium?.copyWith(
             color: AppColors.black700,
             fontFamily: BaseConstant.cairoBold,
@@ -53,7 +54,7 @@ class _ServiceBranchWidgetState extends State<ServiceBranchWidget> {
             border: Border.all(color: AppColors.natural200),
           ),
           child: DropdownButtonFormField<BranchData>(
-            hint: const Text("اختر الفرع"),
+            hint: Text(LocaleKeys.vendorSelectBranch.tr()),
             value: _getSelectedBranch(
               widget.vendorServiceCubit.allBranchEntity?.data,
               widget.vendorServiceCubit.branchID,

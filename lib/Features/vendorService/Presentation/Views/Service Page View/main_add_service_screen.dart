@@ -1,8 +1,10 @@
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Views/Service%20Page%20View/first_add_service.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Views/Service%20Page%20View/second_add_service.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Views/Service%20Page%20View/third_add_service.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Widget/global_widget/scroll_widget.dart';
 import 'package:easy_life/Features/vendorService/Presentation/cubit/vendor_service_cubit.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../Core/Constant/base_constant.dart';
@@ -20,6 +22,17 @@ class MainAddServiceScreen extends StatelessWidget {
     this.id,
   });
 
+  String _titleForType() {
+    switch (type) {
+      case 'resturant':
+        return LocaleKeys.vendorAddRestaurant.tr();
+      case 'hotel':
+        return LocaleKeys.vendorAddHotel.tr();
+      default:
+        return LocaleKeys.vendorAddTrip.tr();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
@@ -32,11 +45,7 @@ class MainAddServiceScreen extends StatelessWidget {
               centerTitle: true,
               backgroundColor: AppColors.natural100,
               title: Text(
-                type == 'resturant'
-                    ? 'اضافة مطعم'
-                    : type == 'hotel'
-                    ? 'اضافة فندق'
-                    : 'اضافة رحلة',
+                _titleForType(),
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: AppColors.primary500,
                   fontFamily: BaseConstant.cairoBold,

@@ -1,4 +1,6 @@
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
+import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:easy_life/Core/Widget/main_app_button.dart';
 import 'package:easy_life/Features/Services/Domain/Entity/service_deatils_entity.dart';
 import 'package:easy_life/Features/Services/Presentation/cubit/service_cubit.dart';
@@ -83,7 +85,7 @@ class _ServiceBranchOptionsBottomSheetState
                       const SizedBox(height: 8),
                       // Price
                       Text(
-                        '${widget.serviceBranch.discount != null && widget.serviceBranch.discount != '0' ? widget.serviceBranch.discount : widget.serviceBranch.price ?? '0'} جنيه',
+                        '${widget.serviceBranch.discount != null && widget.serviceBranch.discount != '0' ? widget.serviceBranch.discount : widget.serviceBranch.price ?? '0'} ${LocaleKeys.commonCurrencyEgp.tr()}',
                         style: theme.textTheme.titleMedium?.copyWith(
                           color: AppColors.primary400,
                         ),
@@ -91,7 +93,7 @@ class _ServiceBranchOptionsBottomSheetState
                       const SizedBox(height: 24),
                       // Options title
                       Text(
-                        'اختر الخيار (اختياري)',
+                        LocaleKeys.servicesOptionSelect.tr(),
                         style: theme.textTheme.titleMedium?.copyWith(
                           color: AppColors.black700,
                           fontWeight: FontWeight.w600,
@@ -167,7 +169,7 @@ class _ServiceBranchOptionsBottomSheetState
                                 ),
                                 // Option price
                                 Text(
-                                  '${optionPrice.toString()} جنية',
+                                  '${optionPrice.toString()} ${LocaleKeys.commonCurrencyEgp.tr()}',
                                   style: theme.textTheme.bodyMedium?.copyWith(
                                     color: AppColors.primary400,
                                   ),
@@ -187,9 +189,9 @@ class _ServiceBranchOptionsBottomSheetState
                 padding: const EdgeInsets.all(20),
                 child: MainAppButton(
                   bgColor: AppColors.primary400,
-                  child: const Text(
-                    'أضاف الخدمة',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  child: Text(
+                    LocaleKeys.servicesOptionAdd.tr(),
+                    style: const TextStyle(fontSize: 18, color: Colors.white),
                   ),
                   onTap: () async {
                     // Close bottom sheet

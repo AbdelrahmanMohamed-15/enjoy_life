@@ -1,5 +1,7 @@
 import 'package:easy_life/Core/Enums/level_message_enums.dart';
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Widget/custom_snack_bar.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_life/Features/Home/Domain/Entity/slider_entity.dart';
 import 'package:easy_life/Features/Home/Domain/Usecases/add_favourite_usecases.dart';
 import 'package:easy_life/Features/Home/Domain/Usecases/get_hotels_usecases.dart';
@@ -232,11 +234,14 @@ class HomeCubit extends Cubit<HomeState> {
       (favourite) {
         if (favourite == true) {
           showCustomSnackBar(
-            'تم الاضافة بنجاح',
+            LocaleKeys.commonAddSuccess.tr(),
             backgroundColor: AppColors.primary400,
           );
         } else {
-          showCustomSnackBar('حدث خطأ', backgroundColor: AppColors.darkRed);
+          showCustomSnackBar(
+            LocaleKeys.commonErrorOccurred.tr(),
+            backgroundColor: AppColors.darkRed,
+          );
         }
       },
     );
@@ -251,11 +256,14 @@ class HomeCubit extends Cubit<HomeState> {
       (favourite) {
         if (favourite == true) {
           showCustomSnackBar(
-            'تم الحذف بنجاح',
+            LocaleKeys.commonRemoveSuccess.tr(),
             backgroundColor: AppColors.primary400,
           );
         } else {
-          showCustomSnackBar('حدث خطأ', backgroundColor: AppColors.darkRed);
+          showCustomSnackBar(
+            LocaleKeys.commonErrorOccurred.tr(),
+            backgroundColor: AppColors.darkRed,
+          );
         }
       },
     );

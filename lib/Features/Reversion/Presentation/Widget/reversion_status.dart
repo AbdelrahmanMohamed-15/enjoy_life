@@ -1,7 +1,9 @@
 import 'package:easy_life/Core/Constant/base_constant.dart';
 import 'package:easy_life/Core/Extentions/center_ext.dart';
 import 'package:easy_life/Core/Extentions/padding_ext.dart';
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_life/Features/Reversion/Presentation/cubit/reversion_cubit.dart';
 import 'package:flutter/material.dart';
 
@@ -35,7 +37,7 @@ class ReversionStatus extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'قيد الانتظار',
+                LocaleKeys.reversionStatusPending.tr(),
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontFamily: BaseConstant.cairoBold,
                   color: status == 'pending'
@@ -63,7 +65,7 @@ class ReversionStatus extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'الموافقة',
+                LocaleKeys.reversionStatusApproved.tr(),
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontFamily: BaseConstant.cairoBold,
                   color: status == 'completed'
@@ -91,7 +93,7 @@ class ReversionStatus extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'الملغية',
+                LocaleKeys.reversionStatusCancelled.tr(),
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontFamily: BaseConstant.cairoBold,
                   color: status == 'cancelled'

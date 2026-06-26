@@ -1,4 +1,6 @@
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Features/Reversion/Domain/Entities/reversion_entity.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_life/Features/Reversion/Presentation/Widget/main_reversion_card.dart';
 import 'package:flutter/material.dart';
 
@@ -22,7 +24,7 @@ class ReversionDetailsScreen extends StatelessWidget {
           centerTitle: true,
           backgroundColor: AppColors.natural100,
           title: Text(
-            'تفاصيل الحجز',
+            LocaleKeys.reversionDetailsTitle.tr(),
             style: theme.textTheme.bodyLarge?.copyWith(
               color: AppColors.primary500,
               fontFamily: BaseConstant.cairoBold,
@@ -43,7 +45,7 @@ class ReversionDetailsScreen extends StatelessWidget {
             ReversionUserCard(reversion: reversionData),
             const SizedBox(height: 20),
             Text(
-              'الخدمات',
+              LocaleKeys.reversionServices.tr(),
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: AppColors.primary500,
                 fontFamily: BaseConstant.cairoBold,
@@ -59,24 +61,24 @@ class ReversionDetailsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 30),
             PriceRowWidget(
-              title: 'السعر',
+              title: LocaleKeys.reversionPrice.tr(),
               price: reversionData.order?.totalPrice ?? '0.0',
             ),
             PriceRowWidget(
-              title: 'مصاريف الشحن',
+              title: LocaleKeys.reversionShipping.tr(),
               price: reversionData.order?.shippingFees ?? '0.0',
             ),
             PriceRowWidget(
-              title: 'الضريبة',
+              title: LocaleKeys.reversionTax.tr(),
               price: reversionData.order?.taxesFees ?? '0.0',
             ),
             PriceRowWidget(
-              title: 'الخصم',
+              title: LocaleKeys.reversionDiscount.tr(),
               price: reversionData.order?.couponDiscount ?? '0.0',
             ),
             Divider(color: AppColors.natural400),
             PriceRowWidget(
-              title: 'الاجمالي',
+              title: LocaleKeys.reversionTotal.tr(),
               price: reversionData.order?.totalPrice ?? '0.0',
             ),
             const SizedBox(height: 20),

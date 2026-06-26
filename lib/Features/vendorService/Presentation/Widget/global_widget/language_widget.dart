@@ -1,4 +1,6 @@
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -38,7 +40,7 @@ class LanguageWidget extends StatelessWidget {
                     ),
                     child: Center(
                       child: Text(
-                        'العربية',
+                        LocaleKeys.languageArabic.tr(),
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: AppColors.black700,
                           fontFamily: BaseConstant.cairoBold,
@@ -63,7 +65,7 @@ class LanguageWidget extends StatelessWidget {
                     ),
                     child: Center(
                       child: Text(
-                        'الانجليزية',
+                        LocaleKeys.languageEnglish.tr(),
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: AppColors.black700,
                           fontFamily: BaseConstant.cairoBold,

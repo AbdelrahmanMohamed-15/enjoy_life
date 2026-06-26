@@ -1,4 +1,6 @@
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Routes/app_navigation.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_life/Features/Order/Presentation/Widget/order_card.dart';
 import 'package:easy_life/Features/Order/Presentation/Widget/order_tabs.dart';
 import 'package:easy_life/Features/Order/Presentation/cubit/order_cubit.dart';
@@ -22,7 +24,7 @@ class OrderHistoryScreen extends StatelessWidget {
           child: Scaffold(
             appBar: AppBar(
               title: Text(
-                'الطلبات السابقة',
+                LocaleKeys.orderHistoryTitle.tr(),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: AppColors.primary400,
                   fontFamily: BaseConstant.cairoBold,
@@ -57,7 +59,7 @@ class OrderHistoryScreen extends StatelessWidget {
                             const SizedBox(height: 20),
                             Center(
                               child: Text(
-                                'لا يوجد طلبات سابقه',
+                                LocaleKeys.orderHistoryEmpty.tr(),
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   fontSize: 17,
                                   color: AppColors.black700,

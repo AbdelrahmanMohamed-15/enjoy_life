@@ -1,9 +1,11 @@
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Widget/custom_snack_bar.dart';
 import 'package:easy_life/Core/Widget/main_app_button.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Widget/global_widget/language_widget.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Widget/global_widget/name_widget.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Widget/global_widget/status_widget.dart';
 import 'package:easy_life/Features/vendorService/Presentation/cubit/vendor_service_cubit.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../Core/Constant/base_constant.dart';
@@ -25,7 +27,7 @@ class AddCategoryScreen extends StatelessWidget {
               centerTitle: true,
               backgroundColor: AppColors.natural100,
               title: Text(
-                'اضافة فئة',
+                LocaleKeys.vendorAddCategory.tr(),
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: AppColors.primary500,
                   fontFamily: BaseConstant.cairoBold,
@@ -48,7 +50,7 @@ class AddCategoryScreen extends StatelessWidget {
                 const SizedBox(height: 40),
                 MainAppButton(
                   child: Text(
-                    'اضافة',
+                    LocaleKeys.commonAdd.tr(),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: AppColors.natural50,
                       fontFamily: BaseConstant.cairoBold,
@@ -59,7 +61,7 @@ class AddCategoryScreen extends StatelessWidget {
                       if (vendorServiceCubit.nameArController.text.isEmpty ||
                           vendorServiceCubit.nameEnController.text.isEmpty) {
                         showCustomSnackBar(
-                          'عليك التأكد من ادخال الاسم باللغة العربية والانجليزية',
+                          LocaleKeys.vendorValidationNameBoth.tr(),
                           backgroundColor: AppColors.darkRed,
                         );
                         return;

@@ -33,6 +33,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import '../../Features/Authentication/Presentation/Views/login_screen.dart';
 import '../../Features/OnBoarding/Presentation/View/onboarding_screen.dart';
+import '../../Features/Profile/Presentation/View/support_screen.dart';
 import '../../Features/Splash/splach_screen.dart';
 import '../Constant/base_constant.dart';
 import 'app_navigation.dart';
@@ -192,6 +193,8 @@ class RouteGenerator {
           ),
           settings: settings,
         );
+      case AppRoutes.supportScreen:
+        return _screenRoute(screen: SupportScreen(), settings: settings);
       case AppRoutes.addCategory:
         // var args = (settings.arguments as Map<String, dynamic>);
         return _screenRoute(

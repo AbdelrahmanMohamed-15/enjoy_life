@@ -1,4 +1,6 @@
 import 'package:easy_life/Core/Constant/assets_strings.dart';
+import 'package:easy_life/Core/L10n/locale_keys.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_life/Core/Helper/dependency_injection_helper.dart';
 import 'package:easy_life/Core/Routes/app_navigation.dart';
 import 'package:easy_life/Core/Routes/app_routes.dart';
@@ -59,7 +61,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 cursorColor: AppColors.primary400,
 
                 decoration: InputDecoration(
-                  hintText: 'ابحث عن مطعم، فندق أو رحلة',
+                  hintText: LocaleKeys.homeSearchHint.tr(),
                   hintStyle: const TextStyle(color: AppColors.natural400),
                   contentPadding: EdgeInsets.symmetric(vertical: 15),
                   prefixIcon: const Icon(
@@ -134,13 +136,13 @@ class _SearchScreenState extends State<SearchScreen> {
           padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            children: const [
-              Icon(Icons.search_off, color: AppColors.natural400, size: 40),
-              SizedBox(height: 12),
+            children: [
+              const Icon(Icons.search_off, color: AppColors.natural400, size: 40),
+              const SizedBox(height: 12),
               Text(
-                'لا توجد نتائج مطابقة لبحثك',
+                LocaleKeys.homeSearchNoResults.tr(),
                 textAlign: TextAlign.center,
-                style: TextStyle(color: AppColors.natural400),
+                style: const TextStyle(color: AppColors.natural400),
               ),
             ],
           ),
@@ -161,13 +163,13 @@ class _SearchScreenState extends State<SearchScreen> {
         padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: const [
-            Icon(Icons.search, color: AppColors.natural400, size: 40),
-            SizedBox(height: 12),
+          children: [
+            const Icon(Icons.search, color: AppColors.natural400, size: 40),
+            const SizedBox(height: 12),
             Text(
-              'ابحث عن أقرب مطعم، فندق أو رحلة',
+              LocaleKeys.homeSearchEmptyHint.tr(),
               textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.natural400),
+              style: const TextStyle(color: AppColors.natural400),
             ),
           ],
         ),

@@ -3,47 +3,60 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../Core/Handler/auth_handler.dart';
-import '../../Helper/dependency_injection_helper.dart';
+import '../../Handler/auth_handler.dart';
+import '../../Helper/locale_storage.dart';
 import '../../Routes/app_navigation.dart';
-import '../../Routes/app_routes.dart';
 
 part 'language_state.dart';
 
 class LanguageCubit extends Cubit<LanguageState> {
-  final BuildContext context;
-  LanguageCubit({required this.context}) : super(LanguageInitial());
+  LanguageCubit({
+    required LocaleStorage localeStorage,
+    required AuthHandlerInterface authHandler,
+  }) : _localeStorage = localeStorage,
+       _authHandler = authHandler,
+       super(const LanguageLoaded(locale: LanguageCubit.defaultLocale));
+
+  static const Locale defaultLocale = Locale('en');
+
+  final LocaleStorage _localeStorage;
+  final AuthHandlerInterface _authHandler;
 
   static LanguageCubit get(BuildContext context) =>
       BlocProvider.of<LanguageCubit>(context);
-  Locale currentLocale = Locale('ar');
-  String? languageCode = DependencyInjectionHelper()
-      .sl<AuthHandlerInterface>()
-      .getLanguageCode();
 
-  initialCubit() async {
-    debugPrint('LanguageCubit initialCubit languageCode: $languageCode');
-    if (languageCode != null) {
-      currentLocale = Locale(languageCode!);
-      emit(SetLanguageState(locale: currentLocale));
-      await context.setLocale(Locale(languageCode!));
-    } else {
-      DependencyInjectionHelper().sl<AuthHandlerInterface>().setLanguageCode(
-        'ar',
-      );
-      currentLocale = Locale('ar');
-      emit(SetLanguageState(locale: currentLocale));
-      await context.setLocale(Locale(currentLocale.languageCode));
+  Locale get currentLocale => state.locale;
+
+  Future<void> initialize() async {
+    String? savedCode = _localeStorage.getLanguageCode();
+
+    if (savedCode == null) {
+      savedCode = _authHandler.getLanguageCode();
+      if (savedCode != null) {
+        await _localeStorage.saveLanguageCode(savedCode);
+      }
     }
+
+    final locale = savedCode != null
+        ? Locale(savedCode)
+        : LanguageCubit.defaultLocale;
+
+    if (savedCode == null) {
+      await _localeStorage.saveLanguageCode(locale.languageCode);
+    }
+
+    emit(LanguageLoaded(locale: locale));
   }
 
-  void changeLanguage({required Locale newLocale}) async {
-    await context.setLocale(newLocale);
-    currentLocale = newLocale;
-    emit(SetLanguageState(locale: newLocale));
-    await DependencyInjectionHelper()
-        .sl<AuthHandlerInterface>()
-        .setLanguageCode(newLocale.languageCode);
-    AppNavigation.pushNamedAndRemoveUntil(AppRoutes.splash);
+  Future<void> changeLanguage({required Locale newLocale}) async {
+    if (currentLocale == newLocale) return;
+
+    await _localeStorage.saveLanguageCode(newLocale.languageCode);
+    emit(LanguageLoaded(locale: newLocale));
+
+    final context = AppNavigation.navigatorKey.currentContext;
+    if (context != null && context.mounted) {
+      await context.setLocale(newLocale);
+    }
   }
 }

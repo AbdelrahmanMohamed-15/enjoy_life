@@ -1,6 +1,8 @@
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Widget/global_widget/language_widget.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Widget/global_widget/name_widget.dart';
 import 'package:easy_life/Features/vendorService/Presentation/cubit/vendor_service_cubit.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../Core/Helper/input_validator.dart';
@@ -22,15 +24,15 @@ class FirstAddService extends StatelessWidget {
             NameWidget(formKey: vendorServiceCubit.formKey),
             FieldHeaderWidget(
               controller: vendorServiceCubit.addressArController,
-              label: 'العنوان',
-              hintText: 'ادخل العنوان',
+              label: LocaleKeys.vendorAddress.tr(),
+              hintText: LocaleKeys.vendorAddressHint.tr(),
               maxLines: 4,
               validator: (value) => InputValidator.validateNotEmpty(value),
             ),
             FieldHeaderWidget(
               controller: vendorServiceCubit.phoneController,
-              label: 'رقم الهاتف',
-              hintText: 'ادخل رقم الهاتف',
+              label: LocaleKeys.vendorPhone.tr(),
+              hintText: LocaleKeys.vendorPhoneHint.tr(),
               keyboardType: TextInputType.phone,
               validator: (value) => InputValidator.validateNumbers(value),
             ),

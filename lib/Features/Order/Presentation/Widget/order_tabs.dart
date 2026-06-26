@@ -1,4 +1,6 @@
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Features/Order/Presentation/cubit/order_cubit.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../Core/Constant/base_constant.dart';
@@ -28,7 +30,7 @@ class OrderTabs extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 4),
                   child: Text(
-                    'المنتظره',
+                    LocaleKeys.orderTabPending.tr(),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: currentIndex == 0
                           ? AppColors.primary400
@@ -57,7 +59,7 @@ class OrderTabs extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 4),
                   child: Text(
-                    'المكتملة',
+                    LocaleKeys.orderTabCompleted.tr(),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: currentIndex == 1
                           ? AppColors.primary400
@@ -86,7 +88,7 @@ class OrderTabs extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 4),
                   child: Text(
-                    'الملغيه',
+                    LocaleKeys.orderTabCancelled.tr(),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: currentIndex == 2
                           ? AppColors.primary400

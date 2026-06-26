@@ -1,5 +1,7 @@
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
 import 'package:easy_life/Core/Widget/main_app_button.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -44,7 +46,7 @@ class ScrollWidget extends StatelessWidget {
                     );
                   },
                   child: Text(
-                    'السابق',
+                    LocaleKeys.commonPrevious.tr(),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: AppColors.natural100,
                       fontFamily: BaseConstant.cairoBold,
@@ -62,21 +64,21 @@ class ScrollWidget extends StatelessWidget {
                       if (vendorServiceCubit.nameArController.text.isEmpty ||
                           vendorServiceCubit.nameEnController.text.isEmpty) {
                         showCustomSnackBar(
-                          'عليك التأكد من ادخال الاسم باللغة العربية والانجليزية',
+                          LocaleKeys.vendorValidationNameBoth.tr(),
                           backgroundColor: AppColors.darkRed,
                         );
                         return;
                       }
                       if (vendorServiceCubit.addressArController.text.isEmpty) {
                         showCustomSnackBar(
-                          'عليك التأكد من ادخال العنوان باللغة العربية',
+                          LocaleKeys.vendorValidationAddressAr.tr(),
                           backgroundColor: AppColors.darkRed,
                         );
                         return;
                       }
                       if (vendorServiceCubit.phoneController.text.isEmpty) {
                         showCustomSnackBar(
-                          'عليك التأكد من ادخال رقم الهاتف',
+                          LocaleKeys.vendorValidationPhone.tr(),
                           backgroundColor: AppColors.darkRed,
                         );
                         return;
@@ -84,7 +86,7 @@ class ScrollWidget extends StatelessWidget {
                       if (vendorServiceCubit.initialLatitude == null ||
                           vendorServiceCubit.initialLongitude == null) {
                         showCustomSnackBar(
-                          'عليك تحديد موقع الفرع',
+                          LocaleKeys.vendorValidationLocationRequired.tr(),
                           backgroundColor: AppColors.darkRed,
                         );
                         return;
@@ -96,14 +98,14 @@ class ScrollWidget extends StatelessWidget {
                     } else if (vendorServiceCubit.currentPage == 1) {
                       if (vendorServiceCubit.logoImage == null) {
                         showCustomSnackBar(
-                          'عليك اضافة شعار الفرع',
+                          LocaleKeys.vendorValidationLogoRequired.tr(),
                           backgroundColor: AppColors.darkRed,
                         );
                         return;
                       }
                       if (vendorServiceCubit.imageFiles.isEmpty) {
                         showCustomSnackBar(
-                          'عليك اضافة صورة الفرع',
+                          LocaleKeys.vendorValidationBranchImageRequired.tr(),
                           backgroundColor: AppColors.darkRed,
                         );
                         return;
@@ -120,7 +122,7 @@ class ScrollWidget extends StatelessWidget {
                     }
                   },
                   child: Text(
-                    'التالي',
+                    LocaleKeys.commonNext.tr(),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: AppColors.natural100,
                       fontFamily: BaseConstant.cairoBold,
@@ -137,7 +139,7 @@ class ScrollWidget extends StatelessWidget {
                         vendorServiceCubit.tableList.first,
                       )) {
                         showCustomSnackBar(
-                          'عليك اضافة الطاولات',
+                          LocaleKeys.vendorValidationTablesRequired.tr(),
                           backgroundColor: AppColors.darkRed,
                         );
                         return;
@@ -152,7 +154,7 @@ class ScrollWidget extends StatelessWidget {
                         vendorServiceCubit.roomList.first,
                       )) {
                         showCustomSnackBar(
-                          'عليك اضافة الغرف',
+                          LocaleKeys.vendorValidationRoomsRequired.tr(),
                           backgroundColor: AppColors.darkRed,
                         );
                         return;
@@ -162,7 +164,7 @@ class ScrollWidget extends StatelessWidget {
                     } else {
                       if (vendorServiceCubit.tripScheduleList.isEmpty) {
                         showCustomSnackBar(
-                          'عليك اضافة جدول الرحلات',
+                          LocaleKeys.vendorValidationTripScheduleRequired.tr(),
                           backgroundColor: AppColors.darkRed,
                         );
                         return;
@@ -171,7 +173,7 @@ class ScrollWidget extends StatelessWidget {
                           vendorServiceCubit.tripScheduleList.first,
                         )) {
                           showCustomSnackBar(
-                            'عليك اضافة جدول الرحلات',
+                            LocaleKeys.vendorValidationTripScheduleRequired.tr(),
                             backgroundColor: AppColors.darkRed,
                           );
                           return;
@@ -181,7 +183,9 @@ class ScrollWidget extends StatelessWidget {
                     }
                   },
                   child: Text(
-                    isEdit == false ? 'اضافة' : 'تعديل',
+                    isEdit == false
+                        ? LocaleKeys.commonAdd.tr()
+                        : LocaleKeys.commonEdit.tr(),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: AppColors.natural100,
                       fontFamily: BaseConstant.cairoBold,

@@ -1,7 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Features/vendorService/Domain/Entities/all_service_entity.dart';
-import 'package:flutter/material.dart';
 import 'package:easy_life/Features/vendorService/Presentation/cubit/vendor_service_cubit.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 import '../../../../../Core/Constant/base_constant.dart';
 import '../../../../../Core/Themes/app_colors.dart';
 
@@ -36,7 +38,7 @@ class _AllServiceWidgetState extends State<AllServiceWidget> {
       children: [
         const SizedBox(height: 15),
         Text(
-          'اختر الخدمة',
+          LocaleKeys.vendorSelectService.tr(),
           style: theme.textTheme.bodyMedium?.copyWith(
             color: AppColors.black700,
             fontFamily: BaseConstant.cairoBold,
@@ -51,7 +53,7 @@ class _AllServiceWidgetState extends State<AllServiceWidget> {
             border: Border.all(color: AppColors.natural200),
           ),
           child: DropdownButtonFormField<AllServiceData>(
-            hint: const Text("اختر الخدمة"),
+            hint: Text(LocaleKeys.vendorSelectService.tr()),
             value: _getSelectedservice(
               widget.vendorServiceCubit.allServiceEntity?.data,
               widget.vendorServiceCubit.selectedService,

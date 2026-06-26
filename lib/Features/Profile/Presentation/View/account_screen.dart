@@ -1,10 +1,13 @@
 import 'package:easy_life/Core/Extentions/center_ext.dart';
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Routes/app_navigation.dart';
 import 'package:easy_life/Core/Routes/app_routes.dart';
 import 'package:easy_life/Features/Profile/Presentation/Widget/account_user_card.dart';
 import 'package:easy_life/Features/Profile/Presentation/Widget/delete_bottom_sheet.dart';
+import 'package:easy_life/Features/Profile/Presentation/Widget/language_bottom_sheet.dart';
 import 'package:easy_life/Features/Profile/Presentation/Widget/tile_widget.dart';
 import 'package:easy_life/Features/Profile/Presentation/cubit/profile_cubit.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../Core/Constant/base_constant.dart';
 import '../../../../Core/Handler/auth_handler.dart';
@@ -26,7 +29,7 @@ class AccountScreen extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
         children: [
           Text(
-            'الملف الشخصي',
+            LocaleKeys.profileTitle.tr(),
             style: theme.textTheme.bodyMedium?.copyWith(
               fontFamily: BaseConstant.cairoBold,
               color: AppColors.black700,
@@ -56,11 +59,11 @@ class AccountScreen extends StatelessWidget {
             child: Column(
               children: [
                 if (UserValidationHelper.checkUserValidation() == true) ...[
-                  TileWidget(icon: Icons.credit_card, title: 'طرق الدفع'),
+                  TileWidget(icon: Icons.credit_card, title: LocaleKeys.profilePaymentMethods.tr()),
                   Divider(color: AppColors.natural400),
                   TileWidget(
                     icon: Icons.wallet_giftcard_rounded,
-                    title: 'الطلبات',
+                    title: LocaleKeys.profileOrders.tr(),
                     onTap: () {
                       AppNavigation.pushNamed(AppRoutes.orderHistory);
                     },
@@ -68,27 +71,38 @@ class AccountScreen extends StatelessWidget {
                   Divider(color: AppColors.natural400),
                   TileWidget(
                     icon: Icons.notifications_active_outlined,
-                    title: 'الاشعارات',
+                    title: LocaleKeys.profileNotifications.tr(),
                   ),
                   Divider(color: AppColors.natural400),
                 ],
 
-                TileWidget(icon: Icons.language, title: 'اللغة'),
-                Divider(color: AppColors.natural400),
                 TileWidget(
-                  icon: Icons.support_agent,
-                  title: 'الدعم والمساعدة',
+                  icon: Icons.language,
+                  title: LocaleKeys.profileLanguage.tr(),
                   onTap: () {
-                    AppNavigation.pushNamed(
-                      AppRoutes.additionalScreen,
-                      arguments: {'type': 'terms_of_use'},
+                    showModalBottomSheet(
+                      context: context,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(20),
+                        ),
+                      ),
+                      builder: (context) => const LanguageBottomSheet(),
                     );
                   },
                 ),
                 Divider(color: AppColors.natural400),
                 TileWidget(
+                  icon: Icons.support_agent,
+                  title: LocaleKeys.profileSupport.tr(),
+                  onTap: () {
+                    AppNavigation.pushNamed(AppRoutes.supportScreen);
+                  },
+                ),
+                Divider(color: AppColors.natural400),
+                TileWidget(
                   icon: Icons.privacy_tip_outlined,
-                  title: 'سياسة الخصوصية',
+                  title: LocaleKeys.profilePrivacy.tr(),
                   onTap: () {
                     AppNavigation.pushNamed(
                       AppRoutes.additionalScreen,
@@ -99,7 +113,7 @@ class AccountScreen extends StatelessWidget {
                 Divider(color: AppColors.natural400),
                 TileWidget(
                   icon: Icons.question_mark,
-                  title: 'الاسئلة الشائعة',
+                  title: LocaleKeys.profileFaq.tr(),
                   onTap: () {
                     AppNavigation.pushNamed(
                       AppRoutes.additionalScreen,
@@ -111,7 +125,7 @@ class AccountScreen extends StatelessWidget {
                   Divider(color: AppColors.natural400),
                   TileWidget(
                     icon: Icons.power_settings_new,
-                    title: 'تسجيل الخروج',
+                    title: LocaleKeys.profileLogout.tr(),
                     onTap: () async {
                       await DependencyInjectionHelper()
                           .sl<AuthHandlerInterface>()
@@ -122,7 +136,7 @@ class AccountScreen extends StatelessWidget {
                   Divider(color: AppColors.natural400),
                   TileWidget(
                     icon: Icons.delete_sweep,
-                    title: 'حذف الحساب',
+                    title: LocaleKeys.profileDeleteAccount.tr(),
                     iconColor: Colors.red,
                     textColor: Colors.red,
                     onTap: () {

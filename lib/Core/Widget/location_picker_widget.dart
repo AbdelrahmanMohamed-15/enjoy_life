@@ -1,3 +1,5 @@
+import 'package:easy_life/Core/L10n/locale_keys.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -88,7 +90,7 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
         if (!serviceEnabled) {
           if (mounted) {
             showCustomSnackBar(
-              'الرجاء تفعيل خدمة الموقع في إعدادات الجهاز',
+              LocaleKeys.locationServiceDisabled.tr(),
               backgroundColor: AppColors.darkRed,
             );
           }
@@ -104,7 +106,7 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
         if (permissionGranted != PermissionStatus.granted) {
           if (mounted) {
             showCustomSnackBar(
-              'تم رفض إذن الموقع. الرجاء السماح بالوصول إلى الموقع',
+              LocaleKeys.locationPermissionDenied.tr(),
               backgroundColor: AppColors.darkRed,
             );
           }
@@ -119,21 +121,19 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: const Text('إذن الموقع مطلوب'),
-                content: const Text(
-                  'يجب السماح بالوصول إلى الموقع من إعدادات التطبيق',
-                ),
+                title: Text(LocaleKeys.locationPermissionTitle.tr()),
+                content: Text(LocaleKeys.locationPermissionMessage.tr()),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('إلغاء'),
+                    child: Text(LocaleKeys.commonCancel.tr()),
                   ),
                   TextButton(
                     onPressed: () {
                       ph.openAppSettings();
                       Navigator.of(context).pop();
                     },
-                    child: const Text('فتح الإعدادات'),
+                    child: Text(LocaleKeys.commonOpenSettings.tr()),
                   ),
                 ],
               );
@@ -166,7 +166,7 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
       debugPrint('Error getting current location: $e');
       if (mounted) {
         showCustomSnackBar(
-          'حدث خطأ في الحصول على الموقع الحالي',
+          LocaleKeys.locationFetchError.tr(),
           backgroundColor: AppColors.darkRed,
         );
       }
@@ -303,7 +303,7 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
                     focusNode: _searchFocusNode,
                     googleAPIKey: _googleApiKey,
                     inputDecoration: InputDecoration(
-                      hintText: 'ابحث عن موقع',
+                      hintText: LocaleKeys.locationSearchHint.tr(),
                       hintStyle: TextStyle(color: AppColors.natural500),
                       filled: true,
                       fillColor: Colors.white,

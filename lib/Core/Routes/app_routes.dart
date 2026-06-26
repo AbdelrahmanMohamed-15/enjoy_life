@@ -27,6 +27,7 @@ class AppRoutes {
   // Routes For Profile
   static const String editProfile = "/editProfile";
   static const String additionalScreen = "/additionalScreen";
+  static const String supportScreen = "/supportScreen";
 
   // Routes For Vendor Services
   static const String addCategory = "/addCategory";

@@ -1,4 +1,6 @@
 import 'package:easy_life/Core/Helper/dependency_injection_helper.dart';
+import 'package:easy_life/Core/L10n/locale_keys.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
 import 'package:easy_life/Features/Home/Presentation/cubit/home_cubit.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +49,7 @@ class VendorHomeScreen extends StatelessWidget {
                                   RequestState.empty
                             ? const SizedBox()
                             : HomeListWidget(
-                                title: 'المطاعم',
+                                title: LocaleKeys.homeVendorRestaurants.tr(),
                                 homeData:
                                     homeCubit.vendorResturantEntity!.data!,
                                 homeCubit: homeCubit,
@@ -70,7 +72,7 @@ class VendorHomeScreen extends StatelessWidget {
                                   RequestState.empty
                             ? const SizedBox()
                             : HomeListWidget(
-                                title: 'الفنادق',
+                                title: LocaleKeys.homeVendorHotels.tr(),
                                 homeData: homeCubit.vendorHotelsEntity!.data!,
                                 homeCubit: homeCubit,
                                 type: 'Hotel',
@@ -92,7 +94,7 @@ class VendorHomeScreen extends StatelessWidget {
                                   RequestState.empty
                             ? const SizedBox()
                             : HomeListWidget(
-                                title: 'الرحلات',
+                                title: LocaleKeys.homeVendorTrips.tr(),
                                 homeData: homeCubit.vendorTripsEntity!.data!,
                                 homeCubit: homeCubit,
                                 type: 'Trip',

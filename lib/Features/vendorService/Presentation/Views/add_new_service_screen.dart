@@ -1,4 +1,5 @@
 import 'package:easy_life/Core/Extentions/extentions.dart';
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Widget/main_app_button.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Widget/global_widget/country_widget.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Widget/global_widget/language_widget.dart';
@@ -10,6 +11,7 @@ import 'package:easy_life/Features/vendorService/Presentation/Widget/service_wid
 import 'package:easy_life/Features/vendorService/Presentation/Widget/service_widget/service_category_widget.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Widget/service_widget/service_info_widget.dart';
 import 'package:easy_life/Features/vendorService/Presentation/cubit/vendor_service_cubit.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../Core/Constant/base_constant.dart';
@@ -38,7 +40,7 @@ class _AddNewServiceScreenState extends State<AddNewServiceScreen> {
               centerTitle: true,
               backgroundColor: AppColors.natural100,
               title: Text(
-                'اضافة الخدمة',
+                LocaleKeys.vendorAddService.tr(),
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: AppColors.primary500,
                   fontFamily: BaseConstant.cairoBold,
@@ -68,9 +70,9 @@ class _AddNewServiceScreenState extends State<AddNewServiceScreen> {
                 const SizedBox(height: 20),
                 MainAppButton(
                   child: Text(
-                    'اضافة الخدمة',
+                    LocaleKeys.vendorAddService.tr(),
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: AppColors.natural100,
+                      color: AppColors.natural50,
                       fontFamily: BaseConstant.cairoBold,
                     ),
                   ),
@@ -78,7 +80,7 @@ class _AddNewServiceScreenState extends State<AddNewServiceScreen> {
                     if (vendorServiceCubit.nameArController.text.isEmpty ||
                         vendorServiceCubit.nameEnController.text.isEmpty) {
                       showCustomSnackBar(
-                        'عليك التأكد من ادخال الاسم باللغة العربية والانجليزية',
+                        LocaleKeys.vendorValidationNameBoth.tr(),
                         backgroundColor: AppColors.darkRed,
                       );
                       return;
@@ -92,49 +94,49 @@ class _AddNewServiceScreenState extends State<AddNewServiceScreen> {
                             .text
                             .isEmpty) {
                       showCustomSnackBar(
-                        'عليك التأكد من ادخال الوصف باللغة العربية والانجليزية',
+                        LocaleKeys.vendorValidationDescriptionBoth.tr(),
                         backgroundColor: AppColors.darkRed,
                       );
                       return;
                     }
                     if (vendorServiceCubit.branchID == 0) {
                       showCustomSnackBar(
-                        'يرجى تحديد الفرع',
+                        LocaleKeys.vendorValidationBranchRequired.tr(),
                         backgroundColor: AppColors.darkRed,
                       );
                       return;
                     }
                     if (vendorServiceCubit.catID == 0) {
                       showCustomSnackBar(
-                        'يرجى تحديد القسم',
+                        LocaleKeys.vendorValidationCategoryRequired.tr(),
                         backgroundColor: AppColors.darkRed,
                       );
                       return;
                     }
                     if (vendorServiceCubit.selectedService == 0) {
                       showCustomSnackBar(
-                        'يرجى تحديد نوع الخدمة',
+                        LocaleKeys.vendorValidationServiceTypeRequired.tr(),
                         backgroundColor: AppColors.darkRed,
                       );
                       return;
                     }
                     if (vendorServiceCubit.priceController.text.isEmpty) {
                       showCustomSnackBar(
-                        'يرجى تحديد السعر',
+                        LocaleKeys.vendorValidationPriceRequired.tr(),
                         backgroundColor: AppColors.darkRed,
                       );
                       return;
                     }
                     if (vendorServiceCubit.discountController.text.isEmpty) {
                       showCustomSnackBar(
-                        'يرجى تحديد الخصم',
+                        LocaleKeys.vendorValidationDiscountRequired.tr(),
                         backgroundColor: AppColors.darkRed,
                       );
                       return;
                     }
                     if (vendorServiceCubit.logoImage == null) {
                       showCustomSnackBar(
-                        'يرجى تحديد الصورة',
+                        LocaleKeys.vendorValidationImageRequired.tr(),
                         backgroundColor: AppColors.darkRed,
                       );
                       return;

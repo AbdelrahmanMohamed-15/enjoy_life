@@ -1,4 +1,6 @@
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Features/Reversion/Presentation/cubit/reversion_cubit.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -53,7 +55,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
             appBar: AppBar(
               backgroundColor: AppColors.natural100,
               title: Text(
-                "قم بمسح كود الطلب",
+                LocaleKeys.reversionQrTitle.tr(),
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppColors.primary400,
@@ -88,7 +90,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                   right: 0,
                   child: Center(
                     child: Text(
-                      'قم بمسح الكود',
+                      LocaleKeys.reversionQrPrompt.tr(),
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,

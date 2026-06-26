@@ -1,4 +1,6 @@
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../Core/Constant/base_constant.dart';
@@ -19,14 +21,13 @@ class CountryWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'الدولة',
+                LocaleKeys.vendorCountry.tr(),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: AppColors.black700,
                   fontFamily: BaseConstant.cairoBold,
                 ),
               ),
               SizedBox(height: 15),
-              // ---------------- STATE DROPDOWN ----------------
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 decoration: BoxDecoration(
@@ -42,8 +43,13 @@ class CountryWidget extends StatelessWidget {
                     disabledBorder: InputBorder.none,
                     enabledBorder: InputBorder.none,
                   ),
-                  hint: const Text("اختر الدولة"),
-                  items: const [DropdownMenuItem(value: 1, child: Text("مصر"))],
+                  hint: Text(LocaleKeys.vendorSelectCountry.tr()),
+                  items: [
+                    DropdownMenuItem(
+                      value: 1,
+                      child: Text(LocaleKeys.vendorCountryEgypt.tr()),
+                    ),
+                  ],
                   onChanged: (value) {
                     vendorServiceCubit.setCountryID(countryID: value!);
                   },

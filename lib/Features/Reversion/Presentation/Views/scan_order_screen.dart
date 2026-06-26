@@ -1,6 +1,8 @@
 import 'package:easy_life/Core/Constant/base_constant.dart';
 import 'package:easy_life/Core/Extentions/center_ext.dart';
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Routes/routes.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_life/Core/Widget/main_app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -16,7 +18,7 @@ class ScanOrderScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'مسح الطلب',
+          LocaleKeys.reversionScanTitle.tr(),
           style: theme.textTheme.bodyMedium?.copyWith(
             fontSize: 20,
             color: AppColors.primary500,
@@ -31,7 +33,7 @@ class ScanOrderScreen extends StatelessWidget {
           QrImageView(data: '', size: 200).setCenter(),
           const SizedBox(height: 20),
           Text(
-            'قم بمسح الكود الخاص بالطلب لتأكيد الحجز الخاص بك',
+            LocaleKeys.reversionScanInstruction.tr(),
             style: theme.textTheme.bodyMedium?.copyWith(
               color: AppColors.primary500,
               fontFamily: BaseConstant.cairoBold,
@@ -40,7 +42,7 @@ class ScanOrderScreen extends StatelessWidget {
           const SizedBox(height: 30),
           MainAppButton(
             child: Text(
-              'مسح الكود',
+              LocaleKeys.reversionScanButton.tr(),
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: AppColors.natural100,
                 fontFamily: BaseConstant.cairoBold,

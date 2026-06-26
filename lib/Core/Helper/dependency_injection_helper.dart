@@ -93,6 +93,8 @@ import '../../Features/vendorService/Data/Repository/vendor_service_repository_i
 import '../../Features/vendorService/Domain/Repository/vendor_service_repository.dart';
 import '../../Features/vendorService/Domain/Usecases/get_all_category_usecases.dart';
 import '../Handler/auth_handler.dart';
+import '../Helper/locale_storage.dart';
+import '../main cubit/cubit/language_cubit.dart';
 import '../Services/network_service.dart';
 import 'default_firebase_option.dart';
 
@@ -134,6 +136,9 @@ class DependencyInjectionHelper {
     );
     sl.registerLazySingleton(() => sharedPreferences);
     sl.registerLazySingleton(() => flutterSecureStorage);
+    sl.registerLazySingleton(
+      () => LocaleStorage(sl<SharedPreferences>()),
+    );
     // sl.registerLazySingleton<AuthService>(
     //   () => AuthService(sl()),
     // );
@@ -422,6 +427,12 @@ class DependencyInjectionHelper {
 
   /// Registers any [Bloc]
   Future<void> _registerBloc() async {
+    sl.registerLazySingleton<LanguageCubit>(
+      () => LanguageCubit(
+        localeStorage: sl<LocaleStorage>(),
+        authHandler: sl<AuthHandlerInterface>(),
+      ),
+    );
     sl.registerFactory(
       () => AuthCubit(
         loginUsecases: sl<LoginUsecases>(),

@@ -1,5 +1,7 @@
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Widget/global_widget/upload_tile.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../Core/Constant/base_constant.dart';
@@ -17,16 +19,11 @@ class LogoWidget extends StatelessWidget {
         var vendorServiceCubit = VendorServiceCubit.get(context);
         return Container(
           margin: EdgeInsets.symmetric(vertical: 10),
-          // padding: EdgeInsets.symmetric(vertical: 18, horizontal: 15),
-          // decoration: BoxDecoration(
-          //   color: AppColors.natural50,
-          //   borderRadius: BorderRadius.circular(10),
-          // ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'الشعار',
+                LocaleKeys.vendorLogo.tr(),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: AppColors.black700,
                   fontFamily: BaseConstant.cairoBold,

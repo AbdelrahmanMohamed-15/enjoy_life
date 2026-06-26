@@ -1,6 +1,8 @@
 import 'package:easy_life/Core/Helper/input_validator.dart';
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
 import 'package:easy_life/Core/Widget/custom_text_form_field.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -31,8 +33,8 @@ class NameWidget extends StatelessWidget {
               children: [
                 Text(
                   vendorServiceCubit.language != 'ar'
-                      ? 'الاسم باللغة الانجليزية'
-                      : 'الاسم باللغة العربية',
+                      ? LocaleKeys.vendorNameEn.tr()
+                      : LocaleKeys.vendorNameAr.tr(),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: AppColors.black700,
                     fontFamily: BaseConstant.cairoBold,
@@ -44,8 +46,8 @@ class NameWidget extends StatelessWidget {
                       ? vendorServiceCubit.nameArController
                       : vendorServiceCubit.nameEnController,
                   hintText: vendorServiceCubit.language != 'ar'
-                      ? 'ادخل الاسم باللغة الانجليزية'
-                      : 'ادخل الاسم باللغة العربية',
+                      ? LocaleKeys.vendorNameEnHint.tr()
+                      : LocaleKeys.vendorNameArHint.tr(),
                   validator: (value) => InputValidator.validateName(value!),
                 ),
               ],

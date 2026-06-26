@@ -1,4 +1,6 @@
 import 'package:easy_life/Core/Enums/level_message_enums.dart';
+import 'package:easy_life/Core/L10n/locale_keys.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_life/Core/Helper/dependency_injection_helper.dart';
 import 'package:easy_life/Features/Home/Presentation/cubit/home_cubit.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +32,7 @@ class MyFavouriteScreen extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(
               title: Text(
-                'قائمة المفضلة',
+                LocaleKeys.homeFavoritesTitle.tr(),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontSize: 20,
                   color: AppColors.primary500,
@@ -49,7 +51,7 @@ class MyFavouriteScreen extends StatelessWidget {
                       const SizedBox(height: 20),
                       Center(
                         child: Text(
-                          'لا يوجد اي منتجات في قائمة المفضلة',
+                          LocaleKeys.homeFavoritesEmpty.tr(),
                           style: theme.textTheme.bodyMedium?.copyWith(
                             fontSize: 17,
                             color: AppColors.black700,

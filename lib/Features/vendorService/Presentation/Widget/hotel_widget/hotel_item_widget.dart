@@ -1,7 +1,9 @@
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
 import 'package:easy_life/Features/vendorService/Data/Model/hotel_item_model.dart';
 import 'package:easy_life/Features/vendorService/Domain/Entities/all_branch_entity.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Widget/global_widget/field_header_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../cubit/vendor_service_cubit.dart';
@@ -112,7 +114,7 @@ class _HotelItemWidgetState extends State<HotelItemWidget> {
                     border: Border.all(color: AppColors.natural200),
                   ),
                   child: DropdownButtonFormField<BranchData>(
-                    hint: const Text("اختر الفرع"),
+                    hint: Text(LocaleKeys.vendorSelectBranch.tr()),
                     value: _getSelectedBranch(
                       vendorServiceCubit.allBranchEntity?.data,
                       item.branchID,
@@ -154,9 +156,9 @@ class _HotelItemWidgetState extends State<HotelItemWidget> {
                     Expanded(
                       child: FieldHeaderWidget(
                         controller: item.roomNumber!,
-                        label: 'رقم الغرفة',
+                        label: LocaleKeys.vendorRoomNumber.tr(),
                         keyboardType: TextInputType.number,
-                        hintText: 'رقم الغرفة',
+                        hintText: LocaleKeys.vendorRoomNumber.tr(),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -164,8 +166,8 @@ class _HotelItemWidgetState extends State<HotelItemWidget> {
                       child: FieldHeaderWidget(
                         controller: item.floorNumber!,
                         keyboardType: TextInputType.number,
-                        label: 'رقم الدور',
-                        hintText: 'رقم الدور',
+                        label: LocaleKeys.vendorFloorNumber.tr(),
+                        hintText: LocaleKeys.vendorFloorNumber.tr(),
                       ),
                     ),
                   ],
@@ -179,8 +181,8 @@ class _HotelItemWidgetState extends State<HotelItemWidget> {
                       child: FieldHeaderWidget(
                         controller: item.price!,
                         keyboardType: TextInputType.number,
-                        label: 'السعر',
-                        hintText: 'السعر',
+                        label: LocaleKeys.vendorPrice.tr(),
+                        hintText: LocaleKeys.vendorPrice.tr(),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -188,8 +190,8 @@ class _HotelItemWidgetState extends State<HotelItemWidget> {
                       child: FieldHeaderWidget(
                         controller: item.deposit!,
                         keyboardType: TextInputType.number,
-                        label: 'المقدم',
-                        hintText: 'المقدم',
+                        label: LocaleKeys.vendorDeposit.tr(),
+                        hintText: LocaleKeys.vendorDeposit.tr(),
                       ),
                     ),
                   ],
@@ -199,8 +201,8 @@ class _HotelItemWidgetState extends State<HotelItemWidget> {
                 FieldHeaderWidget(
                   controller: item.capacity!,
                   keyboardType: TextInputType.number,
-                  label: 'الاستيعاب',
-                  hintText: 'الاستيعاب',
+                  label: LocaleKeys.vendorCapacity.tr(),
+                  hintText: LocaleKeys.vendorCapacity.tr(),
                 ),
                 const SizedBox(height: 20),
                 Row(

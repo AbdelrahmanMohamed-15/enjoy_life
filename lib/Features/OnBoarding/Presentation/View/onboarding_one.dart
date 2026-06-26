@@ -1,4 +1,6 @@
 import 'package:easy_life/Core/Extentions/extentions.dart';
+import 'package:easy_life/Core/L10n/locale_keys.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../Core/Constant/assets_strings.dart';
 import '../../../../Core/Themes/app_colors.dart';
@@ -29,7 +31,7 @@ class OnboardingOne extends StatelessWidget {
                   controller.jumpToPage(2);
                 },
                 child: Text(
-                  'تخطي',
+                  LocaleKeys.onboardingSkip.tr(),
                   style: theme.textTheme.bodyMedium!.copyWith(
                     color: AppColors.black700,
                   ),
@@ -47,22 +49,22 @@ class OnboardingOne extends StatelessWidget {
                 color: AppColors.black700,
               ),
               children: [
-                TextSpan(text: 'استمتع'),
+                TextSpan(text: LocaleKeys.onboardingOneHeadline1.tr()),
                 TextSpan(text: ' '),
                 TextSpan(
-                  text: 'بتجربة',
+                  text: LocaleKeys.onboardingOneHeadline2.tr(),
                   style: theme.textTheme.headlineMedium!.copyWith(
                     color: AppColors.primary500,
                   ),
                 ),
                 TextSpan(text: ' '),
-                TextSpan(text: 'فريدة!'),
+                TextSpan(text: LocaleKeys.onboardingOneHeadline3.tr()),
               ],
             ),
           ),
           const SizedBox(height: 20),
           Text(
-            'احجز وجهتك المفضلة بسهولة، واستمتع بلحظات فاخرة تناسب ذوقك!',
+            LocaleKeys.onboardingOneDescription.tr(),
             style: theme.textTheme.bodyMedium!.copyWith(
               color: AppColors.natural400,
             ),
@@ -76,7 +78,7 @@ class OnboardingOne extends StatelessWidget {
               controller.jumpToPage(1);
             },
             child: Text(
-              'التالي',
+              LocaleKeys.onboardingNext.tr(),
               style: theme.textTheme.bodyMedium!.copyWith(
                 color: AppColors.natural100,
               ),

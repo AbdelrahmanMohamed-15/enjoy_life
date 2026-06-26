@@ -1,7 +1,7 @@
 name: easy_life
 description: "A new Flutter project."
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
-version: 1.0.5+5
+version: 1.0.2+2
 
 environment:
   sdk: ^3.8.1
@@ -30,6 +30,9 @@ dependencies:
   flutter_html: ^3.0.0
   #Package for Languague and localiztion
   easy_localization: ^3.0.7+1
+  flutter_localizations:
+    sdk: flutter
+  intl: any
   #Package for Rest pi
   dio: ^5.8.0+1
   dartz: ^0.10.1
@@ -52,6 +55,7 @@ dependencies:
   # Package for Firebase
   firebase_core: ^4.4.0
   firebase_messaging: ^16.1.1
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   flutter_test:

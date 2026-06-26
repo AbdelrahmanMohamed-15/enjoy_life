@@ -184,26 +184,28 @@ class Item extends Equatable {
   });
 
   factory Item.fromJson(Map<String, dynamic> json) => Item(
-    id: json["id"] ?? 0,
-    price: json["price"] ?? 0,
-    discount: json["discount"] ?? 0,
-    delivery: json["delivery"] ?? 0,
-    totalPrice: json["total_price"] ?? "",
-    hourPrice: json["hour_price"] ?? "",
-    nightPrice: json["night_price"] ?? "",
-    startTime: json["start_time"] ?? "",
-    endTime: json["end_time"] ?? "",
-    type: json["type"] ?? "",
-    isServiceOptions: json["is_service_options"] ?? false,
-    name: json["name"] ?? "",
-    service: json["service"] ?? "",
-    branch: json["branch"] ?? "",
-    restaurantTable: json["restaurantTable"] ?? "",
-    restaurant: json["restaurant"] ?? "",
-    hotemRoom: json["hotemRoom"] ?? "",
-    hotel: json["hotel"] ?? "",
-    tripSchedule: json["tripSchedule"] ?? "",
-    trip: json["trip"] ?? "",
+    id: _asInt(json["id"]),
+    price: _asInt(json["price"]),
+    discount: _asInt(json["discount"]),
+    delivery: _asInt(json["delivery"]),
+    totalPrice: _asString(json["total_price"]),
+    hourPrice: _asString(json["hour_price"]),
+    nightPrice: _asString(json["night_price"]),
+    startTime: _asString(json["start_time"]),
+    endTime: _asString(json["end_time"]),
+    type: _asString(json["type"]),
+    isServiceOptions: json["is_service_options"] == true,
+    name: _asString(json["name"]),
+    service: _asString(json["service"]),
+    branch: _asString(json["branch"]),
+    restaurantTable: _asString(
+      json["restaurantTable"] ?? json["restaurant_table"],
+    ),
+    restaurant: _asString(json["restaurant"]),
+    hotemRoom: _asString(json["hotemRoom"] ?? json["hotel_room"]),
+    hotel: _asString(json["hotel"]),
+    tripSchedule: _asString(json["tripSchedule"] ?? json["trip_schedule"]),
+    trip: _asString(json["trip"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -253,4 +255,22 @@ class Item extends Equatable {
     tripSchedule,
     trip,
   ];
+}
+
+String _asString(dynamic value) {
+  if (value == null) return '';
+  if (value is String) return value;
+  if (value is Map) {
+    final name = value['name'] ?? value['title'] ?? value['label'];
+    return name?.toString() ?? '';
+  }
+  return value.toString();
+}
+
+int _asInt(dynamic value) {
+  if (value == null) return 0;
+  if (value is int) return value;
+  if (value is double) return value.toInt();
+  if (value is String) return int.tryParse(value) ?? 0;
+  return 0;
 }

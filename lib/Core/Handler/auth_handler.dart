@@ -139,12 +139,11 @@ class AuthHandler implements AuthHandlerInterface {
       await secureStorage.delete(key: 'userData');
       await secureStorage.delete(key: 'token');
       await secureStorage.delete(key: 'cookies');
-      await secureStorage.delete(key: 'languageCode');
+      // Language preference is stored in SharedPreferences and kept on logout.
       // await secureStorage.delete(key: 'boarding');
       _token = null;
       _userData = null;
       // _boardnig = null;
-      _languageCode = null;
       _cookies = null;
     } catch (e) {
       debugPrint('Error clearing data: $e');

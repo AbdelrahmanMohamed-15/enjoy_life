@@ -138,11 +138,16 @@ class CartCubit extends Cubit<CartState> {
     );
   }
 
-  storeSession() async {
-    String? session = DependencyInjectionHelper()
+  Future<void> storeSession() async {
+    final session = DependencyInjectionHelper()
         .sl<AuthHandlerInterface>()
         .getCookies();
-    final res = await storeSessionUsecases.storeSession(session: session!);
+
+    if (session == null || session.trim().isEmpty) {
+      return;
+    }
+
+    final res = await storeSessionUsecases.storeSession(session: session);
     res.fold(
       (failure) {
         EasyLoading.dismiss();

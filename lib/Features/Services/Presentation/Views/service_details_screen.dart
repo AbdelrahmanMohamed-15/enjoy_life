@@ -1,4 +1,6 @@
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Routes/routes.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
 import 'package:easy_life/Core/Widget/main_app_button.dart';
 import 'package:easy_life/Core/Widget/map_location_widget.dart';
@@ -58,8 +60,8 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
         }
 
         if (serviceCubit.serviceRequestState == RequestState.empty) {
-          return const Scaffold(
-            body: Center(child: Text("حدث خطأ أثناء تحميل التفاصيل")),
+          return Scaffold(
+            body: Center(child: Text(LocaleKeys.servicesLoadError.tr())),
           );
         }
 
@@ -121,7 +123,7 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                             child: DropdownButton<Branch>(
                               isExpanded: true,
                               underline: const SizedBox(),
-                              hint: const Text("اختر الفرع"),
+                              hint: Text(LocaleKeys.servicesSelectBranch.tr()),
                               value: selectedBranch,
                               items: uniqueBranches.toSet().map((branch) {
                                 return DropdownMenuItem<Branch>(
@@ -392,7 +394,7 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                             child: MainAppButton(
                               bgColor: AppColors.primary400,
                               child: Text(
-                                "الخدمات",
+                                LocaleKeys.servicesServices.tr(),
                                 style: theme.textTheme.bodyMedium!.copyWith(
                                   color: AppColors.natural100,
                                   fontFamily: BaseConstant.cairoBold,
@@ -418,7 +420,7 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                           child: MainAppButton(
                             bgColor: AppColors.primary400,
                             child: Text(
-                              "احجز الان",
+                              LocaleKeys.servicesBookNow.tr(),
                               style: theme.textTheme.bodyMedium!.copyWith(
                                 color: AppColors.natural100,
                                 fontFamily: BaseConstant.cairoBold,

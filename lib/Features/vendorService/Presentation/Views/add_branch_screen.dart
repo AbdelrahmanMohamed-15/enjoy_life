@@ -1,3 +1,4 @@
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Widget/location_picker_widget.dart';
 import 'package:easy_life/Core/Widget/main_app_button.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Widget/global_widget/country_widget.dart';
@@ -7,6 +8,7 @@ import 'package:easy_life/Features/vendorService/Presentation/Widget/global_widg
 import 'package:easy_life/Features/vendorService/Presentation/Widget/global_widget/name_widget.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Widget/global_widget/status_widget.dart';
 import 'package:easy_life/Features/vendorService/Presentation/cubit/vendor_service_cubit.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../Core/Constant/base_constant.dart';
@@ -31,7 +33,7 @@ class AddBranchScreen extends StatelessWidget {
               centerTitle: true,
               backgroundColor: AppColors.natural100,
               title: Text(
-                'اضافة فرع',
+                LocaleKeys.vendorAddBranch.tr(),
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: AppColors.primary500,
                   fontFamily: BaseConstant.cairoBold,
@@ -52,15 +54,15 @@ class AddBranchScreen extends StatelessWidget {
                 NameWidget(formKey: vendorServiceCubit.formKey),
                 FieldHeaderWidget(
                   controller: vendorServiceCubit.addressArController,
-                  label: 'العنوان',
-                  hintText: 'ادخل العنوان',
+                  label: LocaleKeys.vendorAddress.tr(),
+                  hintText: LocaleKeys.vendorAddressHint.tr(),
                   maxLines: 4,
                   validator: (value) => InputValidator.validateNotEmpty(value),
                 ),
                 FieldHeaderWidget(
                   controller: vendorServiceCubit.phoneController,
-                  label: 'رقم الهاتف',
-                  hintText: 'ادخل رقم الهاتف',
+                  label: LocaleKeys.vendorPhone.tr(),
+                  hintText: LocaleKeys.vendorPhoneHint.tr(),
                   keyboardType: TextInputType.phone,
                   validator: (value) => InputValidator.validateNumbers(value),
                 ),
@@ -81,7 +83,7 @@ class AddBranchScreen extends StatelessWidget {
                 const SizedBox(height: 20),
                 MainAppButton(
                   child: Text(
-                    'اضافة',
+                    LocaleKeys.commonAdd.tr(),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: AppColors.natural50,
                       fontFamily: BaseConstant.cairoBold,
@@ -91,35 +93,35 @@ class AddBranchScreen extends StatelessWidget {
                     if (vendorServiceCubit.nameArController.text.isEmpty ||
                         vendorServiceCubit.nameEnController.text.isEmpty) {
                       showCustomSnackBar(
-                        'عليك التأكد من ادخال الاسم باللغة العربية والانجليزية',
+                        LocaleKeys.vendorValidationNameBoth.tr(),
                         backgroundColor: AppColors.darkRed,
                       );
                       return;
                     }
                     if (vendorServiceCubit.addressArController.text.isEmpty) {
                       showCustomSnackBar(
-                        'عليك التأكد من ادخال العنوان باللغة العربية',
+                        LocaleKeys.vendorValidationAddressAr.tr(),
                         backgroundColor: AppColors.darkRed,
                       );
                       return;
                     }
                     if (vendorServiceCubit.phoneController.text.isEmpty) {
                       showCustomSnackBar(
-                        'عليك التأكد من ادخال رقم الهاتف',
+                        LocaleKeys.vendorValidationPhone.tr(),
                         backgroundColor: AppColors.darkRed,
                       );
                       return;
                     }
                     if (vendorServiceCubit.logoImage == null) {
                       showCustomSnackBar(
-                        'عليك اضافة شعار الفرع',
+                        LocaleKeys.vendorValidationLogoRequired.tr(),
                         backgroundColor: AppColors.darkRed,
                       );
                       return;
                     }
                     if (vendorServiceCubit.imageFiles.isEmpty) {
                       showCustomSnackBar(
-                        'عليك اضافة صورة الفرع',
+                        LocaleKeys.vendorValidationBranchImageRequired.tr(),
                         backgroundColor: AppColors.darkRed,
                       );
                       return;
@@ -127,7 +129,7 @@ class AddBranchScreen extends StatelessWidget {
                     if (vendorServiceCubit.initialLatitude == null ||
                         vendorServiceCubit.initialLongitude == null) {
                       showCustomSnackBar(
-                        'عليك تحديد موقع الفرع',
+                        LocaleKeys.vendorValidationLocationRequired.tr(),
                         backgroundColor: AppColors.darkRed,
                       );
                       return;

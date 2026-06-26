@@ -1,4 +1,6 @@
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -23,7 +25,7 @@ class ServiceImageWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'الصور',
+                LocaleKeys.vendorImages.tr(),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: AppColors.black700,
                   fontFamily: BaseConstant.cairoBold,
@@ -59,7 +61,6 @@ class ServiceImageWidget extends StatelessWidget {
                       : vendorServiceCubit.imageFiles.length,
                   itemBuilder: (context, index) {
                     if (index < vendorServiceCubit.imageFiles.length) {
-                      // Show uploaded image with delete button
                       return Stack(
                         children: [
                           Container(
@@ -101,7 +102,6 @@ class ServiceImageWidget extends StatelessWidget {
                         ],
                       );
                     } else {
-                      // Show add more button
                       return GestureDetector(
                         onTap: () {
                           pickuVendorpBottomSheet(
@@ -129,7 +129,7 @@ class ServiceImageWidget extends StatelessWidget {
                               ),
                               const SizedBox(height: 5),
                               Text(
-                                'إضافة',
+                                LocaleKeys.commonAdd.tr(),
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   color: AppColors.primary500,
                                   fontWeight: FontWeight.bold,

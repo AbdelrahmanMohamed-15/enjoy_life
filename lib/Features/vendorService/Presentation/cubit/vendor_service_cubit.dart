@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:easy_life/Core/Enums/level_message_enums.dart';
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Routes/routes.dart';
 import 'package:easy_life/Features/vendorService/Data/Model/hotel_item_model.dart';
 import 'package:easy_life/Features/vendorService/Data/Model/resturnat_item_model.dart';
@@ -26,6 +27,7 @@ import 'package:easy_life/Features/vendorService/Domain/Usecases/show_hotel_usec
 import 'package:easy_life/Features/vendorService/Domain/Usecases/show_resturant_usecase.dart';
 import 'package:easy_life/Features/vendorService/Domain/Usecases/show_trip_usecases.dart';
 import 'package:equatable/equatable.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -782,7 +784,7 @@ class VendorServiceCubit extends Cubit<VendorServiceState> {
       final lastItem = tableList.last;
       if (!_isResturantTableItemValid(lastItem)) {
         showCustomSnackBar(
-          'يرجى ملء جميع البيانات في العنصر الحالي قبل إضافة عنصر جديد',
+          LocaleKeys.vendorValidationFillCurrentItem.tr(),
           backgroundColor: AppColors.darkRed,
         );
         return;
@@ -818,7 +820,7 @@ class VendorServiceCubit extends Cubit<VendorServiceState> {
       final lastItem = roomList.last;
       if (!_isHotelTableItemValid(lastItem)) {
         showCustomSnackBar(
-          'يرجى ملء جميع البيانات في العنصر الحالي قبل إضافة عنصر جديد',
+          LocaleKeys.vendorValidationFillCurrentItem.tr(),
           backgroundColor: AppColors.darkRed,
         );
         return;
@@ -856,7 +858,7 @@ class VendorServiceCubit extends Cubit<VendorServiceState> {
       final lastItem = tripScheduleList.last;
       if (!_isTripScheduleItemValid(lastItem)) {
         showCustomSnackBar(
-          'يرجى ملء جميع البيانات في العنصر الحالي قبل إضافة عنصر جديد',
+          LocaleKeys.vendorValidationFillCurrentItem.tr(),
           backgroundColor: AppColors.darkRed,
         );
         return;
@@ -898,7 +900,9 @@ class VendorServiceCubit extends Cubit<VendorServiceState> {
   pickFile({required ImageSource source}) async {
     if (imageFiles.length >= maxImages) {
       showCustomSnackBar(
-        'يمكنك رفع ما يصل إلى $maxImages صور فقط',
+        LocaleKeys.vendorImageMaxLimit.tr(
+          namedArgs: {'max': '$maxImages'},
+        ),
         backgroundColor: AppColors.darkRed,
       );
       return;
@@ -930,12 +934,19 @@ class VendorServiceCubit extends Cubit<VendorServiceState> {
 
         if (pickedFiles.length > remainingSlots) {
           showCustomSnackBar(
-            'تم إضافة $remainingSlots صورة فقط. الحد الأقصى هو $maxImages صور',
+            LocaleKeys.vendorImagePartialAdd.tr(
+              namedArgs: {
+                'count': '$remainingSlots',
+                'max': '$maxImages',
+              },
+            ),
             backgroundColor: AppColors.darkRed,
           );
         } else if (filesToAdd > 0) {
           showCustomSnackBar(
-            'تم إضافة $filesToAdd صورة بنجاح',
+            LocaleKeys.vendorImageAddSuccessCount.tr(
+              namedArgs: {'count': '$filesToAdd'},
+            ),
             backgroundColor: Colors.green,
           );
         }
@@ -954,7 +965,7 @@ class VendorServiceCubit extends Cubit<VendorServiceState> {
           'Added 1 image from camera. Total images: ${imageFiles.length}',
         );
         showCustomSnackBar(
-          'تم إضافة الصورة بنجاح',
+          LocaleKeys.vendorImageAddSuccess.tr(),
           backgroundColor: Colors.green,
         );
         emit(SetImages(images: List.from(imageFiles)));

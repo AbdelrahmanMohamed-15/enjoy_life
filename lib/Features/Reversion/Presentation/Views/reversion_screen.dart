@@ -1,5 +1,7 @@
 import 'package:easy_life/Core/Enums/level_message_enums.dart';
 import 'package:easy_life/Core/Helper/dependency_injection_helper.dart';
+import 'package:easy_life/Core/L10n/locale_keys.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_life/Features/Reversion/Presentation/Widget/reversion_card.dart';
 import 'package:easy_life/Features/Reversion/Presentation/Widget/reversion_service.dart';
 import 'package:easy_life/Features/Reversion/Presentation/cubit/reversion_cubit.dart';
@@ -25,7 +27,7 @@ class ReversionScreen extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(
               title: Text(
-                'الحجوزات',
+                LocaleKeys.reversionTitle.tr(),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontSize: 20,
                   color: AppColors.primary500,
@@ -62,7 +64,7 @@ class ReversionScreen extends StatelessWidget {
                             const SizedBox(height: 20),
                             Center(
                               child: Text(
-                                'لا يوجد حجوزات',
+                                LocaleKeys.reversionEmpty.tr(),
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   fontSize: 17,
                                   color: AppColors.black700,

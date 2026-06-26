@@ -1,3 +1,5 @@
+import 'package:easy_life/Core/L10n/locale_keys.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -14,7 +16,7 @@ class NotificationScreen extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('الاشعارات'),
+          title: Text(LocaleKeys.homeNotificationsTitle.tr()),
           centerTitle: true,
           leading: GestureDetector(
             onTap: () {
@@ -31,7 +33,7 @@ class NotificationScreen extends StatelessWidget {
             const SizedBox(height: 20),
             Center(
               child: Text(
-                'لا توجد اشعارات حالياً',
+                LocaleKeys.homeNotificationsEmpty.tr(),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontSize: 17,
                   color: AppColors.black700,

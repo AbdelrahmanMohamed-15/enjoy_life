@@ -1,10 +1,12 @@
 import 'package:easy_life/Core/Constant/assets_strings.dart';
 import 'package:easy_life/Core/Extentions/center_ext.dart';
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Routes/app_navigation.dart';
 import 'package:easy_life/Core/Routes/app_routes.dart';
 import 'package:easy_life/Core/Widget/custom_text_form_field.dart';
 import 'package:easy_life/Core/Widget/main_app_button.dart';
 import 'package:easy_life/Features/Authentication/Presentation/cubit/auth_cubit.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -47,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     SizedBox(height: 20),
                     Text(
-                      'تسجيل الدخول',
+                      LocaleKeys.authLoginTitle.tr(),
                       style: theme.textTheme.headlineSmall!.copyWith(
                         color: AppColors.black700,
                       ),
@@ -55,11 +57,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(height: 50),
                     CustomTextFormField(
                       controller: authCubit.phoneController,
-                      hintText: 'رقم الجوال',
+                      hintText: LocaleKeys.authLoginPhoneHint.tr(),
                       textInputType: TextInputType.phone,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'يرجى إدخال رقم الجوال';
+                          return LocaleKeys.authLoginPhoneRequired.tr();
                         }
                         return null;
                       },
@@ -75,15 +77,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(height: 20),
                     CustomTextFormField(
                       controller: authCubit.passwordController,
-                      hintText: 'كلمة المرور',
+                      hintText: LocaleKeys.authLoginPasswordHint.tr(),
                       textInputType: TextInputType.visiblePassword,
                       obscureText: isObscure,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'يرجى إدخال كلمة المرور';
+                          return LocaleKeys.authLoginPasswordRequired.tr();
                         }
                         if (value.length < 6) {
-                          return 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+                          return LocaleKeys.authLoginPasswordMinLength.tr();
                         }
                         return null;
                       },
@@ -109,7 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             AppNavigation.pushNamed(AppRoutes.forgetPassword);
                           },
                           child: Text(
-                            'نسيت كلمة المرور؟',
+                            LocaleKeys.authLoginForgotPassword.tr(),
                             style: theme.textTheme.bodyMedium!.copyWith(
                               color: AppColors.primary300,
                             ),
@@ -129,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         }
                       },
                       child: Text(
-                        'تسجيل الدخول',
+                        LocaleKeys.authLoginButton.tr(),
                         style: theme.textTheme.bodyMedium!.copyWith(
                           color: AppColors.natural100,
                           fontFamily: BaseConstant.cairoBold,
@@ -145,14 +147,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'ليس لديك حساب؟',
+                            LocaleKeys.authLoginNoAccount.tr(),
                             style: theme.textTheme.bodyMedium!.copyWith(
                               color: AppColors.black700,
                             ),
                           ),
                           const SizedBox(width: 5),
                           Text(
-                            'انشاء حساب',
+                            LocaleKeys.authLoginCreateAccount.tr(),
                             style: theme.textTheme.bodyMedium!.copyWith(
                               color: AppColors.primary500,
                             ),

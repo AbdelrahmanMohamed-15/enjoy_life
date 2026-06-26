@@ -1,8 +1,9 @@
-import 'package:easy_localization/easy_localization.dart';
+import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -22,22 +23,28 @@ void main() async {
   try {
     await DependencyInjectionHelper().sl<AuthHandlerInterface>().init();
   } catch (e) {
-    // Handle initialization errors gracefully
     debugPrint('Error initializing AuthHandler in main: $e');
   }
+
+  final di = DependencyInjectionHelper();
+  final languageCubit = di.sl<LanguageCubit>();
+  await languageCubit.initialize();
+
+  final startLocale = languageCubit.currentLocale;
 
   runApp(
     EasyLocalization(
       supportedLocales: const <Locale>[
-        Locale('en'), // English
-        Locale('ar'), // Arabic
+        Locale('en'),
+        Locale('ar'),
       ],
       path: 'assets/translations',
-      fallbackLocale: const Locale('ar'),
+      fallbackLocale: LanguageCubit.defaultLocale,
+      startLocale: startLocale,
       child: Phoenix(
         child: Portal(
-          child: BlocProvider<LanguageCubit>(
-            create: (context) => LanguageCubit(context: context),
+          child: BlocProvider<LanguageCubit>.value(
+            value: languageCubit,
             child: const MyApp(),
           ),
         ),
@@ -45,10 +52,6 @@ void main() async {
     ),
   );
   configLoading();
-  // NotificationNavigator(
-  //   onRoutingMessage: (RemoteMessage message) {},
-  //   onNoInitialMessage: () {},
-  // );
 }
 
 void configLoading() {
@@ -56,11 +59,9 @@ void configLoading() {
     ..displayDuration = const Duration(milliseconds: 2000)
     ..indicatorType = EasyLoadingIndicatorType.fadingCircle
     ..loadingStyle = EasyLoadingStyle.dark
-    ..maskType = EasyLoadingMaskType
-        .black // Blocks user interaction
-    ..userInteractions =
-        false // Prevents screen interactions while loading
-    ..dismissOnTap = false; // Does not dismiss when tapped
+    ..maskType = EasyLoadingMaskType.black
+    ..userInteractions = false
+    ..dismissOnTap = false;
 }
 
 class MyApp extends StatelessWidget {
@@ -76,8 +77,13 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       designSize: const Size(393, 844),
       builder: (_, __) => BlocBuilder<LanguageCubit, LanguageState>(
+        buildWhen: (previous, current) => previous.locale != current.locale,
         builder: (context, state) {
-          var languageCubit = LanguageCubit.get(context);
+          final locale = state.locale;
+          final textDirection = locale.languageCode == 'ar'
+              ? TextDirection.rtl
+              : TextDirection.ltr;
+
           return MaterialApp(
             title: BaseConstant.appName,
             debugShowCheckedModeBanner: false,
@@ -86,15 +92,23 @@ class MyApp extends StatelessWidget {
             themeMode: ThemeMode.dark,
             navigatorKey: AppNavigation.navigatorKey,
             onGenerateRoute: RouteGenerator.generateRoute,
-            localizationsDelegates: context.localizationDelegates,
+            locale: locale,
             supportedLocales: context.supportedLocales,
-            locale: languageCubit.currentLocale,
+            localizationsDelegates: [
+              ...context.localizationDelegates,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
             builder: EasyLoading.init(
-              builder: (context, child) => MediaQuery(
-                data: MediaQuery.of(
-                  context,
-                ).copyWith(textScaler: TextScaler.noScaling),
-                child: child ?? const Scaffold(),
+              builder: (context, child) => Directionality(
+                textDirection: textDirection,
+                child: MediaQuery(
+                  data: MediaQuery.of(
+                    context,
+                  ).copyWith(textScaler: TextScaler.noScaling),
+                  child: child ?? const Scaffold(),
+                ),
               ),
             ),
           );

@@ -1,3 +1,5 @@
+import 'package:easy_life/Core/L10n/locale_keys.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_life/Features/Profile/Presentation/cubit/profile_cubit.dart';
 import 'package:flutter/material.dart';
 import '../../../../Core/Handler/auth_handler.dart';
@@ -20,12 +22,12 @@ class DeleteBottomSheet extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              children: const [
-                Icon(Icons.warning_amber_rounded, color: Colors.red, size: 26),
-                SizedBox(width: 8),
+              children: [
+                const Icon(Icons.warning_amber_rounded, color: Colors.red, size: 26),
+                const SizedBox(width: 8),
                 Text(
-                  'حذف الحساب',
-                  style: TextStyle(
+                  LocaleKeys.profileDeleteSheetTitle.tr(),
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                     color: Colors.red,
@@ -34,9 +36,9 @@ class DeleteBottomSheet extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            const Text(
-              'هل أنت متأكد أنك تريد حذف حسابك؟ لن تتمكن من استعادة بياناتك بعد الحذف.',
-              style: TextStyle(color: AppColors.natural600, fontSize: 14),
+            Text(
+              LocaleKeys.profileDeleteSheetMessage.tr(),
+              style: const TextStyle(color: AppColors.natural600, fontSize: 14),
             ),
             const SizedBox(height: 20),
             Row(
@@ -61,9 +63,9 @@ class DeleteBottomSheet extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: const Text(
-                      'تأكيد الحذف',
-                      style: TextStyle(color: Colors.white),
+                    child: Text(
+                      LocaleKeys.profileDeleteConfirm.tr(),
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ),
                 ),
@@ -81,9 +83,9 @@ class DeleteBottomSheet extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: const Text(
-                      'الغاء',
-                      style: TextStyle(color: AppColors.natural700),
+                    child: Text(
+                      LocaleKeys.profileDeleteCancel.tr(),
+                      style: const TextStyle(color: AppColors.natural700),
                     ),
                   ),
                 ),

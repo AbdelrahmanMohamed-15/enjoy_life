@@ -1,7 +1,9 @@
 import 'package:easy_life/Core/Constant/base_constant.dart';
 import 'package:easy_life/Core/Extentions/center_ext.dart';
 import 'package:easy_life/Core/Extentions/padding_ext.dart';
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_life/Features/Reversion/Presentation/cubit/reversion_cubit.dart';
 import 'package:flutter/material.dart';
 
@@ -33,7 +35,7 @@ class ReversionService extends StatelessWidget {
                     : AppColors.natural200,
               ),
               child: Text(
-                'مطعم',
+                LocaleKeys.reversionFilterRestaurant.tr(),
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontFamily: BaseConstant.cairoBold,
                   color: serviceID == 1
@@ -59,7 +61,7 @@ class ReversionService extends StatelessWidget {
                     : AppColors.natural200,
               ),
               child: Text(
-                'فندق',
+                LocaleKeys.reversionFilterHotel.tr(),
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontFamily: BaseConstant.cairoBold,
                   color: serviceID == 2
@@ -85,7 +87,7 @@ class ReversionService extends StatelessWidget {
                     : AppColors.natural200,
               ),
               child: Text(
-                'رحلة',
+                LocaleKeys.reversionFilterTrip.tr(),
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontFamily: BaseConstant.cairoBold,
                   color: serviceID == 3

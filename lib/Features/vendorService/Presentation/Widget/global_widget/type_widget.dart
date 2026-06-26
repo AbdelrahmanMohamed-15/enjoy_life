@@ -1,4 +1,6 @@
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../Core/Constant/base_constant.dart';
@@ -20,14 +22,13 @@ class TypeWidget extends StatelessWidget {
             children: [
               const SizedBox(height: 15),
               Text(
-                'الخدمة',
+                LocaleKeys.vendorServiceType.tr(),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: AppColors.black700,
                   fontFamily: BaseConstant.cairoBold,
                 ),
               ),
               SizedBox(height: 15),
-              // ---------------- STATE DROPDOWN ----------------
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 decoration: BoxDecoration(
@@ -43,12 +44,20 @@ class TypeWidget extends StatelessWidget {
                     disabledBorder: InputBorder.none,
                     enabledBorder: InputBorder.none,
                   ),
-
-                  hint: const Text("اختر الخدمة"),
-                  items: const [
-                    DropdownMenuItem(value: 1, child: Text("مطعم")),
-                    DropdownMenuItem(value: 2, child: Text("فندق")),
-                    DropdownMenuItem(value: 3, child: Text("رحلة")),
+                  hint: Text(LocaleKeys.vendorSelectServiceType.tr()),
+                  items: [
+                    DropdownMenuItem(
+                      value: 1,
+                      child: Text(LocaleKeys.vendorTypeRestaurant.tr()),
+                    ),
+                    DropdownMenuItem(
+                      value: 2,
+                      child: Text(LocaleKeys.vendorTypeHotel.tr()),
+                    ),
+                    DropdownMenuItem(
+                      value: 3,
+                      child: Text(LocaleKeys.vendorTypeTrip.tr()),
+                    ),
                   ],
                   onChanged: (value) {
                     vendorServiceCubit.setTypeID(type: value!);

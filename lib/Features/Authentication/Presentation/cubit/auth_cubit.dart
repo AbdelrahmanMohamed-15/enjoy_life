@@ -54,6 +54,7 @@ class AuthCubit extends Cubit<AuthState> {
   TextEditingController otpRestController = TextEditingController();
   TextEditingController newPasswordController = TextEditingController();
   TextEditingController confirmRestPasswordController = TextEditingController();
+  String registerDailCode = '+20';
 
   Future<void> login({
     required String dailCode,
@@ -100,6 +101,7 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   register({required AuthCubit authCubit, required String dailCode}) async {
+    registerDailCode = dailCode;
     EasyLoading.show();
     final result = await registerUsecases.call(
       dailCode: dailCode,
@@ -227,6 +229,58 @@ class AuthCubit extends Cubit<AuthState> {
             backgroundColor: AppColors.darkRed,
           );
         }
+      },
+    );
+  }
+
+  Future<bool> resendCode({required bool isRegister}) async {
+    EasyLoading.show();
+    if (isRegister) {
+      final result = await registerUsecases.call(
+        dailCode: registerDailCode,
+        name: nameController.text,
+        email: emailController.text,
+        phone: regPhoneController.text,
+        password: regPasswordController.text,
+        confirmPassword: confirmPasswordController.text,
+        address: addressController.text,
+      );
+      return result.fold(
+        (failure) {
+          EasyLoading.dismiss();
+          showCustomSnackBar(failure.message, backgroundColor: AppColors.darkRed);
+          return false;
+        },
+        (register) {
+          EasyLoading.dismiss();
+          showCustomSnackBar(
+            register.message ?? '',
+            backgroundColor: register.status == 200
+                ? AppColors.primary400
+                : AppColors.darkRed,
+          );
+          return register.status == 200;
+        },
+      );
+    }
+
+    final result = await forgetPasswordUsecases.call(
+      email: emailRestController.text,
+    );
+    return result.fold(
+      (failure) {
+        EasyLoading.dismiss();
+        showCustomSnackBar(failure.message, backgroundColor: AppColors.darkRed);
+        return false;
+      },
+      (base) {
+        EasyLoading.dismiss();
+        showCustomSnackBar(
+          base.message ?? '',
+          backgroundColor:
+              base.status == 200 ? AppColors.primary400 : AppColors.darkRed,
+        );
+        return base.status == 200;
       },
     );
   }

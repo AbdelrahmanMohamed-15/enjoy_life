@@ -1,8 +1,11 @@
 import 'package:easy_life/Core/Extentions/center_ext.dart';
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Routes/app_navigation.dart';
 import 'package:easy_life/Core/Routes/app_routes.dart';
 import 'package:easy_life/Features/Profile/Presentation/Widget/account_user_card.dart';
+import 'package:easy_life/Features/Profile/Presentation/Widget/language_bottom_sheet.dart';
 import 'package:easy_life/Features/Profile/Presentation/Widget/tile_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../Core/Constant/base_constant.dart';
 import '../../../../Core/Handler/auth_handler.dart';
@@ -25,7 +28,7 @@ class VendorAccountSccreen extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
         children: [
           Text(
-            'الملف الشخصي',
+            LocaleKeys.profileTitle.tr(),
             style: theme.textTheme.bodyMedium?.copyWith(
               fontFamily: BaseConstant.cairoBold,
               color: AppColors.black700,
@@ -52,7 +55,7 @@ class VendorAccountSccreen extends StatelessWidget {
               children: [
                 TileWidget(
                   icon: Icons.add,
-                  title: 'اضافة فئة',
+                  title: LocaleKeys.vendorAddCategory.tr(),
                   onTap: () {
                     AppNavigation.pushNamed(AppRoutes.addCategory);
                   },
@@ -60,16 +63,15 @@ class VendorAccountSccreen extends StatelessWidget {
                 Divider(color: AppColors.natural400),
                 TileWidget(
                   icon: Icons.add,
-                  title: 'اضافة فرع',
+                  title: LocaleKeys.vendorAddBranch.tr(),
                   onTap: () {
                     AppNavigation.pushNamed(AppRoutes.addBranch);
                   },
                 ),
                 Divider(color: AppColors.natural400),
-
                 TileWidget(
                   icon: Icons.add,
-                  title: 'اضافة مطعم',
+                  title: LocaleKeys.vendorAddRestaurant.tr(),
                   onTap: () {
                     AppNavigation.pushNamed(
                       AppRoutes.addService,
@@ -80,7 +82,7 @@ class VendorAccountSccreen extends StatelessWidget {
                 Divider(color: AppColors.natural400),
                 TileWidget(
                   icon: Icons.add,
-                  title: 'اضافة فندق',
+                  title: LocaleKeys.vendorAddHotel.tr(),
                   onTap: () {
                     AppNavigation.pushNamed(
                       AppRoutes.addService,
@@ -91,7 +93,7 @@ class VendorAccountSccreen extends StatelessWidget {
                 Divider(color: AppColors.natural400),
                 TileWidget(
                   icon: Icons.add,
-                  title: 'اضافة رحلة',
+                  title: LocaleKeys.vendorAddTrip.tr(),
                   onTap: () {
                     AppNavigation.pushNamed(
                       AppRoutes.addService,
@@ -102,7 +104,7 @@ class VendorAccountSccreen extends StatelessWidget {
                 Divider(color: AppColors.natural400),
                 TileWidget(
                   icon: Icons.add,
-                  title: 'اضافة خدمة',
+                  title: LocaleKeys.vendorAddService.tr(),
                   onTap: () {
                     AppNavigation.pushNamed(AppRoutes.addNewServiceScreen);
                   },
@@ -110,17 +112,31 @@ class VendorAccountSccreen extends StatelessWidget {
                 Divider(color: AppColors.natural400),
                 TileWidget(
                   icon: Icons.add,
-                  title: 'اضافة خدمة اضافية',
+                  title: LocaleKeys.vendorAddServiceOption.tr(),
                   onTap: () {
                     AppNavigation.pushNamed(AppRoutes.addServiceOption);
                   },
                 ),
                 Divider(color: AppColors.natural400),
-                TileWidget(icon: Icons.language, title: 'اللغة'),
+                TileWidget(
+                  icon: Icons.language,
+                  title: LocaleKeys.profileLanguage.tr(),
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(20),
+                        ),
+                      ),
+                      builder: (context) => const LanguageBottomSheet(),
+                    );
+                  },
+                ),
                 Divider(color: AppColors.natural400),
                 TileWidget(
                   icon: Icons.power_settings_new,
-                  title: 'تسجيل الخروج',
+                  title: LocaleKeys.profileLogout.tr(),
                   onTap: () async {
                     await DependencyInjectionHelper()
                         .sl<AuthHandlerInterface>()
@@ -131,7 +147,7 @@ class VendorAccountSccreen extends StatelessWidget {
                 Divider(color: AppColors.natural400),
                 TileWidget(
                   icon: Icons.delete_sweep,
-                  title: 'حذف الحساب',
+                  title: LocaleKeys.profileDeleteAccount.tr(),
                   iconColor: Colors.red,
                   textColor: Colors.red,
                   onTap: () {
