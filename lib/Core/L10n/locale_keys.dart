@@ -128,6 +128,14 @@ class LocaleKeys {
   static const profilePrivacy = 'profile.privacy_policy';
   static const profileFaq = 'profile.faq';
   static const profileLogout = 'profile.logout';
+  static const profileSectionAccount = 'profile.section_account';
+  static const profileSectionPreferences = 'profile.section_preferences';
+  static const profileSectionHelp = 'profile.section_help';
+  static const profileGuestName = 'profile.guest_name';
+  static const profileGuestHint = 'profile.guest_hint';
+  static const profileSignIn = 'profile.sign_in';
+  static const profileLogoutTitle = 'profile.logout_title';
+  static const profileLogoutMessage = 'profile.logout_message';
   static const profileDeleteAccount = 'profile.delete_account';
   static const profileTerms = 'profile.terms';
   static const profileAdditionalEmpty = 'profile.additional_empty';
@@ -173,6 +181,15 @@ class LocaleKeys {
   static const cartEmpty = 'cart.empty';
   static const cartTotal = 'cart.total';
   static const cartCheckout = 'cart.checkout';
+  static const cartSummary = 'cart.summary';
+  static const cartItemsCount = 'cart.items_count';
+  static const cartRemoveTitle = 'cart.remove_title';
+  static const cartRemoveMessage = 'cart.remove_message';
+  static const cartRemove = 'cart.remove';
+  static const cartTypeRestaurant = 'cart.type_restaurant';
+  static const cartTypeHotel = 'cart.type_hotel';
+  static const cartTypeTrip = 'cart.type_trip';
+  static const cartTypeService = 'cart.type_service';
 
   // Services
   static const servicesLoadError = 'services.load_error';

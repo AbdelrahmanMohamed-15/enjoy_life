@@ -72,7 +72,10 @@ class SupportScreen extends StatelessWidget {
           ),
           leading: GestureDetector(
             onTap: AppNavigation.pop,
-            child: const Icon(Icons.arrow_back_ios, color: AppColors.primary500),
+            child: const Icon(
+              Icons.arrow_back_ios,
+              color: AppColors.primary500,
+            ),
           ),
         ),
         body: ListView(
@@ -332,10 +335,7 @@ class _SocialButton extends StatelessWidget {
   final _SocialLink link;
   final VoidCallback onTap;
 
-  const _SocialButton({
-    required this.link,
-    required this.onTap,
-  });
+  const _SocialButton({required this.link, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

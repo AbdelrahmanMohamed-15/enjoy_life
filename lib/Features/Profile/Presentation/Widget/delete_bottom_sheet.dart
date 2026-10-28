@@ -23,7 +23,11 @@ class DeleteBottomSheet extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Icon(Icons.warning_amber_rounded, color: Colors.red, size: 26),
+                const Icon(
+                  Icons.warning_amber_rounded,
+                  color: Colors.red,
+                  size: 26,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   LocaleKeys.profileDeleteSheetTitle.tr(),
