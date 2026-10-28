@@ -71,32 +71,27 @@ class EditProfileScreen extends StatelessWidget {
                                 //   fit: BoxFit.fill,
                                 // ),
                               ),
-                              child:
-                                  profileCubit.userData!.image != '' &&
-                                      profileCubit.profileImage == null
-                                  ? ClipRRect(
-                                      borderRadius:
-                                          BorderRadiusGeometry.circular(50),
-                                      child: CustomNetworkImage(
-                                        imageUrl:
-                                            profileCubit.userData!.image ?? '',
-                                        width: 100,
-                                        height: 100,
-                                        fit: BoxFit.fill,
-                                      ),
-                                    )
-                                  : profileCubit.profileImage != null
-                                  ? ClipRRect(
-                                      borderRadius:
-                                          BorderRadiusGeometry.circular(50),
-                                      child: Image.file(
+                              child: ClipRRect(
+                                borderRadius: BorderRadiusGeometry.circular(50),
+                                child: profileCubit.profileImage != null
+                                    ? Image.file(
                                         profileCubit.profileImage!,
                                         width: 100,
                                         height: 100,
                                         fit: BoxFit.fill,
+                                      )
+                                    : CustomNetworkImage(
+                                        imageUrl: profileCubit.userData?.image,
+                                        width: 100,
+                                        height: 100,
+                                        fit: BoxFit.fill,
+                                        errorWidget: const Icon(
+                                          Icons.person,
+                                          size: 60,
+                                          color: AppColors.primary400,
+                                        ),
                                       ),
-                                    )
-                                  : Container(),
+                              ),
                             ).setCenter(),
                             Positioned(
                               bottom: 2,

@@ -76,6 +76,7 @@ class HomeCubit extends Cubit<HomeState> {
   RequestState totalHomeRequestState = RequestState.initial;
 
   Future<void> getSliders() async {
+    sliderRequestState = RequestState.loading;
     emit(HomeLoadingState());
     final result = await getSlidersUsecases.call();
     result.fold(
@@ -85,7 +86,8 @@ class HomeCubit extends Cubit<HomeState> {
       },
       (sliders) {
         slidersEntity = sliders;
-        if (sliders.data!.isNotEmpty) {
+        if ((sliders.data ?? []).isNotEmpty) {
+          sliderRequestState = RequestState.loaded;
           emit(HomeSuccessState(sliders: sliders));
         } else {
           sliderRequestState = RequestState.empty;
@@ -96,6 +98,7 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   Future<void> getResturant() async {
+    resturantRequestState = RequestState.loading;
     emit(HomeLoadingState());
     final result = await getResturantUsecases.call();
     result.fold(
@@ -105,7 +108,8 @@ class HomeCubit extends Cubit<HomeState> {
       },
       (resturant) {
         resturantEntity = resturant;
-        if (resturant.data!.isNotEmpty) {
+        if ((resturant.data ?? []).isNotEmpty) {
+          resturantRequestState = RequestState.loaded;
           emit(HomeResturantSuccessState(resturant: resturant));
         } else {
           resturantRequestState = RequestState.empty;
@@ -116,6 +120,7 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   Future<void> getTrips() async {
+    tripsRequestState = RequestState.loading;
     emit(HomeLoadingState());
     final result = await getTripsUsecases.call();
     result.fold(
@@ -125,7 +130,8 @@ class HomeCubit extends Cubit<HomeState> {
       },
       (trips) {
         tripsEntity = trips;
-        if (trips.data!.isNotEmpty) {
+        if ((trips.data ?? []).isNotEmpty) {
+          tripsRequestState = RequestState.loaded;
           emit(HomeTripsSuccessState(trips: trips));
         } else {
           tripsRequestState = RequestState.empty;
@@ -136,6 +142,7 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   Future<void> getHotels() async {
+    hotelsRequestState = RequestState.loading;
     emit(HomeLoadingState());
     final result = await getHotelsUsecases.call();
     result.fold(
@@ -145,7 +152,8 @@ class HomeCubit extends Cubit<HomeState> {
       },
       (hotels) {
         hotelsEntity = hotels;
-        if (hotels.data!.isNotEmpty) {
+        if ((hotels.data ?? []).isNotEmpty) {
+          hotelsRequestState = RequestState.loaded;
           emit(HomeHotelsSuccessState(hotels: hotels));
         } else {
           hotelsRequestState = RequestState.empty;
@@ -156,6 +164,7 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   Future<void> getVendorResturant() async {
+    vendorResturantRequestState = RequestState.loading;
     emit(HomeLoadingState());
     final result = await getVendorResturantUsecases.call();
     result.fold(
@@ -167,7 +176,8 @@ class HomeCubit extends Cubit<HomeState> {
       },
       (resturant) {
         vendorResturantEntity = resturant;
-        if (resturant.data!.isNotEmpty) {
+        if ((resturant.data ?? []).isNotEmpty) {
+          vendorResturantRequestState = RequestState.loaded;
           emit(HomeResturantSuccessState(resturant: resturant));
         } else {
           vendorResturantRequestState = RequestState.empty;
@@ -180,6 +190,7 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   Future<void> getVendorTrips() async {
+    vendorTripsRequestState = RequestState.loading;
     emit(HomeLoadingState());
     final result = await getVendorTripsUsecases.call();
     result.fold(
@@ -189,7 +200,8 @@ class HomeCubit extends Cubit<HomeState> {
       },
       (trips) {
         vendorTripsEntity = trips;
-        if (trips.data!.isNotEmpty) {
+        if ((trips.data ?? []).isNotEmpty) {
+          vendorTripsRequestState = RequestState.loaded;
           emit(HomeTripsSuccessState(trips: trips));
         } else {
           vendorTripsRequestState = RequestState.empty;
@@ -200,6 +212,7 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   Future<void> getVendorHotels() async {
+    vendorHotelsRequestState = RequestState.loading;
     emit(HomeLoadingState());
     final result = await getVendorHotelsUsecases.call();
     result.fold(
@@ -209,7 +222,8 @@ class HomeCubit extends Cubit<HomeState> {
       },
       (hotels) {
         vendorHotelsEntity = hotels;
-        if (hotels.data!.isNotEmpty) {
+        if ((hotels.data ?? []).isNotEmpty) {
+          vendorHotelsRequestState = RequestState.loaded;
           emit(HomeHotelsSuccessState(hotels: hotels));
         } else {
           vendorHotelsRequestState = RequestState.empty;
@@ -219,10 +233,16 @@ class HomeCubit extends Cubit<HomeState> {
     );
   }
 
-  getAllVendorHome() async {
-    await getVendorResturant();
-    await getVendorTrips();
-    await getVendorHotels();
+  Future<void> getHomeData() async {
+    await Future.wait([getSliders(), getResturant(), getHotels(), getTrips()]);
+  }
+
+  Future<void> getAllVendorHome() async {
+    await Future.wait([
+      getVendorResturant(),
+      getVendorTrips(),
+      getVendorHotels(),
+    ]);
   }
 
   Future<void> addFavourite({required int id, required String type}) async {
@@ -270,6 +290,8 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   getMyFavourite() async {
+    myFavouriteRequestState = RequestState.loading;
+    emit(HomeLoadingState());
     final result = await getMyFavouriteUsecases.call();
     result.fold(
       (failure) {
@@ -278,7 +300,8 @@ class HomeCubit extends Cubit<HomeState> {
       },
       (myFavourite) {
         myFavouriteEntity = myFavourite;
-        if (myFavourite.data!.isNotEmpty) {
+        if ((myFavourite.data ?? []).isNotEmpty) {
+          myFavouriteRequestState = RequestState.loaded;
           emit(HomeFavouriteSuccessState(favourite: myFavourite));
         } else {
           myFavouriteRequestState = RequestState.empty;
@@ -289,6 +312,8 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   getAllHome({required String type}) async {
+    totalHomeRequestState = RequestState.loading;
+    emit(HomeLoadingState());
     final result = await getAllHomeUsecases.call(type: type);
     result.fold(
       (failure) {
@@ -297,7 +322,8 @@ class HomeCubit extends Cubit<HomeState> {
       },
       (home) {
         totalHomeEntity = home;
-        if (home.data!.isNotEmpty) {
+        if ((home.data ?? []).isNotEmpty) {
+          totalHomeRequestState = RequestState.loaded;
           emit(HomeAllSuccessState(all: home));
         } else {
           totalHomeRequestState = RequestState.empty;

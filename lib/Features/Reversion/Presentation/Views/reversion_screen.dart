@@ -1,3 +1,4 @@
+import 'package:easy_life/Core/Widget/state_message_widget.dart';
 import 'package:easy_life/Core/Enums/level_message_enums.dart';
 import 'package:easy_life/Core/Helper/dependency_injection_helper.dart';
 import 'package:easy_life/Core/L10n/locale_keys.dart';
@@ -51,9 +52,13 @@ class ReversionScreen extends StatelessWidget {
                 const SizedBox(height: 15),
                 Expanded(
                   child:
-                      reversionCubit.reversionEntity == null ||
-                          reversionCubit.reversionRequestState ==
-                              RequestState.loading
+                      reversionCubit.reversionRequestState == RequestState.error
+                      ? StateMessageWidget.error(
+                          onRetry: () => reversionCubit.getAllReversion(),
+                        )
+                      : reversionCubit.reversionEntity == null ||
+                            reversionCubit.reversionRequestState ==
+                                RequestState.loading
                       ? const Center(child: CircularProgressIndicator())
                       : reversionCubit.reversionRequestState ==
                             RequestState.empty

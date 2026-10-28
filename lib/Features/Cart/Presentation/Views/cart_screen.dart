@@ -1,3 +1,4 @@
+import 'package:easy_life/Core/Widget/state_message_widget.dart';
 import 'package:easy_life/Core/Constant/assets_strings.dart';
 import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -41,7 +42,11 @@ class CartScreen extends StatelessWidget {
               centerTitle: true,
               elevation: 2,
             ),
-            body: cartCubit.cartEntity == null
+            body:
+                cartCubit.cartRequestState == RequestState.error &&
+                    cartCubit.cartEntity == null
+                ? StateMessageWidget.error(onRetry: () => cartCubit.getCart())
+                : cartCubit.cartEntity == null
                 ? Center(child: CircularProgressIndicator())
                 : cartCubit.cartRequestState == RequestState.empty
                 ? Column(

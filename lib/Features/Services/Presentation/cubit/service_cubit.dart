@@ -74,6 +74,7 @@ class ServiceCubit extends Cubit<ServiceState> {
   }
 
   Future<void> getResturantDetails({required int id}) async {
+    serviceRequestState = RequestState.loading;
     emit(ResturantLoading());
     final res = await getResturantDetailsUsecases.call(resturantId: id);
     res.fold(
@@ -84,6 +85,7 @@ class ServiceCubit extends Cubit<ServiceState> {
       (resDetails) {
         serviceDetails = resDetails;
         if (resDetails.data != null) {
+          serviceRequestState = RequestState.loaded;
           emit(ResturantSuccessState(resturant: resDetails));
         } else {
           serviceRequestState = RequestState.empty;
@@ -94,6 +96,7 @@ class ServiceCubit extends Cubit<ServiceState> {
   }
 
   Future<void> getHotelDetails({required int id}) async {
+    serviceRequestState = RequestState.loading;
     emit(HotelLoading());
     final res = await getHotelDetailsUsecases.call(hotelID: id);
     res.fold(
@@ -104,6 +107,7 @@ class ServiceCubit extends Cubit<ServiceState> {
       (hotelDetails) {
         serviceDetails = hotelDetails;
         if (hotelDetails.data != null) {
+          serviceRequestState = RequestState.loaded;
           emit(HotelSuccessState(hotel: hotelDetails));
         } else {
           serviceRequestState = RequestState.empty;
@@ -114,6 +118,7 @@ class ServiceCubit extends Cubit<ServiceState> {
   }
 
   Future<void> getTripDetails({required int id}) async {
+    serviceRequestState = RequestState.loading;
     emit(TripLoading());
     final res = await getTripDetailsUsecases.call(tripID: id);
     res.fold(
@@ -124,6 +129,7 @@ class ServiceCubit extends Cubit<ServiceState> {
       (tripDetails) {
         serviceDetails = tripDetails;
         if (tripDetails.data != null) {
+          serviceRequestState = RequestState.loaded;
           emit(TripSuccessState(trip: tripDetails));
         } else {
           serviceRequestState = RequestState.empty;

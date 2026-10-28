@@ -1,3 +1,4 @@
+import 'package:easy_life/Core/Widget/state_message_widget.dart';
 import 'package:easy_life/Core/Enums/level_message_enums.dart';
 import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -45,10 +46,18 @@ class AdditionalScreen extends StatelessWidget {
                 child: Icon(Icons.arrow_back_ios, color: AppColors.primary500),
               ),
             ),
-            body: profileCubit.additionalEntity == null
+            body: profileCubit.additionalRequestState == RequestState.error
+                ? StateMessageWidget.error(
+                    onRetry: () => profileCubit.getAdditionalPage(type: type),
+                  )
+                : profileCubit.additionalEntity == null ||
+                      profileCubit.additionalRequestState ==
+                          RequestState.loading
                 ? const Center(child: CircularProgressIndicator())
                 : profileCubit.additionalRequestState == RequestState.empty
-                ? Center(child: Text(LocaleKeys.profileAdditionalEmpty.tr()))
+                ? StateMessageWidget.empty(
+                    message: LocaleKeys.profileAdditionalEmpty.tr(),
+                  )
                 : ListView(
                     padding: const EdgeInsets.all(15),
                     children: [

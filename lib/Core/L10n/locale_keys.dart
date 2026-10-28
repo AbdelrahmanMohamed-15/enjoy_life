@@ -15,6 +15,7 @@ class LocaleKeys {
   static const commonNoData = 'common.no_data';
   static const commonOpenSettings = 'common.open_settings';
   static const commonErrorOccurred = 'common.error_occurred';
+  static const commonRetry = 'common.retry';
   static const commonAddSuccess = 'common.add_success';
   static const commonRemoveSuccess = 'common.remove_success';
 

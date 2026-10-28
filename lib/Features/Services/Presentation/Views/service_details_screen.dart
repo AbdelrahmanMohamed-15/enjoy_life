@@ -1,3 +1,5 @@
+import 'package:easy_life/Core/Widget/state_message_widget.dart';
+import 'package:easy_life/Core/Widget/custom_network_image.dart';
 import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Routes/routes.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -53,15 +55,41 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
     return BlocBuilder<ServiceCubit, ServiceState>(
       builder: (context, state) {
         var serviceCubit = ServiceCubit.get(context);
-        if (serviceCubit.serviceDetails == null) {
+        final messageAppBar = AppBar(
+          elevation: 2,
+          leading: GestureDetector(
+            onTap: () {
+              AppNavigation.pop();
+            },
+            child: Icon(Icons.arrow_back_ios, color: AppColors.primary400),
+          ),
+        );
+
+        if (serviceCubit.serviceRequestState == RequestState.error) {
+          return Scaffold(
+            appBar: messageAppBar,
+            body: StateMessageWidget.error(
+              message: LocaleKeys.servicesLoadError.tr(),
+              onRetry: () => serviceCubit.getinitialData(
+                id: widget.serviceID,
+                type: widget.type,
+              ),
+            ),
+          );
+        }
+
+        if (serviceCubit.serviceDetails == null ||
+            serviceCubit.serviceRequestState == RequestState.loading) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
 
-        if (serviceCubit.serviceRequestState == RequestState.empty) {
+        if (serviceCubit.serviceRequestState == RequestState.empty ||
+            serviceCubit.serviceDetails!.data == null) {
           return Scaffold(
-            body: Center(child: Text(LocaleKeys.servicesLoadError.tr())),
+            appBar: messageAppBar,
+            body: StateMessageWidget.empty(),
           );
         }
 
@@ -76,7 +104,7 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
           final uniqueBranches = branches.toSet().toList();
           // Filter services for the selected branch and remove duplicates by id
           List<ServiceBranch> uniqueBranchesById = {
-            for (var sb in resturant.serviceBranches!.where(
+            for (var sb in (resturant.serviceBranches ?? []).where(
               (s) => s.branch?.id == selectedBranch?.id,
             ))
               sb.id: sb,
@@ -290,15 +318,18 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                           return Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: AppColors.primary400,
-                                  image: DecorationImage(
-                                    image: NetworkImage(
-                                      rates.clientImage ?? '',
+                              ClipOval(
+                                child: CustomNetworkImage(
+                                  imageUrl: rates.clientImage,
+                                  height: 50,
+                                  width: 50,
+                                  errorWidget: Container(
+                                    height: 50,
+                                    width: 50,
+                                    color: AppColors.primary400,
+                                    child: const Icon(
+                                      Icons.person,
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ),

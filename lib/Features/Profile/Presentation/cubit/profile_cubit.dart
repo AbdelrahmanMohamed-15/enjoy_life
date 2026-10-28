@@ -150,7 +150,9 @@ class ProfileCubit extends Cubit<ProfileState> {
     );
   }
 
-  getAdditionalPage({required String type}) async {
+  Future<void> getAdditionalPage({required String type}) async {
+    additionalRequestState = RequestState.loading;
+    emit(GetAdditionalPageLoading());
     final result = await getAdditionalUsecases.call(type: type);
     result.fold(
       (failure) {
@@ -159,7 +161,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       },
       (additional) {
         additionalEntity = additional;
-        if (additional.data!.isEmpty) {
+        if ((additional.data ?? []).isEmpty) {
           additionalRequestState = RequestState.empty;
           emit(GetAdditionalPageError(requestState: additionalRequestState));
         } else {

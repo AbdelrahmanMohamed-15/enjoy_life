@@ -55,15 +55,7 @@ class ReversionCubit extends Cubit<ReversionState> {
       },
       (reversion) {
         reversionEntity = reversion;
-        reversionRequestState = RequestState.loaded;
-        emit(
-          GetAllReversion(
-            reversionEntity: reversion,
-            reversionRequestState: reversionRequestState,
-          ),
-        );
-        if (reversion.data!.isNotEmpty) {
-          reversionEntity = reversion;
+        if ((reversion.data ?? []).isNotEmpty) {
           reversionRequestState = RequestState.loaded;
           emit(
             GetAllReversion(

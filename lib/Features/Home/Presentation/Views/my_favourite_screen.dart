@@ -1,3 +1,5 @@
+import 'package:easy_life/Core/Widget/state_message_widget.dart';
+import 'package:easy_life/Core/Widget/custom_network_image.dart';
 import 'package:easy_life/Core/Enums/level_message_enums.dart';
 import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -41,7 +43,11 @@ class MyFavouriteScreen extends StatelessWidget {
               centerTitle: true,
               elevation: 2,
             ),
-            body: homeCubit.myFavouriteEntity == null
+            body: homeCubit.myFavouriteRequestState == RequestState.error
+                ? StateMessageWidget.error(
+                    onRetry: () => homeCubit.getMyFavourite(),
+                  )
+                : homeCubit.myFavouriteEntity == null
                 ? const Center(child: CircularProgressIndicator())
                 : homeCubit.myFavouriteRequestState == RequestState.empty
                 ? Column(
@@ -100,10 +106,10 @@ class MyFavouriteScreen extends StatelessWidget {
                                     bottomRight: Radius.circular(12),
                                     topRight: Radius.circular(12),
                                   ),
-                                  child: Image.network(
-                                    favourite.logo ?? '',
-                                    height: 120,
-                                    width: 185,
+                                  child: CustomNetworkImage(
+                                    imageUrl: favourite.logo,
+                                    height: 130,
+                                    width: 100,
                                     fit: BoxFit.cover,
                                   ),
                                 ),

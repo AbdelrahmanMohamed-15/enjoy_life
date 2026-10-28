@@ -1,12 +1,11 @@
+import 'package:easy_life/Core/Widget/state_message_widget.dart';
 import 'package:easy_life/Core/Extentions/extentions.dart';
 import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_life/Features/Home/Presentation/cubit/home_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 
-import '../../../../Core/Constant/assets_strings.dart';
 import '../../../../Core/Constant/base_constant.dart';
 import '../../../../Core/Enums/level_message_enums.dart';
 import '../../../../Core/Handler/auth_handler.dart';
@@ -50,25 +49,15 @@ class AllHomeScreen extends StatelessWidget {
             centerTitle: true,
             elevation: 2,
           ),
-          body: homeCubit.totalHomeEntity == null
+          body: homeCubit.totalHomeRequestState == RequestState.error
+              ? StateMessageWidget.error(
+                  onRetry: () => homeCubit.getAllHome(type: type),
+                )
+              : homeCubit.totalHomeEntity == null ||
+                    homeCubit.totalHomeRequestState == RequestState.loading
               ? const Center(child: CircularProgressIndicator())
               : homeCubit.totalHomeRequestState == RequestState.empty
-              ? Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset(AssetsStrings.empty),
-                    const SizedBox(height: 20),
-                    Center(
-                      child: Text(
-                        LocaleKeys.commonNoData.tr(),
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          fontFamily: BaseConstant.cairoBold,
-                          color: AppColors.primary400,
-                        ),
-                      ),
-                    ),
-                  ],
-                )
+              ? StateMessageWidget.empty()
               : GridView.builder(
                   shrinkWrap: true,
                   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),

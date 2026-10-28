@@ -28,6 +28,9 @@ class OrderCubit extends Cubit<OrderState> {
   int currentIndex = 0;
 
   Future<void> getPendingOrders() async {
+    // Clear the previous tab's data so it is not shown while loading
+    orderHistoryEntity = null;
+    orderRequestState = RequestState.loading;
     emit(OrderPendingLoading());
     final failureOrOrderHistoryEntity = await getPendingOrderUsecases();
     failureOrOrderHistoryEntity.fold(
@@ -37,7 +40,8 @@ class OrderCubit extends Cubit<OrderState> {
       },
       (order) {
         orderHistoryEntity = order;
-        if (order.data!.isNotEmpty) {
+        if ((order.data ?? []).isNotEmpty) {
+          orderRequestState = RequestState.loaded;
           emit(PendingOrderSuccess(orderHistoryEntity: order));
         } else {
           orderRequestState = RequestState.empty;
@@ -48,6 +52,9 @@ class OrderCubit extends Cubit<OrderState> {
   }
 
   Future<void> getCompleteOrders() async {
+    // Clear the previous tab's data so it is not shown while loading
+    orderHistoryEntity = null;
+    orderRequestState = RequestState.loading;
     emit(OrderPendingLoading());
     final failureOrOrderHistoryEntity = await getCompleteOrderUsecases();
     failureOrOrderHistoryEntity.fold(
@@ -57,7 +64,8 @@ class OrderCubit extends Cubit<OrderState> {
       },
       (order) {
         orderHistoryEntity = order;
-        if (order.data!.isNotEmpty) {
+        if ((order.data ?? []).isNotEmpty) {
+          orderRequestState = RequestState.loaded;
           emit(PendingOrderSuccess(orderHistoryEntity: order));
         } else {
           orderRequestState = RequestState.empty;
@@ -68,6 +76,9 @@ class OrderCubit extends Cubit<OrderState> {
   }
 
   Future<void> getCancelOrders() async {
+    // Clear the previous tab's data so it is not shown while loading
+    orderHistoryEntity = null;
+    orderRequestState = RequestState.loading;
     emit(OrderPendingLoading());
     final failureOrOrderHistoryEntity = await getCancelOrderUsecases();
     failureOrOrderHistoryEntity.fold(
@@ -77,7 +88,8 @@ class OrderCubit extends Cubit<OrderState> {
       },
       (order) {
         orderHistoryEntity = order;
-        if (order.data!.isNotEmpty) {
+        if ((order.data ?? []).isNotEmpty) {
+          orderRequestState = RequestState.loaded;
           emit(PendingOrderSuccess(orderHistoryEntity: order));
         } else {
           orderRequestState = RequestState.empty;

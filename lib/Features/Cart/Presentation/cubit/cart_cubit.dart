@@ -40,6 +40,7 @@ class CartCubit extends Cubit<CartState> {
   Future<void> getCart() async {
     debugPrint('Cart Response : call Cart');
     cartRequestState = RequestState.loading;
+    emit(CartLoading());
     var result = await getCartUsecases.call();
     result.fold(
       (failure) {
@@ -48,7 +49,7 @@ class CartCubit extends Cubit<CartState> {
       },
       (cart) {
         cartEntity = cart;
-        if (cart.data!.items!.isEmpty) {
+        if ((cart.data?.items ?? []).isEmpty) {
           cartRequestState = RequestState.empty;
           emit(ErrorGetCart(requestState: cartRequestState));
         } else {

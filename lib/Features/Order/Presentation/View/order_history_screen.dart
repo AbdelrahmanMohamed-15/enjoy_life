@@ -1,3 +1,5 @@
+import 'package:easy_life/Core/Enums/level_message_enums.dart';
+import 'package:easy_life/Core/Widget/state_message_widget.dart';
 import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Routes/app_navigation.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -49,9 +51,15 @@ class OrderHistoryScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 Expanded(
-                  child: orderCubit.orderHistoryEntity == null
+                  child: orderCubit.orderRequestState == RequestState.error
+                      ? StateMessageWidget.error(
+                          onRetry: () => orderCubit.fetchData(
+                            index: orderCubit.currentIndex,
+                          ),
+                        )
+                      : orderCubit.orderHistoryEntity == null
                       ? const Center(child: CircularProgressIndicator())
-                      : orderCubit.orderHistoryEntity!.data!.isEmpty
+                      : (orderCubit.orderHistoryEntity!.data ?? []).isEmpty
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [

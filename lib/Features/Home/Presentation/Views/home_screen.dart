@@ -1,5 +1,6 @@
 import 'package:easy_life/Core/Helper/dependency_injection_helper.dart';
 import 'package:easy_life/Core/L10n/locale_keys.dart';
+import 'package:easy_life/Core/Widget/state_message_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_life/Features/Home/Presentation/Widget/main_bar.dart';
 import 'package:easy_life/Features/Home/Presentation/cubit/home_cubit.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../Core/Enums/level_message_enums.dart';
 import '../Widget/carsoual_banner.dart';
 import '../Widget/Home_list_widget.dart';
+import '../Widget/home_section.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -15,97 +17,82 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => DependencyInjectionHelper().sl<HomeCubit>()
-        ..getSliders()
-        ..getResturant()
-        ..getHotels()
-        ..getTrips(),
+      create: (context) =>
+          DependencyInjectionHelper().sl<HomeCubit>()..getHomeData(),
       child: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
           var homeCubit = HomeCubit.get(context);
+          final sectionStates = [
+            homeCubit.sliderRequestState,
+            homeCubit.resturantRequestState,
+            homeCubit.hotelsRequestState,
+            homeCubit.tripsRequestState,
+          ];
+          final bool allFailed = sectionStates.every(
+            (s) => s == RequestState.error,
+          );
+          final bool nothingToShow = sectionStates.every(
+            (s) => s == RequestState.error || s == RequestState.empty,
+          );
           return Scaffold(
             body: Column(
               children: [
                 MainBar(isHaveSearch: true),
                 SizedBox(height: 20),
                 Expanded(
-                  child: ListView(
-                    children: [
-                      homeCubit.slidersEntity == null
-                          ? Container(
-                              height: 200,
-                              margin: EdgeInsets.symmetric(
-                                horizontal: 15,
-                                vertical: 10,
+                  child: allFailed
+                      ? StateMessageWidget.error(
+                          onRetry: () => homeCubit.getHomeData(),
+                        )
+                      : nothingToShow
+                      ? StateMessageWidget.empty(
+                          onRetry: () => homeCubit.getHomeData(),
+                        )
+                      : RefreshIndicator(
+                          onRefresh: () => homeCubit.getHomeData(),
+                          child: ListView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            children: [
+                              HomeSection(
+                                requestState: homeCubit.sliderRequestState,
+                                hasData: homeCubit.slidersEntity != null,
+                                builder: () => CarouselBanner(
+                                  sliderEntity: homeCubit.slidersEntity!,
+                                ),
                               ),
-                              width: double.infinity,
-                              child: Center(child: CircularProgressIndicator()),
-                            )
-                          : homeCubit.sliderRequestState == RequestState.empty
-                          ? const SizedBox()
-                          : CarouselBanner(
-                              sliderEntity: homeCubit.slidersEntity!,
-                            ),
-
-                      homeCubit.resturantEntity == null
-                          ? Container(
-                              height: 200,
-                              margin: EdgeInsets.symmetric(
-                                horizontal: 15,
-                                vertical: 10,
+                              HomeSection(
+                                requestState: homeCubit.resturantRequestState,
+                                hasData: homeCubit.resturantEntity != null,
+                                builder: () => HomeListWidget(
+                                  title: LocaleKeys.homeSectionRestaurants.tr(),
+                                  homeData: homeCubit.resturantEntity!.data!,
+                                  homeCubit: homeCubit,
+                                  type: 'resturant',
+                                ),
                               ),
-                              width: double.infinity,
-                              child: Center(child: CircularProgressIndicator()),
-                            )
-                          : homeCubit.resturantRequestState ==
-                                RequestState.empty
-                          ? const SizedBox()
-                          : HomeListWidget(
-                              title: LocaleKeys.homeSectionRestaurants.tr(),
-                              homeData: homeCubit.resturantEntity!.data!,
-                              homeCubit: homeCubit,
-                              type: 'resturant',
-                            ),
-
-                      homeCubit.hotelsEntity == null
-                          ? Container(
-                              height: 200,
-                              margin: EdgeInsets.symmetric(
-                                horizontal: 15,
-                                vertical: 10,
+                              HomeSection(
+                                requestState: homeCubit.hotelsRequestState,
+                                hasData: homeCubit.hotelsEntity != null,
+                                builder: () => HomeListWidget(
+                                  title: LocaleKeys.homeSectionHotels.tr(),
+                                  homeData: homeCubit.hotelsEntity!.data!,
+                                  homeCubit: homeCubit,
+                                  type: 'Hotel',
+                                ),
                               ),
-                              width: double.infinity,
-                              child: Center(child: CircularProgressIndicator()),
-                            )
-                          : homeCubit.hotelsRequestState == RequestState.empty
-                          ? const SizedBox()
-                          : HomeListWidget(
-                              title: LocaleKeys.homeSectionHotels.tr(),
-                              homeData: homeCubit.hotelsEntity!.data!,
-                              homeCubit: homeCubit,
-                              type: 'Hotel',
-                            ),
-
-                      homeCubit.tripsEntity == null
-                          ? Container(
-                              height: 200,
-                              margin: EdgeInsets.symmetric(
-                                horizontal: 15,
-                                vertical: 10,
+                              HomeSection(
+                                requestState: homeCubit.tripsRequestState,
+                                hasData: homeCubit.tripsEntity != null,
+                                builder: () => HomeListWidget(
+                                  title: LocaleKeys.homeSectionTrips.tr(),
+                                  homeData: homeCubit.tripsEntity!.data!,
+                                  homeCubit: homeCubit,
+                                  type: 'Trip',
+                                ),
                               ),
-                              width: double.infinity,
-                              child: Center(child: CircularProgressIndicator()),
-                            )
-                          : homeCubit.tripsRequestState == RequestState.empty
-                          ? const SizedBox()
-                          : HomeListWidget(
-                              title: LocaleKeys.homeSectionTrips.tr(),
-                              homeData: homeCubit.tripsEntity!.data!,
-                              homeCubit: homeCubit,
-                              type: 'Trip',
-                            ),
-                    ],
-                  ),
+                            ],
+                          ),
+                        ),
                 ),
               ],
             ),
