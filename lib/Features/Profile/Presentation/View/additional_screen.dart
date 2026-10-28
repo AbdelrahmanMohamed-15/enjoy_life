@@ -4,10 +4,10 @@ import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_life/Features/Profile/Presentation/cubit/profile_cubit.dart';
 import 'package:flutter/material.dart';
+import '../../../../Core/Widget/app_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import '../../../../Core/Constant/base_constant.dart';
-import '../../../../Core/Routes/app_navigation.dart';
 import '../../../../Core/Themes/app_colors.dart';
 
 class AdditionalScreen extends StatelessWidget {
@@ -16,36 +16,20 @@ class AdditionalScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
     return BlocBuilder<ProfileCubit, ProfileState>(
       builder: (context, state) {
         var profileCubit = ProfileCubit.get(context);
+        final title = type == 'terms_of_use'
+            ? LocaleKeys.profileTerms.tr()
+            : type == 'privace_police'
+            ? LocaleKeys.profilePrivacy.tr()
+            : type == 'faq'
+            ? LocaleKeys.profileFaq.tr()
+            : LocaleKeys.supportTitle.tr();
         return SafeArea(
           child: Scaffold(
-            appBar: AppBar(
-              centerTitle: true,
-              backgroundColor: AppColors.natural100,
-              title: Text(
-                type == 'terms_of_use'
-                    ? LocaleKeys.profileTerms.tr()
-                    : type == 'privace_police'
-                    ? LocaleKeys.profilePrivacy.tr()
-                    : type == 'faq'
-                    ? LocaleKeys.profileFaq.tr()
-                    : LocaleKeys.supportTitle.tr(),
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: AppColors.primary500,
-                  fontFamily: BaseConstant.cairoBold,
-                ),
-              ),
-              elevation: 1,
-              leading: GestureDetector(
-                onTap: () {
-                  AppNavigation.pop();
-                },
-                child: Icon(Icons.arrow_back_ios, color: AppColors.primary500),
-              ),
-            ),
+            backgroundColor: AppColors.backgroundColor,
+            appBar: AppPageBar(title: title),
             body: profileCubit.additionalRequestState == RequestState.error
                 ? StateMessageWidget.error(
                     onRetry: () => profileCubit.getAdditionalPage(type: type),
@@ -59,31 +43,37 @@ class AdditionalScreen extends StatelessWidget {
                     message: LocaleKeys.profileAdditionalEmpty.tr(),
                   )
                 : ListView(
-                    padding: const EdgeInsets.all(15),
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                     children: [
-                      Html(
-                        data:
-                            profileCubit
-                                .additionalEntity
-                                ?.data
-                                ?.first
-                                .description ??
-                            '',
-                        style: {
-                          "body": Style(
-                            color: AppColors.natural400,
-                            fontSize: FontSize(12),
-                            margin: Margins.zero,
-                            padding: HtmlPaddings.zero,
-                            fontFamily: BaseConstant.cairoBold,
-                          ),
-                          "p": Style(
-                            margin: Margins.zero,
-                            padding: HtmlPaddings.zero,
-                            color: AppColors.natural400,
-                            fontFamily: BaseConstant.cairoRegular,
-                          ),
-                        },
+                      AppCard(
+                        padding: const EdgeInsets.all(18),
+                        child: Html(
+                          data:
+                              profileCubit
+                                  .additionalEntity
+                                  ?.data
+                                  ?.first
+                                  .description ??
+                              '',
+                          style: {
+                            "body": Style(
+                              color: AppColors.natural600,
+                              fontSize: FontSize(14),
+                              lineHeight: const LineHeight(1.7),
+                              margin: Margins.zero,
+                              padding: HtmlPaddings.zero,
+                              fontFamily: BaseConstant.cairoRegular,
+                            ),
+                            "p": Style(
+                              margin: Margins.only(bottom: 10),
+                              padding: HtmlPaddings.zero,
+                            ),
+                            "h1,h2,h3,h4,strong,b": Style(
+                              color: AppColors.black700,
+                              fontFamily: BaseConstant.cairoBold,
+                            ),
+                          },
+                        ),
                       ),
                     ],
                   ),

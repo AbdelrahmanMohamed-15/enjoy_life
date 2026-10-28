@@ -6,6 +6,8 @@ import 'package:easy_life/Features/vendorService/Domain/Entities/all_trip_schedu
 import 'package:easy_life/Features/vendorService/Presentation/Widget/global_widget/field_header_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_life/Core/Widget/booking_type_icon.dart';
+import '../global_widget/vendor_form_kit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../Core/Constant/base_constant.dart';
 import '../../cubit/vendor_service_cubit.dart';
@@ -61,11 +63,9 @@ class _TripScheduleItemWidgetState extends State<TripScheduleItemWidget> {
 
   @override
   void dispose() {
-    final vendorServiceCubit = VendorServiceCubit.get(context);
-    if (widget.index < vendorServiceCubit.tripScheduleList.length) {
-      final item = vendorServiceCubit.tripScheduleList[widget.index];
-      _removeListeners(item);
-    }
+    // Looking up the cubit from context is unsafe here, so use the item the
+    // listeners were attached to
+    if (_currentItem != null) _removeListeners(_currentItem!);
     super.dispose();
   }
 
@@ -242,16 +242,34 @@ class _TripScheduleItemWidgetState extends State<TripScheduleItemWidget> {
         // Add listeners when widget builds (they will be removed in dispose)
         _addListeners(item);
         return Card(
+          color: Colors.white,
+          surfaceTintColor: Colors.transparent,
+          shadowColor: Colors.black.withValues(alpha: 0.25),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(20),
           ),
-          elevation: 2,
-          margin: const EdgeInsets.symmetric(vertical: 10),
+          elevation: 3,
+          margin: const EdgeInsets.symmetric(vertical: 8),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
+                Row(
+                  children: [
+                    const BookingTypeIcon(itemType: 'trip', size: 34),
+                    const SizedBox(width: 10),
+                    Text(
+                      '#${widget.index + 1}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontFamily: BaseConstant.cairoBold,
+                        color: AppColors.black700,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
                 Row(
                   children: [
                     Expanded(
@@ -268,12 +286,8 @@ class _TripScheduleItemWidgetState extends State<TripScheduleItemWidget> {
                             vendorServiceCubit.allBranchEntity?.data,
                             item.branchID,
                           ),
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                          ),
+                          decoration: VendorDropdownBox.decoration,
+                          isExpanded: true,
                           items: vendorServiceCubit.allBranchEntity?.data
                               ?.map(
                                 (branch) => DropdownMenuItem<BranchData>(
@@ -315,12 +329,8 @@ class _TripScheduleItemWidgetState extends State<TripScheduleItemWidget> {
                             vendorServiceCubit.allTripSchedualEntity?.data,
                             item.tripScheduleID,
                           ),
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                          ),
+                          decoration: VendorDropdownBox.decoration,
+                          isExpanded: true,
                           items: vendorServiceCubit.allTripSchedualEntity?.data
                               ?.map(
                                 (

@@ -1,19 +1,17 @@
-import 'package:easy_life/Core/Extentions/extentions.dart';
 import 'package:easy_life/Core/Helper/input_validator.dart';
 import 'package:easy_life/Core/L10n/locale_keys.dart';
+import 'package:easy_life/Core/Routes/app_navigation.dart';
+import 'package:easy_life/Core/Routes/app_routes.dart';
+import 'package:easy_life/Core/Widget/app_ui.dart';
+import 'package:easy_life/Core/Widget/custom_text_form_field.dart';
 import 'package:easy_life/Features/Authentication/Presentation/cubit/auth_cubit.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../Core/Constant/assets_strings.dart';
-import '../../../../Core/Constant/base_constant.dart';
-import '../../../../Core/Routes/app_navigation.dart';
-import '../../../../Core/Routes/app_routes.dart';
 import '../../../../Core/Themes/app_colors.dart';
 import '../../../../Core/Widget/custom_country_code.dart';
-import '../../../../Core/Widget/custom_text_form_field.dart';
-import '../../../../Core/Widget/main_app_button.dart';
+import '../Widget/auth_layout.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -28,163 +26,106 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool isObscure2 = true;
   String dailCode = '+20';
 
+  Widget _icon(IconData icon) => Icon(icon, color: AppColors.primary400);
+
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
-    var size = MediaQuery.sizeOf(context);
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, state) {
         var authCubit = AuthCubit.get(context);
-        return PopScope(
-          canPop: false,
-          child: SafeArea(
-            child: Scaffold(
-              body: Form(
-                key: _formKey,
-                child: ListView(
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  children: [
-                    Image.asset(
-                      AssetsStrings.appLogo,
-                      height: 120,
-                      width: size.width * 0.6,
-                    ),
-                    SizedBox(height: 20),
-                    Text(
-                      LocaleKeys.authRegisterTitle.tr(),
-                      style: theme.textTheme.headlineSmall!.copyWith(
-                        color: AppColors.black700,
-                      ),
-                    ).setCenter(),
-                    SizedBox(height: 50),
-                    CustomTextFormField(
-                      controller: authCubit.nameController,
-                      hintText: LocaleKeys.authRegisterUsernameHint.tr(),
-                      validator: (value) =>
-                          InputValidator.validateNotEmpty(value),
-                    ),
-                    SizedBox(height: 20),
-                    CustomTextFormField(
-                      controller: authCubit.emailController,
-                      hintText: LocaleKeys.authRegisterEmailHint.tr(),
-                      textInputType: TextInputType.emailAddress,
-                      validator: (value) => InputValidator.validateEmail(value),
-                    ),
-                    SizedBox(height: 20),
-                    CustomTextFormField(
-                      controller: authCubit.regPhoneController,
-                      hintText: LocaleKeys.authRegisterPhoneHint.tr(),
-                      textInputType: TextInputType.phone,
-                      validator: (value) =>
-                          InputValidator.validateNotEmpty(value),
-                      prefixIcon: CustomCountryCode(
-                        onChanged: (value) {
-                          debugPrint('Country selected ${value.dialCode}');
-                          // authCubit.setCountryCode(code: value.dialCode!);
-                          setState(() {
-                            dailCode = value.dialCode ?? '+20';
-                          });
-                        },
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    CustomTextFormField(
-                      controller: authCubit.addressController,
-                      hintText: LocaleKeys.authRegisterAddressHint.tr(),
-                      validator: (value) =>
-                          InputValidator.validateNotEmpty(value),
-                    ),
-                    SizedBox(height: 20),
-                    CustomTextFormField(
-                      controller: authCubit.regPasswordController,
-                      hintText: LocaleKeys.authRegisterPasswordHint.tr(),
-                      textInputType: TextInputType.visiblePassword,
-                      obscureText: isObscure,
-                      validator: (value) =>
-                          InputValidator.validateNotEmpty(value),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          !isObscure ? Icons.visibility : Icons.visibility_off,
-                          color: AppColors.primary200,
-                          size: 20,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            isObscure = !isObscure;
-                          });
-                        },
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    CustomTextFormField(
-                      controller: authCubit.confirmPasswordController,
-                      hintText: LocaleKeys.authRegisterConfirmPasswordHint.tr(),
-                      textInputType: TextInputType.visiblePassword,
-                      obscureText: isObscure2,
-                      validator: (value) =>
-                          InputValidator.validateConfirmPassword(
-                            value,
-                            authCubit.regPasswordController.text,
-                          ),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          !isObscure2 ? Icons.visibility : Icons.visibility_off,
-                          color: AppColors.primary200,
-                          size: 20,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            isObscure2 = !isObscure2;
-                          });
-                        },
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    MainAppButton(
-                      child: Text(
-                        LocaleKeys.authRegisterButton.tr(),
-                        style: theme.textTheme.bodyMedium!.copyWith(
-                          color: AppColors.natural100,
-                          fontFamily: BaseConstant.cairoBold,
-                        ),
-                      ),
-                      onTap: () {
-                        if (_formKey.currentState!.validate()) {
-                          authCubit.register(
-                            authCubit: authCubit,
-                            dailCode: dailCode,
-                          );
-                        }
-                      },
-                    ),
-                    SizedBox(height: 30),
-                    GestureDetector(
-                      onTap: () {
-                        AppNavigation.pushReplacementNamed(AppRoutes.login);
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            LocaleKeys.authRegisterHaveAccount.tr(),
-                            style: theme.textTheme.bodyMedium!.copyWith(
-                              color: AppColors.black700,
-                            ),
-                          ),
-                          SizedBox(width: 5),
-                          Text(
-                            LocaleKeys.authRegisterLoginLink.tr(),
-                            style: theme.textTheme.bodyMedium!.copyWith(
-                              color: AppColors.primary500,
-                              fontFamily: BaseConstant.cairoBold,
-                            ),
-                          ),
-                        ],
-                      ).setCenter(),
-                    ),
-                  ],
+        const gap = SizedBox(height: 14);
+        return Form(
+          key: _formKey,
+          child: AuthLayout(
+            title: LocaleKeys.authRegisterTitle.tr(),
+            subtitle: LocaleKeys.authRegisterSubtitle.tr(),
+            children: [
+              CustomTextFormField(
+                controller: authCubit.nameController,
+                hintText: LocaleKeys.authRegisterUsernameHint.tr(),
+                prefixIcon: _icon(Icons.person_rounded),
+                textInputAction: TextInputAction.next,
+                validator: (value) => InputValidator.validateNotEmpty(value),
+              ),
+              gap,
+              CustomTextFormField(
+                controller: authCubit.emailController,
+                hintText: LocaleKeys.authRegisterEmailHint.tr(),
+                textInputType: TextInputType.emailAddress,
+                prefixIcon: _icon(Icons.alternate_email_rounded),
+                textInputAction: TextInputAction.next,
+                validator: (value) => InputValidator.validateEmail(value),
+              ),
+              gap,
+              CustomTextFormField(
+                controller: authCubit.regPhoneController,
+                hintText: LocaleKeys.authRegisterPhoneHint.tr(),
+                textInputType: TextInputType.phone,
+                textInputAction: TextInputAction.next,
+                validator: (value) => InputValidator.validateNotEmpty(value),
+                prefixIcon: CustomCountryCode(
+                  onChanged: (value) {
+                    setState(() => dailCode = value.dialCode ?? '+20');
+                  },
                 ),
               ),
+              gap,
+              CustomTextFormField(
+                controller: authCubit.addressController,
+                hintText: LocaleKeys.authRegisterAddressHint.tr(),
+                prefixIcon: _icon(Icons.location_on_rounded),
+                textInputAction: TextInputAction.next,
+                validator: (value) => InputValidator.validateNotEmpty(value),
+              ),
+              gap,
+              CustomTextFormField(
+                controller: authCubit.regPasswordController,
+                hintText: LocaleKeys.authRegisterPasswordHint.tr(),
+                textInputType: TextInputType.visiblePassword,
+                obscureText: isObscure,
+                prefixIcon: _icon(Icons.lock_rounded),
+                textInputAction: TextInputAction.next,
+                validator: (value) => InputValidator.validateNotEmpty(value),
+                suffixIcon: PasswordToggle(
+                  obscured: isObscure,
+                  onTap: () => setState(() => isObscure = !isObscure),
+                ),
+              ),
+              gap,
+              CustomTextFormField(
+                controller: authCubit.confirmPasswordController,
+                hintText: LocaleKeys.authRegisterConfirmPasswordHint.tr(),
+                textInputType: TextInputType.visiblePassword,
+                obscureText: isObscure2,
+                prefixIcon: _icon(Icons.lock_reset_rounded),
+                validator: (value) => InputValidator.validateConfirmPassword(
+                  value,
+                  authCubit.regPasswordController.text,
+                ),
+                suffixIcon: PasswordToggle(
+                  obscured: isObscure2,
+                  onTap: () => setState(() => isObscure2 = !isObscure2),
+                ),
+              ),
+              const SizedBox(height: 24),
+              AppGradientButton(
+                label: LocaleKeys.authRegisterButton.tr(),
+                icon: Icons.person_add_alt_1_rounded,
+                onTap: () {
+                  FocusScope.of(context).unfocus();
+                  if (_formKey.currentState!.validate()) {
+                    authCubit.register(
+                      authCubit: authCubit,
+                      dailCode: dailCode,
+                    );
+                  }
+                },
+              ),
+            ],
+            footer: AuthSwitchLink(
+              text: LocaleKeys.authRegisterHaveAccount.tr(),
+              action: LocaleKeys.authRegisterLoginLink.tr(),
+              onTap: () => AppNavigation.pushReplacementNamed(AppRoutes.login),
             ),
           ),
         );

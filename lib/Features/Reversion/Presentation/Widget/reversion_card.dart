@@ -1,120 +1,231 @@
-import 'package:easy_life/Core/Extentions/extentions.dart';
+import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Routes/app_navigation.dart';
+import 'package:easy_life/Core/Widget/booking_type_icon.dart';
 import 'package:easy_life/Features/Reversion/Domain/Entities/reversion_entity.dart';
+import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import '../../../../Core/Constant/assets_strings.dart';
 import '../../../../Core/Constant/base_constant.dart';
 import '../../../../Core/Routes/app_routes.dart';
 import '../../../../Core/Themes/app_colors.dart';
+import 'reversion_service_type.dart';
 
 class ReversionCard extends StatelessWidget {
   final ReversionData reversion;
-  const ReversionCard({super.key, required this.reversion});
+  final int serviceID;
+  const ReversionCard({
+    super.key,
+    required this.reversion,
+    required this.serviceID,
+  });
+
+  String _formatDate(BuildContext context) {
+    final date = reversion.order?.createdAt?.toLocal();
+    if (date == null) return '';
+    try {
+      final locale = context.locale.toString();
+      return '${DateFormat.yMMMd(locale).format(date)} • ${DateFormat.jm(locale).format(date)}';
+    } catch (_) {
+      return '${date.year}-${date.month}-${date.day}';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadiusGeometry.circular(12),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Image.network(
-              reversion.order?.image ?? '',
-              height: 100,
-              width: 100,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return SvgPicture.asset(
-                  AssetsStrings.noImages,
-                  height: 100,
-                  width: 100,
-                  fit: BoxFit.cover,
-                );
-              },
-            ),
+    final order = reversion.order;
+    final client = reversion.client;
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
+    final date = _formatDate(context);
+    final servicesCount = reversion.orderDetails?.length ?? 0;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
           ),
-          const SizedBox(width: 12),
-          Expanded(
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(20),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: () => AppNavigation.pushNamed(
+            AppRoutes.reversionDetails,
+            arguments: {'reversionData': reversion},
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(14),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  reversion.order?.name ?? '',
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontFamily: BaseConstant.cairoBold,
-                  ),
+                Row(
+                  children: [
+                    _ServiceImage(
+                      imageUrl: order?.image,
+                      itemType: ReversionServiceType.itemType(serviceID),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            order?.name ?? '',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontFamily: BaseConstant.cairoBold,
+                              color: AppColors.black700,
+                            ),
+                          ),
+                          if ((order?.orderCode ?? '').isNotEmpty)
+                            Text(
+                              LocaleKeys.orderNumber.tr(
+                                namedArgs: {'code': order!.orderCode!},
+                              ),
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                fontFamily: BaseConstant.cairoBold,
+                                color: AppColors.primary600,
+                              ),
+                            ),
+                          if (date.isNotEmpty)
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.calendar_today_rounded,
+                                  size: 12,
+                                  color: AppColors.natural500,
+                                ),
+                                const SizedBox(width: 4),
+                                Flexible(
+                                  child: Text(
+                                    date,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: AppColors.natural500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          order?.totalPrice ?? '0',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontFamily: BaseConstant.cairoBold,
+                            color: AppColors.primary500,
+                          ),
+                        ),
+                        Text(
+                          LocaleKeys.commonCurrencyEgp.tr(),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: AppColors.natural500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 5),
-                Text(
-                  reversion.order?.createdAt == null
-                      ? ''
-                      : '${reversion.order?.createdAt!.year}-${reversion.order?.createdAt!.month}-${reversion.order?.createdAt!.day}',
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    fontFamily: BaseConstant.cairoRegular,
-                    color: AppColors.natural400,
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.natural50,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Row(
+                    children: [
+                      if ((client?.fullName ?? '').isNotEmpty) ...[
+                        const Icon(
+                          Icons.person_rounded,
+                          size: 18,
+                          color: AppColors.primary500,
+                        ),
+                        const SizedBox(width: 6),
+                      ],
+                      Expanded(
+                        child: Text(
+                          client?.fullName ?? '',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontFamily: BaseConstant.cairoBold,
+                            color: AppColors.natural600,
+                          ),
+                        ),
+                      ),
+                      if (servicesCount > 0) ...[
+                        const Icon(
+                          Icons.shopping_bag_rounded,
+                          size: 15,
+                          color: AppColors.natural500,
+                        ),
+                        const SizedBox(width: 3),
+                        Text(
+                          '$servicesCount',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: AppColors.natural600,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                      ],
+                      Transform.flip(
+                        flipX: isRtl,
+                        child: const Icon(
+                          Icons.chevron_right_rounded,
+                          size: 20,
+                          color: AppColors.natural400,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 10),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: AppColors.primary200.withOpacity(0.3),
-            ),
-            child: Text(
-              '${reversion.order?.totalPrice ?? '0.0'} ج.م',
-              style: theme.textTheme.bodySmall?.copyWith(
-                fontFamily: BaseConstant.cairoBold,
-                color: AppColors.primary500,
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          GestureDetector(
-            onTap: () {
-              AppNavigation.pushNamed(
-                AppRoutes.reversionDetails,
-                arguments: {'reversionData': reversion},
-              );
-            },
-            child: Container(
-              padding: const EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.natural100,
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.natural200,
-                    blurRadius: 7,
-                    offset: const Offset(0, 3), // changes position of shadow
-                  ),
-                  BoxShadow(
-                    color: AppColors.natural200,
-                    blurRadius: 7,
-                    offset: const Offset(0, -3), // changes position of shadow
-                  ),
-                ],
-              ),
-              child: Icon(Icons.visibility_sharp, color: AppColors.primary500),
-            ),
-          ),
-          const SizedBox(width: 12),
-        ],
+        ),
       ),
-    ).setVerticalPadding(context, 4, enableMediaQuery: false);
+    );
+  }
+}
+
+class _ServiceImage extends StatelessWidget {
+  final String? imageUrl;
+  final String itemType;
+  const _ServiceImage({this.imageUrl, required this.itemType});
+
+  @override
+  Widget build(BuildContext context) {
+    const double size = 60;
+    final url = imageUrl?.trim() ?? '';
+    final fallback = BookingTypeIcon(itemType: itemType, size: size);
+    if (url.isEmpty) return fallback;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(size * 0.28),
+      child: Image.network(
+        url,
+        height: size,
+        width: size,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => fallback,
+      ),
+    );
   }
 }

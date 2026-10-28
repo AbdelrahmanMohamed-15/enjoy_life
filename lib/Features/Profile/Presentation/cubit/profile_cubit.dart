@@ -190,4 +190,14 @@ class ProfileCubit extends Cubit<ProfileState>
       },
     );
   }
+
+  // Created per screen (registerFactory), so release the controllers with it
+  @override
+  Future<void> close() {
+    phoneController.dispose();
+    nameController.dispose();
+    emailController.dispose();
+    addressController.dispose();
+    return super.close();
+  }
 }

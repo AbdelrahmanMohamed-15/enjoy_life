@@ -1,20 +1,20 @@
+import 'package:easy_life/Core/Widget/app_ui.dart';
 import 'package:easy_life/Core/Widget/booking_type_icon.dart';
 import 'package:easy_life/Core/Widget/state_message_widget.dart';
 import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:easy_life/Core/Extentions/padding_ext.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
 import 'package:easy_life/Features/Services/Domain/Entity/table_entity.dart';
 import 'package:easy_life/Features/Services/Presentation/cubit/service_cubit.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../Core/Constant/base_constant.dart';
-import '../../../../Core/Routes/app_navigation.dart';
+import '../Widget/bookable_item_card.dart';
+import '../Widget/booking_period_banner.dart';
 
 class TablesScreen extends StatelessWidget {
+  final List<TableData> tableData;
   final String title;
   final ServiceCubit serviceCubit;
-  final List<TableData> tableData;
   final String startDate;
   final String endDate;
   const TablesScreen({
@@ -28,115 +28,52 @@ class TablesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 2,
-          title: Text(title),
-          centerTitle: true,
-          leading: GestureDetector(
-            onTap: () {
-              AppNavigation.pop();
-            },
-            child: Icon(Icons.arrow_back_ios, color: AppColors.primary400),
-          ),
-          actions: const [
-            // Icon(Icons.favorite_border),
-            // SizedBox(width: 12),
-            Icon(Icons.share),
-            SizedBox(width: 12),
-          ],
-        ),
-        body: tableData.isEmpty
-            ? StateMessageWidget.empty()
-            : ListView.separated(
-                shrinkWrap: true,
-                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-                itemCount: tableData.length,
-                separatorBuilder: (context, index) =>
-                    const Divider(color: AppColors.natural400),
-                itemBuilder: (context, index) {
-                  var table = tableData[index];
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      BookingTypeIcon(itemType: 'restaurant', size: 70),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: LocaleKeys.servicesTableNumber.tr(),
-                                    style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: AppColors.primary400,
-                                      fontFamily: BaseConstant.cairoBold,
-                                    ),
-                                  ),
-                                  TextSpan(text: ' '),
-                                  TextSpan(
-                                    text: table.tableNumber,
-                                    style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: AppColors.black700,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: LocaleKeys.servicesCapacity.tr(),
-                                    style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: AppColors.primary400,
-                                      fontFamily: BaseConstant.cairoBold,
-                                    ),
-                                  ),
-                                  TextSpan(text: ' '),
-                                  TextSpan(
-                                    text: table.capacity.toString(),
-                                    style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: AppColors.black700,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+    return Scaffold(
+      backgroundColor: AppColors.backgroundColor,
+      appBar: AppPageBar(title: title),
+      body: Column(
+        children: [
+          BookingPeriodBanner(startDate: startDate, endDate: endDate),
+          Expanded(
+            child: tableData.isEmpty
+                ? StateMessageWidget.empty()
+                : ListView.separated(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                    itemCount: tableData.length,
+                    separatorBuilder: (_, _) => const SizedBox(height: 12),
+                    itemBuilder: (context, index) {
+                      var table = tableData[index];
+                      return BookableItemCard(
+                        leading: const BookingTypeIcon(
+                          itemType: 'restaurant',
+                          size: 64,
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      GestureDetector(
-                        onTap: () {
-                          serviceCubit.addToCart(
-                            type: 'table',
-                            tableID: table.id!,
-                            startDate: startDate,
-                            endDate: endDate,
-                          );
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              width: 1,
-                              color: AppColors.black700,
-                            ),
+                        title:
+                            '${LocaleKeys.servicesTableNumber.tr()} ${table.tableNumber ?? ''}',
+                        subtitle: table.description,
+                        facts: [
+                          ItemFact(
+                            Icons.groups_rounded,
+                            '${LocaleKeys.servicesCapacity.tr()} ${table.capacity ?? 0}',
                           ),
-                          child: Icon(Icons.add),
+                          if ((table.deposit ?? 'null') != 'null')
+                            ItemFact(
+                              Icons.account_balance_wallet_rounded,
+                              '${LocaleKeys.vendorDeposit.tr()}: ${table.deposit}',
+                            ),
+                        ],
+                        price: table.price ?? '0',
+                        onAdd: () => serviceCubit.addToCart(
+                          type: 'table',
+                          tableID: table.id!,
+                          startDate: startDate,
+                          endDate: endDate,
                         ),
-                      ),
-                    ],
-                  ).setVerticalPadding(context, 8, enableMediaQuery: false);
-                },
-              ),
+                      );
+                    },
+                  ),
+          ),
+        ],
       ),
     );
   }

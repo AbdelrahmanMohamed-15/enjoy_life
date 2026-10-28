@@ -35,6 +35,7 @@ class AppRoutes {
   static const String addService = "/addService";
   static const String addNewServiceScreen = "/AddNewServiceScreen";
   static const String addServiceOption = "/addServiceOption";
+  static const String reversionList = "/reversionList";
   static const String reversionDetails = "/reversionDetails";
   static const String scanQRScreen = "/scanQRScreen";
 }

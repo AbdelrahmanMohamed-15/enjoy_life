@@ -1,50 +1,36 @@
-import 'package:easy_life/Core/Extentions/center_ext.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../Core/Themes/app_colors.dart';
 
 class SmoothIndicator extends StatelessWidget {
   final int currentIndex;
-  const SmoothIndicator({super.key, required this.currentIndex});
+  final int count;
+  const SmoothIndicator({
+    super.key,
+    required this.currentIndex,
+    this.count = 3,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
-          width: currentIndex == 0 ? 30 : 10,
-          height: 10,
-          decoration: BoxDecoration(
-            color: currentIndex == 0
-                ? AppColors.primary500
-                : AppColors.natural300,
-            borderRadius: BorderRadius.circular(10),
+        for (var i = 0; i < count; i++)
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            width: currentIndex == i ? 28 : 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: currentIndex == i
+                  ? AppColors.primary500
+                  : AppColors.natural300,
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
-        ),
-        const SizedBox(width: 10),
-        Container(
-          width: currentIndex == 1 ? 30 : 10,
-          height: 10,
-          decoration: BoxDecoration(
-            color: currentIndex == 1
-                ? AppColors.primary500
-                : AppColors.natural300,
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-        const SizedBox(width: 10),
-        Container(
-          width: currentIndex == 2 ? 30 : 10,
-          height: 10,
-          decoration: BoxDecoration(
-            color: currentIndex == 2
-                ? AppColors.primary500
-                : AppColors.natural300,
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
       ],
-    ).setCenter();
+    );
   }
 }

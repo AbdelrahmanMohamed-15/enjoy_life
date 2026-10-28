@@ -4,7 +4,12 @@ import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Routes/routes.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
-import 'package:easy_life/Core/Widget/main_app_button.dart';
+import 'package:easy_life/Core/Helper/service_kind.dart';
+import 'package:easy_life/Core/Helper/user_validation_helper.dart';
+import 'package:easy_life/Core/Widget/app_ui.dart';
+import 'package:easy_life/Core/Widget/booking_type_icon.dart';
+import 'package:easy_life/Features/Profile/Presentation/Widget/profile_avatar.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:easy_life/Core/Widget/map_location_widget.dart';
 import 'package:easy_life/Features/Authentication/Domain/Entity/user_entity.dart';
 import 'package:flutter/material.dart';
@@ -55,15 +60,7 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
     return BlocBuilder<ServiceCubit, ServiceState>(
       builder: (context, state) {
         var serviceCubit = ServiceCubit.get(context);
-        final messageAppBar = AppBar(
-          elevation: 2,
-          leading: GestureDetector(
-            onTap: () {
-              AppNavigation.pop();
-            },
-            child: Icon(Icons.arrow_back_ios, color: AppColors.primary400),
-          ),
-        );
+        const messageAppBar = AppPageBar(title: '');
 
         if (serviceCubit.serviceRequestState == RequestState.error) {
           return Scaffold(
@@ -95,410 +92,515 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
 
         if (serviceCubit.serviceDetails != null) {
           final resturant = serviceCubit.serviceDetails!.data!;
-          List<Branch> branches = [];
-          if (resturant.serviceBranches != null) {
-            for (var branch in resturant.serviceBranches!) {
-              branches.add(branch.branch!);
-            }
-          }
-          final uniqueBranches = branches.toSet().toList();
-          // Filter services for the selected branch and remove duplicates by id
+          final kind = ServiceKind.of(name: widget.type);
+          final isGuest = userData == null;
+          final isVendor = userData != null && userData.clientType != 0;
+          final uniqueBranches = <int?, Branch>{
+            for (final sb in resturant.serviceBranches ?? <ServiceBranch>[])
+              if (sb.branch != null) sb.branch!.id: sb.branch!,
+          }.values.toList();
+          // Services of the selected branch, without duplicates
           List<ServiceBranch> uniqueBranchesById = {
             for (var sb in (resturant.serviceBranches ?? []).where(
               (s) => s.branch?.id == selectedBranch?.id,
             ))
               sb.id: sb,
           }.values.toList();
+          final images = resturant.images ?? [];
+          final rates = resturant.rates ?? [];
+          final rating = (resturant.avarageRating ?? 0).toStringAsFixed(1);
 
-          return SafeArea(
-            child: Scaffold(
-              appBar: AppBar(
-                elevation: 2,
-                title: Text(resturant.name ?? ""),
-                centerTitle: true,
-                leading: GestureDetector(
-                  onTap: () {
-                    AppNavigation.pop();
-                  },
-                  child: Icon(
-                    Icons.arrow_back_ios,
-                    color: AppColors.primary400,
+          return Scaffold(
+            backgroundColor: AppColors.backgroundColor,
+            body: CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  expandedHeight: 280,
+                  pinned: true,
+                  stretch: true,
+                  elevation: 0,
+                  scrolledUnderElevation: 0,
+                  backgroundColor: AppColors.backgroundColor,
+                  automaticallyImplyLeading: false,
+                  leading: _CircleAction(
+                    icon: Icons.arrow_back_ios_new_rounded,
+                    onTap: () => AppNavigation.pop(),
                   ),
-                ),
-                actions: const [
-                  // Icon(Icons.favorite_border),
-                  // SizedBox(width: 12),
-                  Icon(Icons.share),
-                  SizedBox(width: 12),
-                ],
-              ),
-              body: SingleChildScrollView(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 🔹 Branch Dropdown
-                    if (userData != null)
-                      if (userData.clientType == 0) ...[
-                        if (branches.isNotEmpty) ...[
-                          const SizedBox(height: 20),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey.shade300),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: DropdownButton<Branch>(
-                              isExpanded: true,
-                              underline: const SizedBox(),
-                              hint: Text(LocaleKeys.servicesSelectBranch.tr()),
-                              value: selectedBranch,
-                              items: uniqueBranches.toSet().map((branch) {
-                                return DropdownMenuItem<Branch>(
-                                  value: branch,
-                                  child: Text(branch.name ?? branch.name ?? ""),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedBranch = value;
-                                });
-                              },
-                            ),
-                          ),
-                          const SizedBox(height: 25),
-                        ],
-                      ],
-
-                    // 🔹 Main Image
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.network(
-                        selectedImage ?? resturant.logo ?? "",
-                        height: 200,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return SvgPicture.asset(
-                            AssetsStrings.noImages,
-                            fit: BoxFit.cover,
-                          );
-                        },
-                      ),
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    // 🔹 Horizontal images
-                    SizedBox(
-                      height: 80,
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: resturant.images?.length ?? 0,
-                        separatorBuilder: (_, __) => const SizedBox(width: 8),
-                        itemBuilder: (context, index) {
-                          final img = resturant.images![index];
-                          return GestureDetector(
-                            onTap: () {
-                              debugPrint('change image');
-                              setState(() {
-                                selectedImage = img.url ?? "";
-                              });
-                              debugPrint('change image');
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                img.url ?? resturant.logo ?? "",
-                                width: 80,
-                                height: 80,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return SvgPicture.asset(
-                                    AssetsStrings.noImages,
-                                    width: 80,
-                                    height: 80,
-                                    fit: BoxFit.cover,
-                                  );
-                                },
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-
-                    const SizedBox(height: 25),
-                    // 🔹 Description
-                    Text(
-                      resturant.description ?? "",
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        color: AppColors.natural400,
-                        fontFamily: BaseConstant.cairoBold,
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // 🔹 Rating + Address
-                    RichText(
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      text: TextSpan(
-                        children: [
-                          WidgetSpan(
-                            child: RatingBar.builder(
-                              initialRating: resturant.avarageRating ?? 0,
-                              minRating: 0,
-                              itemSize: 18,
-                              direction: Axis.horizontal,
-                              allowHalfRating: true,
-                              ignoreGestures: true,
-                              itemCount: 5,
-                              itemPadding: EdgeInsets.symmetric(
-                                horizontal: 1.0,
-                              ),
-                              unratedColor: AppColors.natural200,
-                              itemBuilder: (context, _) =>
-                                  Icon(Icons.star, color: Colors.amberAccent),
-                              onRatingUpdate: (rating) {},
-                            ),
-                          ),
-                          TextSpan(text: '   '),
-                          TextSpan(
-                            text: "(${resturant.avarageRating ?? 0})",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey.shade600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    RichText(
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      text: TextSpan(
-                        children: [
-                          WidgetSpan(
-                            child: Icon(Icons.location_on_outlined, size: 15),
-                          ),
-                          TextSpan(text: '   '),
-                          TextSpan(
-                            text: resturant.address ?? '',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey.shade600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 25),
-
-                    // 🔹 Map placeholder
-                    MapLocationWidget(
-                      latitude:
-                          double.tryParse(resturant.latitude ?? '0.0') ?? 0.0,
-                      longitude:
-                          double.tryParse(resturant.longitude ?? '0.0') ?? 0.0,
-                    ),
-                    const SizedBox(height: 20),
-                    if (resturant.rates!.isNotEmpty) ...[
-                      ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: resturant.rates!.length,
-                        separatorBuilder: (_, __) =>
-                            const Divider(color: AppColors.natural400),
-                        itemBuilder: (context, index) {
-                          var rates = resturant.rates![index];
-                          return Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ClipOval(
-                                child: CustomNetworkImage(
-                                  imageUrl: rates.clientImage,
-                                  height: 50,
-                                  width: 50,
-                                  errorWidget: Container(
-                                    height: 50,
-                                    width: 50,
-                                    color: AppColors.primary400,
-                                    child: const Icon(
-                                      Icons.person,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      rates.clientName ?? '',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: theme.textTheme.bodyMedium
-                                          ?.copyWith(
-                                            color: AppColors.black700,
-                                            fontFamily: BaseConstant.cairoBold,
-                                          ),
-                                    ),
-                                    const SizedBox(height: 5),
-                                    // 🔹 Rating + Address
-                                    RichText(
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      text: TextSpan(
-                                        children: [
-                                          WidgetSpan(
-                                            child: RatingBar.builder(
-                                              initialRating: double.parse(
-                                                rates.rating ?? '0.0',
-                                              ),
-                                              minRating: 0,
-                                              itemSize: 18,
-                                              direction: Axis.horizontal,
-                                              allowHalfRating: true,
-                                              ignoreGestures: true,
-                                              itemCount: 5,
-                                              itemPadding: EdgeInsets.symmetric(
-                                                horizontal: 1.0,
-                                              ),
-                                              unratedColor:
-                                                  AppColors.natural200,
-                                              itemBuilder: (context, _) => Icon(
-                                                Icons.star,
-                                                color: Colors.amberAccent,
-                                              ),
-                                              onRatingUpdate: (rating) {},
-                                            ),
-                                          ),
-                                          TextSpan(text: '   '),
-                                          TextSpan(
-                                            text: "(${rates.rating ?? 0})",
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.grey.shade600,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 5),
-                                    Text(
-                                      rates.comment ?? '',
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: theme.textTheme.bodySmall
-                                          ?.copyWith(
-                                            color: AppColors.natural400,
-                                            fontFamily: BaseConstant.cairoBold,
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                    ],
-                    const SizedBox(height: 30),
-                  ],
-                ),
-              ),
-              bottomNavigationBar: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Row(
-                  children: [
-                    if (userData != null)
-                      if (userData.clientType == 0) ...[
-                        // 🔹 Show only if serviceBranches not empty
-                        if (selectedBranch != null) ...[
-                          Expanded(
-                            child: MainAppButton(
-                              bgColor: AppColors.primary400,
-                              child: Text(
-                                LocaleKeys.servicesServices.tr(),
-                                style: theme.textTheme.bodyMedium!.copyWith(
-                                  color: AppColors.natural100,
-                                  fontFamily: BaseConstant.cairoBold,
-                                ),
-                              ),
-                              onTap: () {
-                                AppNavigation.pushNamed(
-                                  AppRoutes.serviceScreen,
-                                  arguments: {
-                                    'serviceBranches': uniqueBranchesById,
-                                    'title': resturant.name ?? '',
-                                    'branchID': selectedBranch?.id ?? 0,
-                                    'serviceCubit': serviceCubit,
-                                  },
-                                );
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                        ],
-
-                        Expanded(
-                          child: MainAppButton(
-                            bgColor: AppColors.primary400,
-                            child: Text(
-                              LocaleKeys.servicesBookNow.tr(),
-                              style: theme.textTheme.bodyMedium!.copyWith(
-                                color: AppColors.natural100,
-                                fontFamily: BaseConstant.cairoBold,
-                              ),
-                            ),
-                            onTap: () {
-                              if (widget.type.toLowerCase() == 'resturant' ||
-                                  widget.type.toLowerCase() == 'مطعم' ||
-                                  widget.type.toLowerCase() == 'hotel' ||
-                                  widget.type.toLowerCase() == 'فندق') {
-                                showModalBottomSheet(
-                                  context: context,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(20),
-                                      topRight: Radius.circular(20),
-                                    ),
-                                  ),
-                                  builder: (_) {
-                                    return BookingTimeBottomSheet(
-                                      serviceCubit: serviceCubit,
-                                      type: widget.type,
-                                      title: resturant.name ?? '',
-                                      serviceID: resturant.id ?? 0,
-                                    );
-                                  },
-                                );
-                              } else {
-                                serviceCubit.getAvaliableTrips(
-                                  tripID: resturant.id ?? 0,
-                                  title: resturant.name ?? '',
-                                  serviceCubit: serviceCubit,
-                                );
-                              }
+                  actions: [
+                    _CircleAction(
+                      icon: Icons.share_rounded,
+                      onTap: () => SharePlus.instance.share(
+                        ShareParams(
+                          text: LocaleKeys.servicesShareText.tr(
+                            namedArgs: {
+                              'name': resturant.name ?? '',
+                              'address': resturant.address ?? '',
+                              'lat': resturant.latitude ?? '',
+                              'lng': resturant.longitude ?? '',
                             },
                           ),
                         ),
-                      ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
                   ],
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Image.network(
+                          selectedImage ?? resturant.logo ?? '',
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              SvgPicture.asset(
+                                AssetsStrings.noImages,
+                                fit: BoxFit.cover,
+                              ),
+                        ),
+                        const DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Color(0x55000000), Color(0x00000000)],
+                              stops: [0, 0.35],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Name, type and rating
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (kind != null) ...[
+                              BookingTypeIcon(
+                                itemType: kind.itemType,
+                                size: 44,
+                              ),
+                              const SizedBox(width: 12),
+                            ],
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    resturant.name ?? '',
+                                    style: theme.textTheme.titleLarge?.copyWith(
+                                      fontFamily: BaseConstant.cairoBold,
+                                      color: AppColors.black700,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.star_rounded,
+                                        color: Color(0xFFFFC83D),
+                                        size: 18,
+                                      ),
+                                      const SizedBox(width: 3),
+                                      Text(
+                                        rating,
+                                        style: const TextStyle(
+                                          fontFamily: BaseConstant.cairoBold,
+                                          color: AppColors.black700,
+                                        ),
+                                      ),
+                                      Text(
+                                        '  (${rates.length} ${LocaleKeys.servicesReviews.tr()})',
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: AppColors.natural500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        if ((resturant.address ?? '').isNotEmpty) ...[
+                          const SizedBox(height: 10),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Icon(
+                                Icons.location_on_rounded,
+                                color: AppColors.primary500,
+                                size: 18,
+                              ),
+                              const SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  resturant.address!,
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: AppColors.natural600,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+
+                        // Gallery
+                        if (images.isNotEmpty) ...[
+                          const SizedBox(height: 16),
+                          SizedBox(
+                            height: 72,
+                            child: ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: images.length,
+                              separatorBuilder: (_, _) =>
+                                  const SizedBox(width: 10),
+                              itemBuilder: (context, index) {
+                                final url = images[index].url ?? '';
+                                final selected = url == selectedImage;
+                                return GestureDetector(
+                                  onTap: () =>
+                                      setState(() => selectedImage = url),
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    width: 72,
+                                    padding: const EdgeInsets.all(2),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(
+                                        color: selected
+                                            ? AppColors.primary500
+                                            : Colors.transparent,
+                                        width: 2,
+                                      ),
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(13),
+                                      child: CustomNetworkImage(
+                                        imageUrl: url,
+                                        width: 68,
+                                        height: 68,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+
+                        // About
+                        if ((resturant.description ?? '').isNotEmpty) ...[
+                          const SizedBox(height: 20),
+                          AppSectionHeader(
+                            title: LocaleKeys.servicesAbout.tr(),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            resturant.description!,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: AppColors.natural600,
+                              height: 1.6,
+                            ),
+                          ),
+                        ],
+
+                        // Branches (customers pick one to see its services)
+                        if (!isVendor && uniqueBranches.isNotEmpty) ...[
+                          const SizedBox(height: 20),
+                          AppSectionHeader(
+                            title: LocaleKeys.servicesBranches.tr(),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            LocaleKeys.servicesBranchHint.tr(),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: AppColors.natural500,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: [
+                              for (final branch in uniqueBranches)
+                                ChoiceChip(
+                                  label: Text(branch.name ?? ''),
+                                  avatar: Icon(
+                                    Icons.storefront_rounded,
+                                    size: 18,
+                                    color: selectedBranch?.id == branch.id
+                                        ? Colors.white
+                                        : AppColors.primary500,
+                                  ),
+                                  showCheckmark: false,
+                                  selected: selectedBranch?.id == branch.id,
+                                  selectedColor: AppColors.primary500,
+                                  backgroundColor: Colors.white,
+                                  side: BorderSide(
+                                    color: selectedBranch?.id == branch.id
+                                        ? AppColors.primary500
+                                        : AppColors.natural200,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                  labelStyle: TextStyle(
+                                    fontFamily: BaseConstant.cairoBold,
+                                    color: selectedBranch?.id == branch.id
+                                        ? Colors.white
+                                        : AppColors.black700,
+                                  ),
+                                  onSelected: (_) =>
+                                      setState(() => selectedBranch = branch),
+                                ),
+                            ],
+                          ),
+                        ],
+
+                        // Location
+                        const SizedBox(height: 20),
+                        AppSectionHeader(
+                          title: LocaleKeys.servicesLocation.tr(),
+                        ),
+                        const SizedBox(height: 10),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: MapLocationWidget(
+                            latitude:
+                                double.tryParse(resturant.latitude ?? '') ??
+                                0.0,
+                            longitude:
+                                double.tryParse(resturant.longitude ?? '') ??
+                                0.0,
+                          ),
+                        ),
+
+                        // Reviews
+                        if (rates.isNotEmpty) ...[
+                          const SizedBox(height: 20),
+                          AppSectionHeader(
+                            title:
+                                '${LocaleKeys.servicesReviews.tr()} (${rates.length})',
+                          ),
+                          const SizedBox(height: 10),
+                          for (final rate in rates)
+                            AppCard(
+                              margin: const EdgeInsets.only(bottom: 10),
+                              padding: const EdgeInsets.all(12),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ProfileAvatar(
+                                    imageUrl: rate.clientImage,
+                                    name: rate.clientName,
+                                    size: 44,
+                                    borderWidth: 0,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                rate.clientName ?? '',
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  fontFamily:
+                                                      BaseConstant.cairoBold,
+                                                  color: AppColors.black700,
+                                                ),
+                                              ),
+                                            ),
+                                            RatingBarIndicator(
+                                              rating:
+                                                  double.tryParse(
+                                                    rate.rating ?? '',
+                                                  ) ??
+                                                  0,
+                                              itemSize: 14,
+                                              unratedColor:
+                                                  AppColors.natural200,
+                                              itemBuilder: (context, _) =>
+                                                  const Icon(
+                                                    Icons.star_rounded,
+                                                    color: Color(0xFFFFC83D),
+                                                  ),
+                                            ),
+                                          ],
+                                        ),
+                                        if ((rate.comment ?? '')
+                                            .isNotEmpty) ...[
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            rate.comment!,
+                                            style: theme.textTheme.bodySmall
+                                                ?.copyWith(
+                                                  color: AppColors.natural600,
+                                                ),
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
+            bottomNavigationBar: isVendor
+                ? null
+                : Container(
+                    padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.06),
+                          blurRadius: 16,
+                          offset: const Offset(0, -4),
+                        ),
+                      ],
+                    ),
+                    child: SafeArea(
+                      top: false,
+                      child: Row(
+                        children: [
+                          if (selectedBranch != null) ...[
+                            Expanded(
+                              child: SizedBox(
+                                height: 52,
+                                child: OutlinedButton.icon(
+                                  onPressed: () {
+                                    if (isGuest) {
+                                      UserValidationHelper.showUserValidation();
+                                      return;
+                                    }
+                                    AppNavigation.pushNamed(
+                                      AppRoutes.serviceScreen,
+                                      arguments: {
+                                        'serviceBranches': uniqueBranchesById,
+                                        'title': resturant.name ?? '',
+                                        'branchID': selectedBranch?.id ?? 0,
+                                        'serviceCubit': serviceCubit,
+                                      },
+                                    );
+                                  },
+                                  style: OutlinedButton.styleFrom(
+                                    side: const BorderSide(
+                                      color: AppColors.primary300,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                  ),
+                                  icon: const Icon(
+                                    Icons.room_service_rounded,
+                                    size: 20,
+                                  ),
+                                  label: Text(
+                                    LocaleKeys.servicesServices.tr(),
+                                    style: const TextStyle(
+                                      fontFamily: BaseConstant.cairoBold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                          ],
+                          Expanded(
+                            child: AppGradientButton(
+                              label: isGuest
+                                  ? LocaleKeys.servicesLoginToBook.tr()
+                                  : LocaleKeys.servicesBookNow.tr(),
+                              icon: Icons.event_available_rounded,
+                              onTap: () {
+                                if (isGuest) {
+                                  UserValidationHelper.showUserValidation();
+                                  return;
+                                }
+                                if (kind == ServiceKind.trip) {
+                                  serviceCubit.getAvaliableTrips(
+                                    tripID: resturant.id ?? 0,
+                                    title: resturant.name ?? '',
+                                    serviceCubit: serviceCubit,
+                                  );
+                                  return;
+                                }
+                                showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  backgroundColor: Colors.white,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(24),
+                                    ),
+                                  ),
+                                  builder: (_) => BookingTimeBottomSheet(
+                                    serviceCubit: serviceCubit,
+                                    type: widget.type,
+                                    title: resturant.name ?? '',
+                                    serviceID: resturant.id ?? 0,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
           );
         }
 
         return const Scaffold();
       },
+    );
+  }
+}
+
+class _CircleAction extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+  const _CircleAction({required this.icon, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: Material(
+        color: Colors.white,
+        shape: const CircleBorder(),
+        elevation: 2,
+        child: InkWell(
+          customBorder: const CircleBorder(),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Icon(icon, size: 20, color: AppColors.black700),
+          ),
+        ),
+      ),
     );
   }
 }

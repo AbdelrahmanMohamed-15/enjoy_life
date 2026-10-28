@@ -1,4 +1,3 @@
-import 'package:easy_life/Core/Extentions/extentions.dart';
 import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_life/Features/Profile/Presentation/cubit/profile_cubit.dart';
@@ -6,11 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../Core/Constant/base_constant.dart';
 import '../../../../Core/Helper/input_validator.dart';
-import '../../../../Core/Routes/app_navigation.dart';
 import '../../../../Core/Themes/app_colors.dart';
-import '../../../../Core/Widget/custom_network_image.dart';
+import '../../../../Core/Widget/app_ui.dart';
+import '../Widget/profile_avatar.dart';
 import '../../../../Core/Widget/custom_text_form_field.dart';
-import '../../../../Core/Widget/main_app_button.dart';
 import '../Widget/pick_bottom_sheet.dart';
 
 class EditProfileScreen extends StatelessWidget {
@@ -22,182 +20,166 @@ class EditProfileScreen extends StatelessWidget {
     return BlocBuilder<ProfileCubit, ProfileState>(
       builder: (context, state) {
         var profileCubit = ProfileCubit.get(context);
-        return SafeArea(
-          child: Scaffold(
-            appBar: AppBar(
-              centerTitle: true,
-              backgroundColor: AppColors.natural100,
-              title: Text(
-                LocaleKeys.profileEditTitle.tr(),
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: AppColors.primary500,
+        Widget field({
+          required TextEditingController controller,
+          required String label,
+          required IconData icon,
+          bool readOnly = false,
+        }) => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8, top: 14),
+              child: Text(
+                label,
+                style: theme.textTheme.bodySmall?.copyWith(
                   fontFamily: BaseConstant.cairoBold,
+                  color: AppColors.natural600,
+                  fontSize: 13,
                 ),
               ),
-              elevation: 1,
-              leading: GestureDetector(
-                onTap: () {
-                  AppNavigation.pop();
-                },
-                child: Icon(Icons.arrow_back_ios, color: AppColors.primary500),
-              ),
             ),
-            body: Form(
-              key: profileCubit.formKey,
-              child: ListView(
-                padding: EdgeInsets.symmetric(vertical: 25, horizontal: 15),
-                children: [
-                  Row(
+            CustomTextFormField(
+              controller: controller,
+              readOnly: readOnly,
+              fillColor: readOnly ? AppColors.natural50 : null,
+              prefixIcon: Icon(icon, color: AppColors.primary400),
+              suffixIcon: readOnly
+                  ? const Icon(
+                      Icons.lock_outline_rounded,
+                      size: 18,
+                      color: AppColors.natural400,
+                    )
+                  : null,
+              validator: (value) => InputValidator.validateNotEmpty(value),
+            ),
+          ],
+        );
+        return Scaffold(
+          backgroundColor: AppColors.backgroundColor,
+          appBar: AppPageBar(title: LocaleKeys.profileEditTitle.tr()),
+          body: Form(
+            key: profileCubit.formKey,
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+              children: [
+                Center(
+                  child: GestureDetector(
+                    onTap: () => pickupBottomSheet(profileCubit: profileCubit),
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              colors: [
+                                AppColors.primary300,
+                                AppColors.primary600,
+                              ],
+                            ),
+                          ),
+                          child: profileCubit.profileImage != null
+                              ? ClipOval(
+                                  child: Image.file(
+                                    profileCubit.profileImage!,
+                                    width: 108,
+                                    height: 108,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                              : ProfileAvatar(
+                                  imageUrl: profileCubit.userData?.image,
+                                  name: profileCubit.userData?.fullName,
+                                  size: 108,
+                                  borderWidth: 3,
+                                ),
+                        ),
+                        PositionedDirectional(
+                          bottom: 2,
+                          end: 2,
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: AppColors.primary500,
+                              border: Border.all(color: Colors.white, width: 2),
+                            ),
+                            child: const Icon(
+                              Icons.photo_camera_rounded,
+                              size: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  LocaleKeys.profileEditAddPhoto.tr(),
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: AppColors.black700,
+                    fontFamily: BaseConstant.cairoBold,
+                  ),
+                ),
+                Text(
+                  LocaleKeys.profileEditPhotoHint.tr(),
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: AppColors.natural500,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                AppCard(
+                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 18),
+                  child: Column(
                     children: [
-                      SizedBox(
-                        height: 100,
-                        width: 100,
-                        child: Stack(
-                          children: [
-                            Container(
-                              height: 100,
-                              width: 100,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: AppColors.primary500,
-                                  width: 2,
-                                ),
-                                // image: DecorationImage(
-                                //   image: NetworkImage(
-                                //     '${BaseConstant.baseImage}${profileCubit.usermodel!.image ?? ''}',
-                                //   ),
-                                //   fit: BoxFit.fill,
-                                // ),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadiusGeometry.circular(50),
-                                child: profileCubit.profileImage != null
-                                    ? Image.file(
-                                        profileCubit.profileImage!,
-                                        width: 100,
-                                        height: 100,
-                                        fit: BoxFit.fill,
-                                      )
-                                    : CustomNetworkImage(
-                                        imageUrl: profileCubit.userData?.image,
-                                        width: 100,
-                                        height: 100,
-                                        fit: BoxFit.fill,
-                                        errorWidget: const Icon(
-                                          Icons.person,
-                                          size: 60,
-                                          color: AppColors.primary400,
-                                        ),
-                                      ),
-                              ),
-                            ).setCenter(),
-                            Positioned(
-                              bottom: 2,
-                              right: 5,
-                              child: GestureDetector(
-                                onTap: () {
-                                  pickupBottomSheet(profileCubit: profileCubit);
-                                },
-                                child: Container(
-                                  height: 30,
-                                  width: 30,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: AppColors.primary100,
-                                    border: Border.all(
-                                      color: AppColors.primary500,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: Icon(
-                                    Icons.add,
-                                    size: 16,
-                                    color: AppColors.natural100,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                      field(
+                        controller: profileCubit.nameController,
+                        label: LocaleKeys.profileEditUsername.tr(),
+                        icon: Icons.person_rounded,
                       ),
-                      const SizedBox(width: 20),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              LocaleKeys.profileEditAddPhoto.tr(),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: AppColors.black700,
-                                fontFamily: BaseConstant.cairoBold,
-                              ),
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              LocaleKeys.profileEditPhotoHint.tr(),
-                              overflow: TextOverflow.ellipsis,
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: AppColors.natural400,
-                              ),
-                            ),
-                          ],
-                        ),
+                      field(
+                        controller: profileCubit.phoneController,
+                        label: LocaleKeys.profileEditPhone.tr(),
+                        icon: Icons.phone_rounded,
+                        readOnly: true,
+                      ),
+                      field(
+                        controller: profileCubit.emailController,
+                        label: LocaleKeys.profileEditEmail.tr(),
+                        icon: Icons.alternate_email_rounded,
+                        readOnly: true,
+                      ),
+                      field(
+                        controller: profileCubit.addressController,
+                        label: LocaleKeys.profileEditAddress.tr(),
+                        icon: Icons.location_on_rounded,
                       ),
                     ],
                   ),
-                  const SizedBox(height: 40),
-                  CustomTextFormField(
-                    controller: profileCubit.nameController,
-                    labelText: LocaleKeys.profileEditUsername.tr(),
-                    // readOnly: true,
-                    validator: (value) =>
-                        InputValidator.validateNotEmpty(value),
-                  ),
-                  const SizedBox(height: 20),
-                  CustomTextFormField(
-                    controller: profileCubit.phoneController,
-                    labelText: LocaleKeys.profileEditPhone.tr(),
-                    readOnly: true,
-                    validator: (value) =>
-                        InputValidator.validateNotEmpty(value),
-                  ),
-                  const SizedBox(height: 20),
-                  CustomTextFormField(
-                    controller: profileCubit.emailController,
-                    labelText: LocaleKeys.profileEditEmail.tr(),
-                    readOnly: true,
-                    validator: (value) =>
-                        InputValidator.validateNotEmpty(value),
-                  ),
-                  const SizedBox(height: 20),
-                  CustomTextFormField(
-                    controller: profileCubit.addressController,
-                    labelText: LocaleKeys.profileEditAddress.tr(),
-                    validator: (value) =>
-                        InputValidator.validateNotEmpty(value),
-                  ),
-                  const SizedBox(height: 40),
-                  MainAppButton(
-                    bgColor: AppColors.primary500,
-                    onTap: () {
-                      if (profileCubit.formKey.currentState!.validate()) {
-                        profileCubit.updateProfile();
-                      }
-                    },
-                    child: Text(
-                      LocaleKeys.profileEditSave.tr(),
-                      style: theme.textTheme.bodyMedium!.copyWith(
-                        color: AppColors.natural100,
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 30),
-                ],
+                ),
+              ],
+            ),
+          ),
+          bottomNavigationBar: Container(
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+            color: Colors.white,
+            child: SafeArea(
+              top: false,
+              child: AppGradientButton(
+                label: LocaleKeys.profileEditSave.tr(),
+                icon: Icons.check_circle_rounded,
+                onTap: () {
+                  FocusScope.of(context).unfocus();
+                  if (profileCubit.formKey.currentState!.validate()) {
+                    profileCubit.updateProfile();
+                  }
+                },
               ),
             ),
           ),

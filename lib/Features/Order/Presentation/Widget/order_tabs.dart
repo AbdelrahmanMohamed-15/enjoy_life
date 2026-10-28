@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../../../../Core/Constant/base_constant.dart';
 import '../../../../Core/Themes/app_colors.dart';
 
+/// Segmented control for the pending / completed / cancelled order lists.
 class OrderTabs extends StatelessWidget {
   final int currentIndex;
   final OrderCubit orderCubit;
@@ -17,97 +18,96 @@ class OrderTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
-    return Row(
-      children: [
-        Expanded(
-          child: GestureDetector(
-            onTap: () {
-              orderCubit.changeIndex(0);
-            },
-            child: Column(
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 4),
-                  child: Text(
-                    LocaleKeys.orderTabPending.tr(),
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: currentIndex == 0
-                          ? AppColors.primary400
-                          : AppColors.natural300,
-                      fontFamily: BaseConstant.cairoBold,
-                    ),
-                  ),
-                ),
-                Divider(
-                  color: currentIndex == 0
-                      ? AppColors.primary400
-                      : AppColors.natural300,
-                  thickness: currentIndex == 0 ? 2 : 1,
-                ),
-              ],
+    final tabs = [
+      (Icons.hourglass_top_rounded, LocaleKeys.orderTabPending.tr()),
+      (Icons.check_circle_rounded, LocaleKeys.orderTabCompleted.tr()),
+      (Icons.cancel_rounded, LocaleKeys.orderTabCancelled.tr()),
+    ];
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: AppColors.natural200.withValues(alpha: 0.7),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          for (var i = 0; i < tabs.length; i++)
+            Expanded(
+              child: _TabItem(
+                icon: tabs[i].$1,
+                label: tabs[i].$2,
+                isSelected: currentIndex == i,
+                onTap: () {
+                  if (currentIndex != i) orderCubit.changeIndex(i);
+                },
+              ),
             ),
-          ),
-        ),
-        Expanded(
-          child: GestureDetector(
-            onTap: () {
-              orderCubit.changeIndex(1);
-            },
-            child: Column(
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 4),
-                  child: Text(
-                    LocaleKeys.orderTabCompleted.tr(),
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: currentIndex == 1
-                          ? AppColors.primary400
-                          : AppColors.natural300,
-                      fontFamily: BaseConstant.cairoBold,
-                    ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TabItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+  const _TabItem({
+    required this.icon,
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = isSelected ? Colors.white : AppColors.natural500;
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+        padding: const EdgeInsets.symmetric(vertical: 9),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          gradient: isSelected
+              ? const LinearGradient(
+                  colors: [AppColors.primary400, AppColors.primary600],
+                )
+              : null,
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: AppColors.primary500.withValues(alpha: 0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
                   ),
-                ),
-                Divider(
-                  color: currentIndex == 1
-                      ? AppColors.primary400
-                      : AppColors.natural300,
-                  thickness: currentIndex == 1 ? 2 : 1,
-                ),
-              ],
-            ),
-          ),
+                ]
+              : null,
         ),
-        Expanded(
-          child: GestureDetector(
-            onTap: () {
-              orderCubit.changeIndex(2);
-            },
-            child: Column(
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 4),
-                  child: Text(
-                    LocaleKeys.orderTabCancelled.tr(),
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: currentIndex == 2
-                          ? AppColors.primary400
-                          : AppColors.natural300,
-                      fontFamily: BaseConstant.cairoBold,
-                    ),
-                  ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 16, color: color),
+            const SizedBox(width: 5),
+            Flexible(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontFamily: BaseConstant.cairoBold,
+                  color: color,
                 ),
-                Divider(
-                  color: currentIndex == 2
-                      ? AppColors.primary400
-                      : AppColors.natural300,
-                  thickness: currentIndex == 2 ? 2 : 1,
-                ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

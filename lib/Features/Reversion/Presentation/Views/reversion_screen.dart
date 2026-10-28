@@ -1,99 +1,161 @@
-import 'package:easy_life/Core/Widget/state_message_widget.dart';
-import 'package:easy_life/Core/Enums/level_message_enums.dart';
 import 'package:easy_life/Core/Helper/dependency_injection_helper.dart';
+import 'package:easy_life/Core/Helper/vendor_service_types.dart';
 import 'package:easy_life/Core/L10n/locale_keys.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:easy_life/Features/Reversion/Presentation/Widget/reversion_card.dart';
-import 'package:easy_life/Features/Reversion/Presentation/Widget/reversion_service.dart';
-import 'package:easy_life/Features/Reversion/Presentation/cubit/reversion_cubit.dart';
+import 'package:easy_life/Core/Routes/app_navigation.dart';
+import 'package:easy_life/Core/Routes/app_routes.dart';
+import 'package:easy_life/Core/Widget/booking_type_icon.dart';
+import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
-import '../../../../Core/Constant/assets_strings.dart';
+import '../../../../Core/Constant/base_constant.dart';
 import '../../../../Core/Themes/app_colors.dart';
-import '../Widget/reversion_status.dart';
+import '../Widget/reversion_service_type.dart';
 
-class ReversionScreen extends StatelessWidget {
+/// Reservations hub: one card per service, each opening its own list screen.
+class ReversionScreen extends StatefulWidget {
   const ReversionScreen({super.key});
+
+  @override
+  State<ReversionScreen> createState() => _ReversionScreenState();
+}
+
+class _ReversionScreenState extends State<ReversionScreen> {
+  final vendorTypes = DependencyInjectionHelper().sl<VendorServiceTypes>();
+
+  @override
+  void initState() {
+    super.initState();
+    vendorTypes.load();
+  }
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    return BlocProvider(
-      create: (context) =>
-          DependencyInjectionHelper().sl<ReversionCubit>()..getAllReversion(),
-      child: BlocBuilder<ReversionCubit, ReversionState>(
-        builder: (context, state) {
-          var reversionCubit = ReversionCubit.get(context);
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(
-                LocaleKeys.reversionTitle.tr(),
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontSize: 20,
-                  color: AppColors.primary500,
-                ),
-              ),
-              centerTitle: true,
-              elevation: 2,
+    return Scaffold(
+      backgroundColor: AppColors.backgroundColor,
+      appBar: AppBar(
+        title: Text(
+          LocaleKeys.reversionTitle.tr(),
+          style: theme.textTheme.bodyMedium?.copyWith(
+            fontSize: 20,
+            color: AppColors.primary500,
+            fontFamily: BaseConstant.cairoBold,
+          ),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        backgroundColor: AppColors.backgroundColor,
+      ),
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+        children: [
+          Text(
+            LocaleKeys.reversionHubSubtitle.tr(),
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: AppColors.natural500,
             ),
-            body: Column(
+          ),
+          const SizedBox(height: 20),
+          // Only the services this vendor actually runs
+          ValueListenableBuilder(
+            valueListenable: vendorTypes.types,
+            builder: (context, _, _) => Column(
               children: [
-                const SizedBox(height: 15),
-                ReversionService(
-                  serviceID: reversionCubit.serviceID,
-                  reversionCubit: reversionCubit,
+                for (final serviceID in ReversionServiceType.all)
+                  if (vendorTypes.current.contains(serviceID))
+                    _ServiceCard(
+                      serviceID: serviceID,
+                      onTap: () => AppNavigation.pushNamed(
+                        AppRoutes.reversionList,
+                        arguments: {'serviceID': serviceID},
+                      ),
+                    ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ServiceCard extends StatelessWidget {
+  final int serviceID;
+  final VoidCallback onTap;
+  const _ServiceCard({required this.serviceID, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    var theme = Theme.of(context);
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(22),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(18),
+            child: Row(
+              children: [
+                BookingTypeIcon(
+                  itemType: ReversionServiceType.itemType(serviceID),
+                  size: 68,
                 ),
-                const SizedBox(height: 15),
-                ReversionStatus(
-                  status: reversionCubit.status,
-                  reversionCubit: reversionCubit,
-                ),
-                const SizedBox(height: 15),
+                const SizedBox(width: 16),
                 Expanded(
-                  child:
-                      reversionCubit.reversionRequestState == RequestState.error
-                      ? StateMessageWidget.error(
-                          onRetry: () => reversionCubit.getAllReversion(),
-                        )
-                      : reversionCubit.reversionEntity == null ||
-                            reversionCubit.reversionRequestState ==
-                                RequestState.loading
-                      ? const Center(child: CircularProgressIndicator())
-                      : reversionCubit.reversionRequestState ==
-                            RequestState.empty
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(AssetsStrings.empty),
-                            const SizedBox(height: 20),
-                            Center(
-                              child: Text(
-                                LocaleKeys.reversionEmpty.tr(),
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  fontSize: 17,
-                                  color: AppColors.black700,
-                                ),
-                              ),
-                            ),
-                          ],
-                        )
-                      : ListView.builder(
-                          shrinkWrap: true,
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          itemCount:
-                              reversionCubit.reversionEntity!.data!.length,
-                          itemBuilder: (context, index) {
-                            var reversion =
-                                reversionCubit.reversionEntity!.data![index];
-                            return ReversionCard(reversion: reversion);
-                          },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        ReversionServiceType.title(serviceID),
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontFamily: BaseConstant.cairoBold,
+                          color: AppColors.black700,
                         ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        ReversionServiceType.description(serviceID),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: AppColors.natural500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.primary100.withValues(alpha: 0.6),
+                  ),
+                  child: Transform.flip(
+                    flipX: isRtl,
+                    child: const Icon(
+                      Icons.chevron_right_rounded,
+                      color: AppColors.primary600,
+                    ),
+                  ),
                 ),
               ],
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }

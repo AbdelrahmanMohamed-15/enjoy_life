@@ -21,6 +21,7 @@ class SearchCubit extends Cubit<SearchState> with SafeEmitMixin<SearchState> {
 
     _debounce?.cancel();
     if (query.trim().length < 2) {
+      _latestQuery = '';
       emit(SearchInitial());
       return;
     }
@@ -30,9 +31,15 @@ class SearchCubit extends Cubit<SearchState> with SafeEmitMixin<SearchState> {
     });
   }
 
+  /// The query the UI is showing; replies for older queries are dropped
+  String _latestQuery = '';
+
   Future<void> _performSearch(String query) async {
+    _latestQuery = query;
     emit(SearchLoading(query: query));
     final res = await searchUsecases.call(query: query);
+    // A slower reply for an earlier query must not replace newer results
+    if (query != _latestQuery) return;
     res.fold(
       (failure) => emit(SearchError(message: failure.message, query: query)),
       (searchEntity) {
@@ -52,4 +59,3 @@ class SearchCubit extends Cubit<SearchState> with SafeEmitMixin<SearchState> {
     return super.close();
   }
 }
-

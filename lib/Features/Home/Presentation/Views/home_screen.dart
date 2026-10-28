@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_life/Features/Home/Presentation/Widget/main_bar.dart';
 import 'package:easy_life/Features/Home/Presentation/cubit/home_cubit.dart';
 import 'package:flutter/material.dart';
+import '../../../../Core/Themes/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../Core/Enums/level_message_enums.dart';
 import '../Widget/carsoual_banner.dart';
@@ -35,10 +36,10 @@ class HomeScreen extends StatelessWidget {
             (s) => s == RequestState.error || s == RequestState.empty,
           );
           return Scaffold(
+            backgroundColor: AppColors.backgroundColor,
             body: Column(
               children: [
                 MainBar(isHaveSearch: true),
-                SizedBox(height: 20),
                 Expanded(
                   child: allFailed
                       ? StateMessageWidget.error(
@@ -49,9 +50,11 @@ class HomeScreen extends StatelessWidget {
                           onRetry: () => homeCubit.getHomeData(),
                         )
                       : RefreshIndicator(
+                          color: AppColors.primary500,
                           onRefresh: () => homeCubit.getHomeData(),
                           child: ListView(
                             physics: const AlwaysScrollableScrollPhysics(),
+                            padding: const EdgeInsets.only(top: 14, bottom: 24),
                             children: [
                               HomeSection(
                                 requestState: homeCubit.sliderRequestState,

@@ -1,17 +1,15 @@
 import 'package:easy_life/Core/L10n/locale_keys.dart';
-import 'package:easy_life/Core/Widget/main_app_button.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Widget/global_widget/country_widget.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Widget/global_widget/language_widget.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Widget/global_widget/name_widget.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Widget/global_widget/status_widget.dart';
+import 'package:easy_life/Features/vendorService/Presentation/Widget/global_widget/vendor_form_kit.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Widget/service_widget/all_service_widget.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Widget/service_widget/service_info_widget.dart';
 import 'package:easy_life/Features/vendorService/Presentation/cubit/vendor_service_cubit.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../Core/Constant/base_constant.dart';
-import '../../../../Core/Routes/app_navigation.dart';
 import '../../../../Core/Themes/app_colors.dart';
 import '../../../../Core/Widget/custom_snack_bar.dart';
 
@@ -20,82 +18,58 @@ class AddServiceOptionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
     return BlocBuilder<VendorServiceCubit, VendorServiceState>(
       builder: (context, state) {
         var vendorServiceCubit = VendorServiceCubit.get(context);
         return SafeArea(
+          bottom: false,
           child: Scaffold(
-            appBar: AppBar(
-              centerTitle: true,
-              backgroundColor: AppColors.natural100,
-              title: Text(
-                LocaleKeys.vendorAddServiceOption.tr(),
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: AppColors.primary500,
-                  fontFamily: BaseConstant.cairoBold,
-                ),
-              ),
-              elevation: 1,
-              leading: GestureDetector(
-                onTap: () {
-                  AppNavigation.pop();
-                },
-                child: Icon(Icons.arrow_back_ios, color: AppColors.primary500),
-              ),
-            ),
+            backgroundColor: AppColors.backgroundColor,
+            appBar: VendorAppBar(title: LocaleKeys.vendorAddServiceOption.tr()),
             body: ListView(
-              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
               children: [
-                LanguageWidget(),
+                const LanguageWidget(),
                 NameWidget(formKey: vendorServiceCubit.formKey),
-                AllServiceWidget(vendorServiceCubit: vendorServiceCubit),
-                ServiceInfoWidget(),
-                CountryWidget(),
-                StatusWidget(),
-                const SizedBox(height: 40),
-                MainAppButton(
-                  child: Text(
-                    LocaleKeys.commonAdd.tr(),
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: AppColors.natural50,
-                      fontFamily: BaseConstant.cairoBold,
+                VendorSectionCard(
+                  icon: Icons.link_rounded,
+                  title: LocaleKeys.vendorSectionLinks.tr(),
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: AllServiceWidget(
+                      vendorServiceCubit: vendorServiceCubit,
                     ),
                   ),
-                  onTap: () {
-                    if (vendorServiceCubit.nameArController.text.isEmpty ||
-                        vendorServiceCubit.nameEnController.text.isEmpty) {
-                      showCustomSnackBar(
-                        LocaleKeys.vendorValidationNameBoth.tr(),
-                        backgroundColor: AppColors.darkRed,
-                      );
-                      return;
-                    }
-                    if (vendorServiceCubit.selectedService == 0) {
-                      showCustomSnackBar(
-                        LocaleKeys.vendorValidationServiceRequired.tr(),
-                        backgroundColor: AppColors.darkRed,
-                      );
-                      return;
-                    }
-                    if (vendorServiceCubit.priceController.text.isEmpty) {
-                      showCustomSnackBar(
-                        LocaleKeys.vendorValidationPriceRequired.tr(),
-                        backgroundColor: AppColors.darkRed,
-                      );
-                      return;
-                    }
-                    if (vendorServiceCubit.discountController.text.isEmpty) {
-                      showCustomSnackBar(
-                        LocaleKeys.vendorValidationDiscountRequired.tr(),
-                        backgroundColor: AppColors.darkRed,
-                      );
-                      return;
-                    }
-                    vendorServiceCubit.createServiceOption();
-                  },
+                ),
+                VendorSectionCard(
+                  icon: Icons.sell_rounded,
+                  title: LocaleKeys.vendorSectionPricing.tr(),
+                  child: const ServiceInfoWidget(),
+                ),
+                VendorSectionCard(
+                  icon: Icons.tune_rounded,
+                  title: LocaleKeys.vendorSectionSettings.tr(),
+                  child: const Column(
+                    children: [CountryWidget(), StatusWidget()],
+                  ),
                 ),
               ],
+            ),
+            bottomNavigationBar: VendorSubmitButton(
+              label: LocaleKeys.vendorAddServiceOption.tr(),
+              icon: Icons.playlist_add_rounded,
+              onTap: () {
+                if (!vendorServiceCubit.validateBilingual()) return;
+                if (vendorServiceCubit.selectedService == 0) {
+                  showCustomSnackBar(
+                    LocaleKeys.vendorValidationServiceRequired.tr(),
+                    backgroundColor: AppColors.darkRed,
+                  );
+                  return;
+                }
+                if (!vendorServiceCubit.validatePricing()) return;
+                vendorServiceCubit.createServiceOption();
+              },
             ),
           ),
         );

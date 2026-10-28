@@ -4,8 +4,7 @@ import 'package:easy_life/Features/vendorService/Domain/Entities/all_category_en
 import 'package:easy_life/Features/vendorService/Presentation/cubit/vendor_service_cubit.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../Core/Constant/base_constant.dart';
-import '../../../../../Core/Themes/app_colors.dart';
+import '../global_widget/vendor_form_kit.dart';
 
 class ServiceCategoryWidget extends StatefulWidget {
   final VendorServiceCubit vendorServiceCubit;
@@ -35,38 +34,20 @@ class _ServiceCategoryWidgetState extends State<ServiceCategoryWidget> {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 15),
-        Text(
-          LocaleKeys.vendorSelectCategory.tr(),
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: AppColors.black700,
-            fontFamily: BaseConstant.cairoBold,
-          ),
-        ),
-        const SizedBox(height: 15),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: AppColors.natural200),
-          ),
+        VendorFieldLabel(LocaleKeys.vendorSelectCategory.tr()),
+        VendorDropdownBox(
           child: DropdownButtonFormField<CategoryData>(
             hint: Text(LocaleKeys.vendorSelectCategory.tr()),
             value: _getSelectedCategory(
               widget.vendorServiceCubit.allCategoryEntity?.data,
               widget.vendorServiceCubit.catID,
             ),
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              disabledBorder: InputBorder.none,
-              enabledBorder: InputBorder.none,
-            ),
+            decoration: VendorDropdownBox.decoration,
+            borderRadius: BorderRadius.circular(14),
+            isExpanded: true,
             items: widget.vendorServiceCubit.allCategoryEntity?.data
                 ?.map(
                   (category) => DropdownMenuItem<CategoryData>(

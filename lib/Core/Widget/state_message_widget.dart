@@ -63,19 +63,26 @@ class StateMessageWidget extends StatelessWidget {
             ),
             if (onRetry != null) ...[
               const SizedBox(height: 16),
-              OutlinedButton.icon(
+              ElevatedButton.icon(
                 onPressed: onRetry,
-                icon: const Icon(Icons.refresh, color: AppColors.primary400),
+                icon: const Icon(Icons.refresh_rounded, color: Colors.white),
                 label: Text(
                   LocaleKeys.commonRetry.tr(),
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: AppColors.primary400,
+                    color: Colors.white,
+                    fontFamily: BaseConstant.cairoBold,
                   ),
                 ),
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: AppColors.primary400),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary500,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 28,
+                    vertical: 12,
+                  ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(14),
                   ),
                 ),
               ),

@@ -1,76 +1,170 @@
+import 'package:easy_life/Core/Constant/base_constant.dart';
 import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../Core/Themes/app_colors.dart';
 
+class NavItem {
+  final IconData icon;
+  final IconData activeIcon;
+  final String label;
+  const NavItem(this.icon, this.activeIcon, this.label);
+}
+
 class NavBarItemWidget {
+  NavBarItemWidget._();
+
+  static List<NavItem> get userItems => [
+    NavItem(
+      Icons.home_outlined,
+      Icons.home_rounded,
+      LocaleKeys.mainNavHome.tr(),
+    ),
+    NavItem(
+      Icons.shopping_bag_outlined,
+      Icons.shopping_bag_rounded,
+      LocaleKeys.mainNavCart.tr(),
+    ),
+    NavItem(
+      Icons.favorite_border_rounded,
+      Icons.favorite_rounded,
+      LocaleKeys.mainNavFavorites.tr(),
+    ),
+    NavItem(
+      Icons.person_outline_rounded,
+      Icons.person_rounded,
+      LocaleKeys.mainNavAccount.tr(),
+    ),
+  ];
+
+  static List<NavItem> get providerItems => [
+    NavItem(
+      Icons.home_outlined,
+      Icons.home_rounded,
+      LocaleKeys.mainNavHome.tr(),
+    ),
+    NavItem(
+      Icons.qr_code_scanner_rounded,
+      Icons.qr_code_scanner_rounded,
+      LocaleKeys.mainNavScan.tr(),
+    ),
+    NavItem(
+      Icons.event_note_outlined,
+      Icons.event_note_rounded,
+      LocaleKeys.mainNavReservations.tr(),
+    ),
+    NavItem(
+      Icons.person_outline_rounded,
+      Icons.person_rounded,
+      LocaleKeys.mainNavAccount.tr(),
+    ),
+  ];
+}
+
+/// Floating bottom bar; the selected tab gets an orange pill with its label.
+class AppBottomNav extends StatelessWidget {
+  final List<NavItem> items;
   final int currentIndex;
-  NavBarItemWidget({required this.currentIndex});
+  final ValueChanged<int> onTap;
+  const AppBottomNav({
+    super.key,
+    required this.items,
+    required this.currentIndex,
+    required this.onTap,
+  });
 
-  List<BottomNavigationBarItem> get userNavBarItems => [
-    BottomNavigationBarItem(
-      icon: Icon(
-        currentIndex == 0 ? Icons.home : Icons.home_outlined,
-        color: currentIndex == 0 ? AppColors.primary400 : AppColors.natural400,
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(12, 0, 12, 10),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(26),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 20,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
-      label: LocaleKeys.mainNavHome.tr(),
-    ),
-    BottomNavigationBarItem(
-      icon: Icon(
-        currentIndex == 1 ? Icons.shopping_bag : Icons.shopping_bag_outlined,
-        color: currentIndex == 1 ? AppColors.primary400 : AppColors.natural400,
+      child: Row(
+        children: [
+          for (var i = 0; i < items.length; i++)
+            Expanded(
+              flex: i == currentIndex ? 3 : 2,
+              child: _NavButton(
+                item: items[i],
+                selected: i == currentIndex,
+                onTap: () => onTap(i),
+              ),
+            ),
+        ],
       ),
-      label: LocaleKeys.mainNavCart.tr(),
-    ),
-    BottomNavigationBarItem(
-      icon: Icon(
-        currentIndex == 2 ? Icons.favorite : Icons.favorite_border,
-        color: currentIndex == 2 ? AppColors.primary400 : AppColors.natural400,
-      ),
-      label: LocaleKeys.mainNavFavorites.tr(),
-    ),
-    BottomNavigationBarItem(
-      icon: Icon(
-        currentIndex == 3 ? Icons.person : Icons.person_outline,
-        color: currentIndex == 3 ? AppColors.primary400 : AppColors.natural400,
-      ),
-      label: LocaleKeys.mainNavAccount.tr(),
-    ),
-  ];
+    );
+  }
+}
 
-  List<BottomNavigationBarItem> get providerNavBarItems => [
-    BottomNavigationBarItem(
-      icon: Icon(
-        currentIndex == 0 ? Icons.home : Icons.home_outlined,
-        color: currentIndex == 0 ? AppColors.primary400 : AppColors.natural400,
+class _NavButton extends StatelessWidget {
+  final NavItem item;
+  final bool selected;
+  final VoidCallback onTap;
+  const _NavButton({
+    required this.item,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      selected: selected,
+      button: true,
+      label: item.label,
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 280),
+          curve: Curves.easeOutCubic,
+          margin: const EdgeInsets.symmetric(horizontal: 3),
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            color: selected
+                ? AppColors.primary100.withValues(alpha: 0.6)
+                : Colors.transparent,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                selected ? item.activeIcon : item.icon,
+                color: selected ? AppColors.primary600 : AppColors.natural500,
+                size: 24,
+              ),
+              if (selected) ...[
+                const SizedBox(width: 6),
+                Flexible(
+                  child: Text(
+                    item.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.fade,
+                    softWrap: false,
+                    style: const TextStyle(
+                      color: AppColors.primary700,
+                      fontSize: 13,
+                      fontFamily: BaseConstant.cairoBold,
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
       ),
-      label: LocaleKeys.mainNavHome.tr(),
-    ),
-    BottomNavigationBarItem(
-      icon: Icon(
-        currentIndex == 1
-            ? Icons.qr_code_scanner
-            : Icons.qr_code_scanner_outlined,
-        color: currentIndex == 1 ? AppColors.primary400 : AppColors.natural400,
-      ),
-      label: LocaleKeys.mainNavScan.tr(),
-    ),
-    BottomNavigationBarItem(
-      icon: Icon(
-        currentIndex == 2
-            ? Icons.shopping_basket
-            : Icons.shopping_basket_outlined,
-        color: currentIndex == 2 ? AppColors.primary400 : AppColors.natural400,
-      ),
-      label: LocaleKeys.mainNavReservations.tr(),
-    ),
-    BottomNavigationBarItem(
-      icon: Icon(
-        currentIndex == 3 ? Icons.person : Icons.person_outline,
-        color: currentIndex == 3 ? AppColors.primary400 : AppColors.natural400,
-      ),
-      label: LocaleKeys.mainNavAccount.tr(),
-    ),
-  ];
+    );
+  }
 }

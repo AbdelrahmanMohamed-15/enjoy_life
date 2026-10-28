@@ -4,6 +4,7 @@ import 'package:easy_life/Core/Routes/app_navigation.dart';
 import 'package:easy_life/Core/Routes/app_routes.dart';
 import 'package:easy_life/Features/Profile/Presentation/Widget/delete_bottom_sheet.dart';
 import 'package:easy_life/Features/Profile/Presentation/Widget/language_bottom_sheet.dart';
+import 'package:easy_life/Features/Profile/Presentation/Widget/logout_dialog.dart';
 import 'package:easy_life/Features/Profile/Presentation/Widget/profile_header.dart';
 import 'package:easy_life/Features/Profile/Presentation/Widget/profile_menu_section.dart';
 import 'package:easy_life/Features/Profile/Presentation/cubit/profile_cubit.dart';
@@ -145,7 +146,7 @@ class AccountScreen extends StatelessWidget {
                           icon: Icons.logout_rounded,
                           color: AppColors.natural600,
                           title: LocaleKeys.profileLogout.tr(),
-                          onTap: () => _confirmLogout(context),
+                          onTap: () => confirmLogout(context),
                         ),
                         ProfileMenuTile(
                           icon: Icons.delete_forever_rounded,
@@ -185,70 +186,5 @@ class AccountScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Future<void> _confirmLogout(BuildContext context) async {
-    var theme = Theme.of(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        icon: Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: AppColors.primary500.withValues(alpha: 0.1),
-          ),
-          child: const Icon(
-            Icons.logout_rounded,
-            color: AppColors.primary500,
-            size: 28,
-          ),
-        ),
-        title: Text(
-          LocaleKeys.profileLogoutTitle.tr(),
-          style: theme.textTheme.titleMedium?.copyWith(
-            color: AppColors.black700,
-            fontFamily: BaseConstant.cairoBold,
-          ),
-        ),
-        content: Text(
-          LocaleKeys.profileLogoutMessage.tr(),
-          textAlign: TextAlign.center,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: AppColors.natural500,
-          ),
-        ),
-        actionsAlignment: MainAxisAlignment.center,
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, false),
-            child: Text(
-              LocaleKeys.commonCancel.tr(),
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: AppColors.natural600,
-              ),
-            ),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: AppColors.primary500,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            onPressed: () => Navigator.pop(dialogContext, true),
-            child: Text(
-              LocaleKeys.profileLogout.tr(),
-              style: theme.textTheme.bodyMedium?.copyWith(color: Colors.white),
-            ),
-          ),
-        ],
-      ),
-    );
-    if (confirmed != true) return;
-    await DependencyInjectionHelper().sl<AuthHandlerInterface>().clearAllData();
-    AppNavigation.pushNamedAndRemoveUntil(AppRoutes.splash);
   }
 }

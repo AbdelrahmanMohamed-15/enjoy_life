@@ -34,11 +34,10 @@ class VendorHomeScreen extends StatelessWidget {
             (s) => s == RequestState.error || s == RequestState.empty,
           );
           return Scaffold(
-            backgroundColor: AppColors.natural50,
+            backgroundColor: AppColors.backgroundColor,
             body: Column(
               children: [
                 MainBar(isHaveSearch: false),
-                SizedBox(height: 20),
                 Expanded(
                   child: allFailed
                       ? StateMessageWidget.error(
@@ -49,11 +48,13 @@ class VendorHomeScreen extends StatelessWidget {
                           onRetry: () => homeCubit.getAllVendorHome(),
                         )
                       : RefreshIndicator(
+                          color: AppColors.primary500,
                           onRefresh: () async {
                             await homeCubit.getAllVendorHome();
                           },
                           child: ListView(
                             physics: const AlwaysScrollableScrollPhysics(),
+                            padding: const EdgeInsets.only(top: 14, bottom: 24),
                             children: [
                               HomeSection(
                                 requestState:

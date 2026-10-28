@@ -44,49 +44,68 @@ class _SearchScreenState extends State<SearchScreen> {
         builder: (context, state) {
           final searchCubit = context.read<SearchCubit>();
           return Scaffold(
+            backgroundColor: AppColors.backgroundColor,
             appBar: AppBar(
-              backgroundColor: Colors.white,
-              elevation: 2,
+              backgroundColor: AppColors.backgroundColor,
+              elevation: 0,
+              scrolledUnderElevation: 0,
               leading: IconButton(
                 icon: const Icon(
-                  Icons.arrow_back_ios,
+                  Icons.arrow_back_ios_new_rounded,
                   color: AppColors.primary500,
+                  size: 20,
                 ),
                 onPressed: () => AppNavigation.pop(),
               ),
               titleSpacing: 0,
-              title: TextField(
-                controller: _controller,
-                autofocus: true,
-                cursorColor: AppColors.primary400,
-
-                decoration: InputDecoration(
-                  hintText: LocaleKeys.homeSearchHint.tr(),
-                  hintStyle: const TextStyle(color: AppColors.natural400),
-                  contentPadding: EdgeInsets.symmetric(vertical: 15),
-                  prefixIcon: const Icon(
-                    Icons.search,
-                    color: AppColors.natural700,
+              title: Padding(
+                padding: const EdgeInsetsDirectional.only(end: 16),
+                child: Container(
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AppColors.natural200),
                   ),
-                  suffixIcon: _controller.text.isEmpty
-                      ? null
-                      : IconButton(
-                          icon: const Icon(
-                            Icons.close,
-                            color: AppColors.natural400,
-                          ),
-                          onPressed: () {
-                            _controller.clear();
-                            searchCubit.onQueryChanged('');
-                            setState(() {});
-                          },
-                        ),
-                  border: InputBorder.none,
+                  child: TextField(
+                    controller: _controller,
+                    autofocus: true,
+                    cursorColor: AppColors.primary500,
+                    textInputAction: TextInputAction.search,
+                    decoration: InputDecoration(
+                      hintText: LocaleKeys.homeSearchHint.tr(),
+                      hintStyle: const TextStyle(
+                        color: AppColors.natural400,
+                        fontSize: 14,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 13),
+                      prefixIcon: const Icon(
+                        Icons.search_rounded,
+                        color: AppColors.primary500,
+                      ),
+                      suffixIcon: _controller.text.isEmpty
+                          ? null
+                          : IconButton(
+                              icon: const Icon(
+                                Icons.close_rounded,
+                                color: AppColors.natural500,
+                              ),
+                              onPressed: () {
+                                _controller.clear();
+                                searchCubit.onQueryChanged('');
+                                setState(() {});
+                              },
+                            ),
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                    ),
+                    onChanged: (value) {
+                      setState(() {});
+                      searchCubit.onQueryChanged(value);
+                    },
+                  ),
                 ),
-                onChanged: (value) {
-                  setState(() {});
-                  searchCubit.onQueryChanged(value);
-                },
               ),
             ),
             body: _buildBody(state),
@@ -137,7 +156,11 @@ class _SearchScreenState extends State<SearchScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.search_off, color: AppColors.natural400, size: 40),
+              const Icon(
+                Icons.search_off,
+                color: AppColors.natural400,
+                size: 40,
+              ),
               const SizedBox(height: 12),
               Text(
                 LocaleKeys.homeSearchNoResults.tr(),

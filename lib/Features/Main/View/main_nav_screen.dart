@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_life/Core/Helper/dependency_injection_helper.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
 import 'package:easy_life/Features/Authentication/Domain/Entity/user_entity.dart';
@@ -13,7 +14,6 @@ import 'package:easy_life/Features/Reversion/Presentation/Views/reversion_screen
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../Core/Constant/base_constant.dart';
 import '../../../Core/Handler/auth_handler.dart';
 import '../../../Core/Helper/user_validation_helper.dart';
 import '../../Reversion/Presentation/Views/scan_order_screen.dart';
@@ -33,7 +33,8 @@ class _MainNavScreenState extends State<MainNavScreen> {
       .getUserData();
   @override
   Widget build(BuildContext context) {
-    debugPrint('user data is ${userData?.clientType}');
+    // Rebuild the tab labels when the language changes
+    context.locale;
     List<Widget> userPages = [
       HomeScreen(),
       CartScreen(),
@@ -54,50 +55,34 @@ class _MainNavScreenState extends State<MainNavScreen> {
         child: VendorAccountSccreen(),
       ),
     ];
-    var theme = Theme.of(context);
-    return SafeArea(
-      child: Scaffold(
-        body: userData == null
-            ? userPages[currentIndex]
-            : userData?.clientType == 0
-            ? userPages[currentIndex]
-            : vendorPages[currentIndex],
-        bottomNavigationBar: BottomNavigationBar(
-          elevation: 0,
-          currentIndex: currentIndex,
-          backgroundColor: AppColors.natural100,
-          // showUnselectedLabels: true,
-          selectedLabelStyle: theme.textTheme.bodySmall?.copyWith(
-            color: AppColors.primary400,
-            fontFamily: BaseConstant.cairoBold,
-          ),
-          unselectedLabelStyle: theme.textTheme.bodySmall?.copyWith(
-            color: AppColors.natural400,
-          ),
-          selectedItemColor: AppColors.primary400,
-          unselectedItemColor: AppColors.natural400,
-          onTap: (value) {
-            if (value == 2) {
-              if (UserValidationHelper.checkUserValidation() == true) {
-                setState(() {
-                  currentIndex = value;
-                });
-              } else {
+    final isVendor = userData != null && userData?.clientType != 0;
+    return PopScope(
+      // Back on another tab returns to Home before leaving the app
+      canPop: currentIndex == 0,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) setState(() => currentIndex = 0);
+      },
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: AppColors.backgroundColor,
+          body: isVendor ? vendorPages[currentIndex] : userPages[currentIndex],
+          bottomNavigationBar: AppBottomNav(
+            items: isVendor
+                ? NavBarItemWidget.providerItems
+                : NavBarItemWidget.userItems,
+            currentIndex: currentIndex,
+            onTap: (value) {
+              if (value == currentIndex) return;
+              // Favourites need an account (vendors are always logged in)
+              if (!isVendor &&
+                  value == 2 &&
+                  UserValidationHelper.checkUserValidation() != true) {
                 UserValidationHelper.showUserValidation();
+                return;
               }
-            } else {
-              setState(() {
-                currentIndex = value;
-              });
-            }
-          },
-          items: userData == null
-              ? NavBarItemWidget(currentIndex: currentIndex).userNavBarItems
-              : userData?.clientType == 0
-              ? NavBarItemWidget(currentIndex: currentIndex).userNavBarItems
-              : NavBarItemWidget(
-                  currentIndex: currentIndex,
-                ).providerNavBarItems,
+              setState(() => currentIndex = value);
+            },
+          ),
         ),
       ),
     );

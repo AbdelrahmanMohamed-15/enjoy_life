@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +12,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../Core/Constant/base_constant.dart';
 import '../../../Core/Routes/app_navigation.dart';
 import 'Core/Handler/auth_handler.dart';
+import 'Core/Services/push_notification_service.dart';
 import 'Core/Helper/dependency_injection_helper.dart';
 import 'Core/Routes/route_generator.dart';
 import 'Core/Themes/app_themes.dart';
@@ -27,6 +30,8 @@ void main() async {
   }
 
   final di = DependencyInjectionHelper();
+  // Not awaited: Firebase and the token upload must never delay startup
+  unawaited(di.sl<PushNotificationService>().init());
   final languageCubit = di.sl<LanguageCubit>();
   await languageCubit.initialize();
 
@@ -34,10 +39,7 @@ void main() async {
 
   runApp(
     EasyLocalization(
-      supportedLocales: const <Locale>[
-        Locale('en'),
-        Locale('ar'),
-      ],
+      supportedLocales: const <Locale>[Locale('en'), Locale('ar')],
       path: 'assets/translations',
       fallbackLocale: LanguageCubit.defaultLocale,
       startLocale: startLocale,

@@ -2,7 +2,10 @@ import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
 import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:easy_life/Core/Widget/custom_snack_bar.dart';
-import 'package:easy_life/Core/Widget/main_app_button.dart';
+import 'package:easy_life/Core/Constant/base_constant.dart';
+import 'package:easy_life/Core/Helper/service_kind.dart';
+import 'package:easy_life/Core/Widget/app_ui.dart';
+import 'package:easy_life/Core/Widget/booking_type_icon.dart';
 import 'package:easy_life/Features/Services/Presentation/cubit/service_cubit.dart';
 import 'package:flutter/material.dart';
 
@@ -105,155 +108,198 @@ class _BookingTimeBottomSheetState extends State<BookingTimeBottomSheet> {
     return "$hour:$minute"; // e.g. 14:30
   }
 
+  void _continue() {
+    if (fromDate == null ||
+        toTime == null ||
+        fromTime == null ||
+        toDate == null) {
+      showCustomSnackBar(
+        LocaleKeys.servicesBookingTimeRequired.tr(),
+        backgroundColor: AppColors.darkRed,
+      );
+      return;
+    }
+    DateTime at(DateTime d, TimeOfDay t) =>
+        DateTime(d.year, d.month, d.day, t.hour, t.minute);
+    if (!at(toDate!, toTime!).isAfter(at(fromDate!, fromTime!))) {
+      showCustomSnackBar(
+        LocaleKeys.servicesBookingEndBeforeStart.tr(),
+        backgroundColor: AppColors.darkRed,
+      );
+      return;
+    }
+    final startDate = '${formatDate(fromDate)} ${formatTime24(fromTime)}';
+    final endDate = '${formatDate(toDate)} ${formatTime24(toTime)}';
+    switch (ServiceKind.of(name: widget.type)) {
+      case ServiceKind.restaurant:
+        widget.serviceCubit.getAvaliableTables(
+          resturantID: widget.serviceID,
+          startDate: startDate,
+          endDate: endDate,
+          title: widget.title,
+          serviceCubit: widget.serviceCubit,
+        );
+      case ServiceKind.hotel:
+        widget.serviceCubit.getAvaliableRooms(
+          hotelID: widget.serviceID,
+          startDate: startDate,
+          endDate: endDate,
+          title: widget.title,
+          serviceCubit: widget.serviceCubit,
+        );
+      case ServiceKind.trip:
+      case null:
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      // RTL support for Arabic
-      textDirection: TextDirection.rtl,
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // From date/time
-              Text(LocaleKeys.servicesBookingDateFrom.tr()),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: InkWell(
-                            onTap: () => _selectDate(context, true),
-                            child: _buildInputBox(
-                              icon: Icons.calendar_today,
-                              text: formatDate(fromDate),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: InkWell(
-                            onTap: () => _selectTime(context, true),
-                            child: _buildInputBox(
-                              icon: Icons.access_time,
-                              text: formatTime(fromTime),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              // To date/time
-              Text(LocaleKeys.servicesBookingDateTo.tr()),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: InkWell(
-                            onTap: () => _selectDate(context, false),
-                            child: _buildInputBox(
-                              icon: Icons.calendar_today,
-                              text: formatDate(toDate),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: InkWell(
-                            onTap: () => _selectTime(context, false),
-                            child: _buildInputBox(
-                              icon: Icons.access_time,
-                              text: formatTime(toTime),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 80),
-              // Continue button
-              MainAppButton(
-                bgColor: AppColors.primary400,
-                child: Text(
-                  LocaleKeys.servicesBookingContinue.tr(),
-                  style: const TextStyle(fontSize: 18, color: Colors.white),
-                ),
-                onTap: () {
-                  if (fromDate == null ||
-                      toTime == null ||
-                      fromTime == null ||
-                      toDate == null) {
-                    showCustomSnackBar(
-                      LocaleKeys.servicesBookingTimeRequired.tr(),
-                      backgroundColor: AppColors.darkRed,
-                    );
-                  } else {
-                    if (widget.type == 'Restaurant'.toUpperCase() ||
-                        widget.type == 'مطعم') {
-                      widget.serviceCubit.getAvaliableTables(
-                        resturantID: widget.serviceID,
-                        startDate:
-                            '${formatDate(fromDate)} ${formatTime24(fromTime)}',
-                        endDate:
-                            '${formatDate(toDate)} ${formatTime24(toTime)}',
-                        title: widget.title,
-                        serviceCubit: widget.serviceCubit,
-                      );
-                    } else if (widget.type == 'Hotel'.toUpperCase() ||
-                        widget.type == 'فندق') {
-                      widget.serviceCubit.getAvaliableRooms(
-                        hotelID: widget.serviceID,
-                        startDate:
-                            '${formatDate(fromDate)} ${formatTime24(fromTime)}',
-                        endDate:
-                            '${formatDate(toDate)} ${formatTime24(toTime)}',
-                        title: widget.title,
-                        serviceCubit: widget.serviceCubit,
-                      );
-                    } else if (widget.type == 'Trip'.toUpperCase() ||
-                        widget.type == 'رحلة') {}
-                  }
-                },
-              ),
-            ],
+    var theme = Theme.of(context);
+    Widget row(String label, bool isFrom) => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: theme.textTheme.bodySmall?.copyWith(
+            fontFamily: BaseConstant.cairoBold,
+            color: AppColors.natural600,
+            fontSize: 13,
           ),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+              flex: 3,
+              child: _buildInputBox(
+                icon: Icons.calendar_month_rounded,
+                text: formatDate(isFrom ? fromDate : toDate),
+                onTap: () => _selectDate(context, isFrom),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              flex: 2,
+              child: _buildInputBox(
+                icon: Icons.schedule_rounded,
+                text: formatTime(isFrom ? fromTime : toTime),
+                onTap: () => _selectTime(context, isFrom),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.natural300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                if (ServiceKind.of(name: widget.type) case final kind?) ...[
+                  BookingTypeIcon(itemType: kind.itemType, size: 40),
+                  const SizedBox(width: 12),
+                ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        LocaleKeys.servicesBookingTitle.tr(),
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontFamily: BaseConstant.cairoBold,
+                          color: AppColors.black700,
+                        ),
+                      ),
+                      Text(
+                        widget.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: AppColors.natural500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            row(LocaleKeys.servicesBookingDateFrom.tr(), true),
+            const SizedBox(height: 16),
+            row(LocaleKeys.servicesBookingDateTo.tr(), false),
+            const SizedBox(height: 28),
+            AppGradientButton(
+              label: LocaleKeys.servicesBookingContinue.tr(),
+              icon: Icons.search_rounded,
+              onTap: _continue,
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildInputBox({required IconData icon, required String text}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.grey),
-          const SizedBox(width: 6),
-          Expanded(
-            child: Text(
-              text.isEmpty ? LocaleKeys.commonSelect.tr() : text,
-              style: const TextStyle(color: Colors.black),
+  Widget _buildInputBox({
+    required IconData icon,
+    required String text,
+    required VoidCallback onTap,
+  }) {
+    final empty = text.isEmpty;
+    return Material(
+      color: empty
+          ? AppColors.natural50
+          : AppColors.primary100.withValues(alpha: 0.35),
+      borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(14),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: empty ? AppColors.natural200 : AppColors.primary300,
             ),
           ),
-        ],
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                size: 18,
+                color: empty ? AppColors.natural500 : AppColors.primary600,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  empty ? LocaleKeys.commonSelect.tr() : text,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontFamily: empty ? null : BaseConstant.cairoBold,
+                    color: empty ? AppColors.natural500 : AppColors.black700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

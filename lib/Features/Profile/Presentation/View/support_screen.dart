@@ -3,10 +3,10 @@ import 'package:easy_life/Core/Constant/support_constant.dart';
 import 'package:easy_life/Core/Helper/url_launcher_helper.dart';
 import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:easy_life/Core/Routes/app_navigation.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
 import 'package:easy_life/Core/Widget/custom_snack_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_life/Core/Widget/app_ui.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SupportScreen extends StatelessWidget {
@@ -58,26 +58,8 @@ class SupportScreen extends StatelessWidget {
 
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.grey[100],
-        appBar: AppBar(
-          centerTitle: true,
-          backgroundColor: AppColors.natural100,
-          elevation: 1,
-          title: Text(
-            LocaleKeys.supportTitle.tr(),
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: AppColors.primary500,
-              fontFamily: BaseConstant.cairoBold,
-            ),
-          ),
-          leading: GestureDetector(
-            onTap: AppNavigation.pop,
-            child: const Icon(
-              Icons.arrow_back_ios,
-              color: AppColors.primary500,
-            ),
-          ),
-        ),
+        backgroundColor: AppColors.backgroundColor,
+        appBar: AppPageBar(title: LocaleKeys.supportTitle.tr()),
         body: ListView(
           padding: const EdgeInsets.all(16),
           children: [

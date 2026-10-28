@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../Core/Constant/base_constant.dart';
 import '../../cubit/vendor_service_cubit.dart';
+import 'vendor_form_kit.dart';
 
+/// Active / inactive switch (sent to the API as status 1 / 0).
 class StatusWidget extends StatelessWidget {
   const StatusWidget({super.key});
 
@@ -15,52 +17,71 @@ class StatusWidget extends StatelessWidget {
     return BlocBuilder<VendorServiceCubit, VendorServiceState>(
       builder: (context, state) {
         var vendorServiceCubit = VendorServiceCubit.get(context);
-        return Container(
-          margin: EdgeInsets.symmetric(vertical: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                LocaleKeys.vendorStatus.tr(),
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: AppColors.black700,
-                  fontFamily: BaseConstant.cairoBold,
+        final isActive = vendorServiceCubit.initialStatusID == 1;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            VendorFieldLabel(LocaleKeys.vendorStatus.tr()),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+              decoration: BoxDecoration(
+                color: isActive
+                    ? const Color(0xFF2EAD5B).withValues(alpha: 0.08)
+                    : AppColors.natural50,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: isActive
+                      ? const Color(0xFF2EAD5B).withValues(alpha: 0.4)
+                      : AppColors.natural200,
                 ),
               ),
-              SizedBox(height: 15),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.natural200),
-                ),
-                child: DropdownButtonFormField<int>(
-                  value: vendorServiceCubit.initialStatusID,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    disabledBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
+              child: Row(
+                children: [
+                  Icon(
+                    isActive
+                        ? Icons.visibility_rounded
+                        : Icons.visibility_off_rounded,
+                    color: isActive
+                        ? const Color(0xFF2EAD5B)
+                        : AppColors.natural500,
+                    size: 22,
                   ),
-                  hint: Text(LocaleKeys.vendorSelectStatus.tr()),
-                  items: [
-                    DropdownMenuItem(
-                      value: 1,
-                      child: Text(LocaleKeys.commonYes.tr()),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          LocaleKeys.vendorStatusActive.tr(),
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontFamily: BaseConstant.cairoBold,
+                            color: AppColors.black700,
+                          ),
+                        ),
+                        Text(
+                          isActive
+                              ? LocaleKeys.vendorStatusActiveHint.tr()
+                              : LocaleKeys.vendorStatusInactiveHint.tr(),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: AppColors.natural500,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
                     ),
-                    DropdownMenuItem(
-                      value: 0,
-                      child: Text(LocaleKeys.commonNo.tr()),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    vendorServiceCubit.setStatusID(statusID: value!);
-                  },
-                ),
+                  ),
+                  Switch.adaptive(
+                    value: isActive,
+                    activeTrackColor: const Color(0xFF2EAD5B),
+                    onChanged: (value) =>
+                        vendorServiceCubit.setStatusID(statusID: value ? 1 : 0),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 10),
+          ],
         );
       },
     );

@@ -1,14 +1,11 @@
+import 'package:easy_life/Core/Widget/app_ui.dart';
+import 'package:easy_life/Core/Widget/custom_network_image.dart';
 import 'package:easy_life/Core/Widget/state_message_widget.dart';
-import 'package:easy_life/Core/Extentions/padding_ext.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
 import 'package:easy_life/Features/Services/Presentation/cubit/service_cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
-import '../../../../Core/Constant/assets_strings.dart';
-import '../../../../Core/Routes/app_navigation.dart';
 import '../../Domain/Entity/service_deatils_entity.dart' hide Image;
+import '../Widget/bookable_item_card.dart';
 import '../Widget/service_branch_options_bottomsheet.dart';
 
 class ServiceScreen extends StatelessWidget {
@@ -24,168 +21,82 @@ class ServiceScreen extends StatelessWidget {
     required this.serviceCubit,
   });
 
-  @override
-  Widget build(BuildContext context) {
-    var theme = Theme.of(context);
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 2,
-          title: Text(title),
-          centerTitle: true,
-          leading: GestureDetector(
-            onTap: () {
-              AppNavigation.pop();
-            },
-            child: Icon(Icons.arrow_back_ios, color: AppColors.primary400),
-          ),
-          actions: const [
-            // Icon(Icons.favorite_border),
-            // SizedBox(width: 12),
-            Icon(Icons.share),
-            SizedBox(width: 12),
-          ],
-        ),
-        body: serviceBranches.isEmpty
-            ? StateMessageWidget.empty()
-            : ListView.separated(
-                shrinkWrap: true,
-                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-                itemCount: serviceBranches.length,
-                separatorBuilder: (context, index) =>
-                    const Divider(color: AppColors.natural400),
-                itemBuilder: (context, index) {
-                  var service = serviceBranches[index];
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.network(
-                          service.image ?? '',
-                          height: 100,
-                          width: 100,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return SvgPicture.asset(
-                              AssetsStrings.noImages,
-                              height: 100,
-                              width: 100,
-                              fit: BoxFit.cover,
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              service.name ?? '',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                color: AppColors.black700,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Html(
-                              data: service.description ?? '',
-                              style: {
-                                "body": Style(
-                                  color:
-                                      AppColors.natural400, // make text black
-                                  maxLines: 2, // limit lines
-                                  textOverflow:
-                                      TextOverflow.ellipsis, // add "..."
-                                  fontSize: FontSize(14), // optional
-                                ),
-                                "p": Style(
-                                  margin: Margins
-                                      .zero, // remove default padding/margins
-                                  padding: HtmlPaddings.zero,
-                                  color: AppColors.natural400,
-                                  maxLines: 2,
-                                  textOverflow: TextOverflow.ellipsis,
-                                ),
-                              },
-                            ),
-                            const SizedBox(height: 4),
-                            RichText(
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              text: TextSpan(
-                                children: [
-                                  service.discount != '0'
-                                      ? TextSpan(
-                                          text: service.discount ?? '0',
-                                          style: TextStyle(color: Colors.black),
-                                        )
-                                      : TextSpan(
-                                          text: service.price ?? '0',
-                                          style: theme.textTheme.bodyMedium
-                                              ?.copyWith(
-                                                color: AppColors.primary400,
-                                              ),
-                                        ),
-                                  TextSpan(
-                                    text: ' جنيه',
-                                    style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: AppColors.natural300,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      GestureDetector(
-                        onTap: () {
-                          // Check if service has options
-                          if (service.serviceBranchOptions != null &&
-                              service.serviceBranchOptions!.isNotEmpty) {
-                            // Show bottom sheet with options
-                            showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              backgroundColor: Colors.transparent,
-                              builder: (context) =>
-                                  ServiceBranchOptionsBottomSheet(
-                                    serviceBranch: service,
-                                    branchID: branchID,
-                                    serviceCubit: serviceCubit,
-                                    serviceName: service.name ?? '',
-                                  ),
-                            );
-                          } else {
-                            // No options, add directly to cart
-                            serviceCubit.addToCart(
-                              type: 'service',
-                              id: service.id!,
-                              branchID: branchID,
-                            );
-                          }
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              width: 1,
-                              color: AppColors.black700,
-                            ),
-                          ),
-                          child: Icon(Icons.add),
-                        ),
-                      ),
-                    ],
-                  ).setVerticalPadding(context, 8, enableMediaQuery: false);
-                },
-              ),
+  /// (price to pay, original price when discounted). The discount is an
+  /// amount off the price, matching order totals (total = price - discount).
+  (String, String?) _prices(ServiceBranch service) {
+    final price = double.tryParse(service.price ?? '') ?? 0;
+    final discount = double.tryParse(service.discount ?? '') ?? 0;
+    String fmt(double v) =>
+        v == v.roundToDouble() ? v.toInt().toString() : v.toStringAsFixed(2);
+    if (discount > 0 && discount < price) {
+      return (fmt(price - discount), fmt(price));
+    }
+    return (fmt(price), null);
+  }
+
+  Future<bool> _add(BuildContext context, ServiceBranch service) async {
+    final options = service.serviceBranchOptions ?? [];
+    if (options.isEmpty) {
+      return serviceCubit.addToCart(
+        type: 'service',
+        id: service.id!,
+        branchID: branchID,
+      );
+    }
+    // Let the user pick options; the sheet adds to the cart itself
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => ServiceBranchOptionsBottomSheet(
+        serviceBranch: service,
+        branchID: branchID,
+        serviceCubit: serviceCubit,
+        serviceName: service.name ?? '',
       ),
     );
+    return false;
   }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.backgroundColor,
+      appBar: AppPageBar(title: title),
+      body: serviceBranches.isEmpty
+          ? StateMessageWidget.empty()
+          : ListView.separated(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+              itemCount: serviceBranches.length,
+              separatorBuilder: (_, _) => const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                var service = serviceBranches[index];
+                final (price, oldPrice) = _prices(service);
+                return BookableItemCard(
+                  leading: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: CustomNetworkImage(
+                      imageUrl: service.image,
+                      height: 76,
+                      width: 76,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  title: service.name ?? '',
+                  // Descriptions are HTML; strip tags for the one-line preview
+                  subtitle: _plain(service.description),
+                  price: price,
+                  oldPrice: oldPrice,
+                  onAdd: () => _add(context, service),
+                );
+              },
+            ),
+    );
+  }
+
+  static String _plain(String? html) => (html ?? '')
+      .replaceAll(RegExp(r'<[^>]*>'), ' ')
+      .replaceAll('&nbsp;', ' ')
+      .replaceAll(RegExp(r'\s+'), ' ')
+      .trim();
 }

@@ -1,5 +1,4 @@
 import 'package:easy_life/Core/Widget/state_message_widget.dart';
-import 'package:easy_life/Core/Constant/assets_strings.dart';
 import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_life/Core/Enums/level_message_enums.dart';
@@ -8,8 +7,8 @@ import 'package:easy_life/Features/Cart/Presentation/Widget/cart_item_card.dart'
 import 'package:easy_life/Features/Cart/Presentation/Widget/cart_summary_widget.dart';
 import 'package:easy_life/Features/Cart/Presentation/cubit/cart_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_life/Core/Widget/app_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 
 import '../../../../Core/Helper/user_validation_helper.dart';
 import '../../../../Core/Themes/app_colors.dart';
@@ -19,7 +18,6 @@ class CartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
     return BlocProvider(
       create: (context) => DependencyInjectionHelper().sl<CartCubit>()
         ..getCart()
@@ -29,17 +27,9 @@ class CartScreen extends StatelessWidget {
           var cartCubit = CartCubit.get(context);
           return Scaffold(
             backgroundColor: AppColors.backgroundColor,
-            appBar: AppBar(
-              title: Text(
-                LocaleKeys.cartTitle.tr(),
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontSize: 20,
-                  color: AppColors.primary500,
-                ),
-              ),
-              centerTitle: true,
-              elevation: 0,
-              scrolledUnderElevation: 0,
+            appBar: AppPageBar(
+              title: LocaleKeys.cartTitle.tr(),
+              showBack: false,
             ),
             body:
                 cartCubit.cartRequestState == RequestState.error &&
@@ -48,21 +38,9 @@ class CartScreen extends StatelessWidget {
                 : cartCubit.cartEntity == null
                 ? Center(child: CircularProgressIndicator())
                 : cartCubit.cartRequestState == RequestState.empty
-                ? Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(AssetsStrings.empty),
-                      const SizedBox(height: 20),
-                      Center(
-                        child: Text(
-                          LocaleKeys.cartEmpty.tr(),
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontSize: 17,
-                            color: AppColors.black700,
-                          ),
-                        ),
-                      ),
-                    ],
+                ? StateMessageWidget.empty(
+                    message: LocaleKeys.cartEmpty.tr(),
+                    onRetry: () => cartCubit.getCart(),
                   )
                 : Column(
                     children: [

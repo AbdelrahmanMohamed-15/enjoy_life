@@ -24,6 +24,7 @@ class OrderHistoryScreen extends StatelessWidget {
         var orderCubit = OrderCubit.get(context);
         return SafeArea(
           child: Scaffold(
+            backgroundColor: AppColors.backgroundColor,
             appBar: AppBar(
               title: Text(
                 LocaleKeys.orderHistoryTitle.tr(),
@@ -34,22 +35,28 @@ class OrderHistoryScreen extends StatelessWidget {
                 ),
               ),
               centerTitle: true,
-              elevation: 2,
-              leading: GestureDetector(
-                onTap: () {
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              backgroundColor: AppColors.backgroundColor,
+              leading: IconButton(
+                onPressed: () {
                   AppNavigation.pop();
                 },
-                child: Icon(Icons.arrow_back_ios, color: AppColors.primary500),
+                icon: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: AppColors.primary500,
+                  size: 20,
+                ),
               ),
             ),
             body: Column(
               children: [
-                const SizedBox(height: 10),
+                const SizedBox(height: 6),
                 OrderTabs(
                   currentIndex: orderCubit.currentIndex,
                   orderCubit: orderCubit,
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 8),
                 Expanded(
                   child: orderCubit.orderRequestState == RequestState.error
                       ? StateMessageWidget.error(
@@ -76,20 +83,37 @@ class OrderHistoryScreen extends StatelessWidget {
                             ),
                           ],
                         )
-                      : ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: orderCubit
-                              .orderHistoryEntity!
-                              .data!
-                              .reversed
-                              .length,
-                          itemBuilder: (context, index) {
-                            var order = orderCubit
+                      : Builder(
+                          builder: (context) {
+                            final orders = orderCubit
                                 .orderHistoryEntity!
                                 .data!
                                 .reversed
-                                .toList()[index];
-                            return OrderCard(order: order);
+                                .toList();
+                            return ListView.builder(
+                              padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
+                              itemCount: orders.length,
+                              itemBuilder: (context, index) {
+                                // Fade/slide cards in, staggered by position
+                                return TweenAnimationBuilder<double>(
+                                  key: ValueKey(orders[index].id),
+                                  tween: Tween(begin: 0, end: 1),
+                                  duration: Duration(
+                                    milliseconds:
+                                        300 + (index.clamp(0, 6) * 70),
+                                  ),
+                                  curve: Curves.easeOutCubic,
+                                  builder: (context, value, child) => Opacity(
+                                    opacity: value,
+                                    child: Transform.translate(
+                                      offset: Offset(0, 24 * (1 - value)),
+                                      child: child,
+                                    ),
+                                  ),
+                                  child: OrderCard(order: orders[index]),
+                                );
+                              },
+                            );
                           },
                         ),
                 ),

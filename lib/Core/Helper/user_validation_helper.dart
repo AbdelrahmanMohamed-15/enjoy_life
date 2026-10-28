@@ -1,7 +1,7 @@
 import 'package:easy_life/Core/Helper/dependency_injection_helper.dart';
 import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Routes/routes.dart';
-import 'package:easy_life/Core/Widget/main_app_button.dart';
+import 'package:easy_life/Core/Widget/app_ui.dart';
 import 'package:easy_life/Features/Authentication/Domain/Entity/user_entity.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -24,44 +24,66 @@ class UserValidationHelper {
     }
   }
 
-  static showUserValidation() {
-    showModalBottomSheet(
+  static Future<void> showUserValidation() {
+    return showModalBottomSheet(
       context: AppNavigation.globalContext,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (_) {
-        var theme = Theme.of(AppNavigation.globalContext);
+      builder: (sheetContext) {
+        var theme = Theme.of(sheetContext);
+        // Close the sheet first, so it is not still open when coming back
+        void go(String route) {
+          Navigator.pop(sheetContext);
+          AppNavigation.pushNamed(route);
+        }
+
         return SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
+                const SheetHandle(),
+                const SizedBox(height: 18),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.primary100.withValues(alpha: 0.6),
+                  ),
+                  child: const Icon(
+                    Icons.lock_person_rounded,
+                    color: AppColors.primary600,
+                    size: 34,
+                  ),
+                ),
+                const SizedBox(height: 14),
                 Text(
                   LocaleKeys.mainNavLoginRequired.tr(),
-                  style: theme.textTheme.bodyMedium?.copyWith(
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.titleMedium?.copyWith(
                     color: AppColors.black700,
                     fontFamily: BaseConstant.cairoBold,
                   ),
                 ),
                 const SizedBox(height: 20),
-                MainAppButton(
-                  bgColor: AppColors.primary400,
-                  child: Text(
-                    LocaleKeys.mainNavLoginButton.tr(),
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: AppColors.natural100,
-                      fontFamily: BaseConstant.cairoBold,
-                    ),
+                AppGradientButton(
+                  label: LocaleKeys.mainNavLoginButton.tr(),
+                  icon: Icons.login_rounded,
+                  onTap: () => go(AppRoutes.login),
+                ),
+                const SizedBox(height: 8),
+                TextButton(
+                  onPressed: () => go(AppRoutes.register),
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.primary600,
                   ),
-                  onTap: () {
-                    AppNavigation.pushNamed(AppRoutes.login);
-                  },
+                  child: Text(
+                    LocaleKeys.authLoginCreateAccount.tr(),
+                    style: const TextStyle(fontFamily: BaseConstant.cairoBold),
+                  ),
                 ),
               ],
             ),

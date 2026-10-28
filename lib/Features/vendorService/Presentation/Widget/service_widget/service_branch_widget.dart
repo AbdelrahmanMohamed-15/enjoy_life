@@ -3,9 +3,8 @@ import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Features/vendorService/Presentation/cubit/vendor_service_cubit.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '../global_widget/vendor_form_kit.dart';
 
-import '../../../../../Core/Constant/base_constant.dart';
-import '../../../../../Core/Themes/app_colors.dart';
 import '../../../Domain/Entities/all_branch_entity.dart';
 
 class ServiceBranchWidget extends StatefulWidget {
@@ -33,38 +32,20 @@ class _ServiceBranchWidgetState extends State<ServiceBranchWidget> {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 15),
-        Text(
-          LocaleKeys.vendorSelectBranch.tr(),
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: AppColors.black700,
-            fontFamily: BaseConstant.cairoBold,
-          ),
-        ),
-        const SizedBox(height: 15),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: AppColors.natural200),
-          ),
+        VendorFieldLabel(LocaleKeys.vendorSelectBranch.tr()),
+        VendorDropdownBox(
           child: DropdownButtonFormField<BranchData>(
             hint: Text(LocaleKeys.vendorSelectBranch.tr()),
             value: _getSelectedBranch(
               widget.vendorServiceCubit.allBranchEntity?.data,
               widget.vendorServiceCubit.branchID,
             ),
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              disabledBorder: InputBorder.none,
-              enabledBorder: InputBorder.none,
-            ),
+            decoration: VendorDropdownBox.decoration,
+            borderRadius: BorderRadius.circular(14),
+            isExpanded: true,
             items: widget.vendorServiceCubit.allBranchEntity?.data
                 ?.map(
                   (branch) => DropdownMenuItem<BranchData>(

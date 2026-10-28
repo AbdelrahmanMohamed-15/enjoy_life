@@ -8,6 +8,11 @@ import '../Handler/response_code.dart';
 import '../Helper/dependency_injection_helper.dart';
 import '../Helper/locale_storage.dart';
 import '../main cubit/cubit/language_cubit.dart';
+import '../L10n/locale_keys.dart';
+import '../Routes/app_navigation.dart';
+import '../Routes/app_routes.dart';
+import '../Widget/custom_snack_bar.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 /// Used to handle the network clients all over the app
 class NetworkService {
@@ -109,21 +114,45 @@ class NetworkService {
 
           ErrorHandler errorHandler = ErrorHandler.handle(error);
           if (errorHandler.failure.code == APIResponseCode.unauthorized) {
-            // DependencyInjectionHelper().sl<AuthService>().clearAuth();
-            // AppNavigation.pushNamedAndRemoveUntil(AppRoutes.login);
-            return; //For stopping error propagation here if the error is handled
+            await _onSessionExpired();
           }
-          // You can pass the error to the next handler or modify it as needed
-          handler.next(error); // Continue to propagate the error
+          // Always pass the error on: returning without calling the handler
+          // left the request's Future pending forever (endless spinners)
+          handler.next(error);
         },
       ),
     );
   }
 
+  static bool _handlingExpiry = false;
+
+  /// The saved token was rejected: clear the session once (several requests
+  /// may fail together) and send the user to log in again.
+  Future<void> _onSessionExpired() async {
+    final authHandler = DependencyInjectionHelper().sl<AuthHandlerInterface>();
+    if (_handlingExpiry || authHandler.getToken() == null) return;
+    _handlingExpiry = true;
+    try {
+      EasyLoading.dismiss();
+      await authHandler.clearAllData();
+      if (AppNavigation.navigatorKey.currentState != null) {
+        AppNavigation.pushNamedAndRemoveUntil(
+          AppRoutes.login,
+          predicate: (_) => false,
+        );
+        showCustomSnackBar(
+          LocaleKeys.commonSessionExpired.tr(),
+          type: SnackBarType.warning,
+        );
+      }
+    } finally {
+      _handlingExpiry = false;
+    }
+  }
+
   void _setLanguageHeader(RequestOptions options) {
-    final languageCode = DependencyInjectionHelper()
-            .sl<LocaleStorage>()
-            .getLanguageCode() ??
+    final languageCode =
+        DependencyInjectionHelper().sl<LocaleStorage>().getLanguageCode() ??
         LanguageCubit.defaultLocale.languageCode;
     options.headers['language'] = languageCode;
     options.headers['Accept-Language'] = languageCode;

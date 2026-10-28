@@ -1,38 +1,40 @@
-import 'package:easy_life/Core/Helper/dependency_injection_helper.dart';
-import 'package:easy_life/Core/Services/setting_services.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
-import 'package:easy_life/Features/Authentication/Domain/Entity/user_entity.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:like_button/like_button.dart';
 
 import '../Constant/assets_strings.dart';
 import '../Constant/base_constant.dart';
-import '../Handler/auth_handler.dart';
+import '../Helper/service_kind.dart';
 import '../Helper/user_validation_helper.dart';
+import 'booking_type_icon.dart';
 
+/// Restaurant / hotel / trip card used in the home rails and grids.
 class GeneralServiceCard extends StatefulWidget {
   final String logo;
   final String title;
   final bool isFavourite;
   final String rate;
-  final String serviceName;
+  final ServiceKind? kind;
   final String description;
   final String address;
-  final Function() addFavouriteTap;
-  final Function() removeFavouriteTap;
+  final VoidCallback? onTap;
+
+  /// Called with the new value; return false to undo the toggle. Hidden when
+  /// null (e.g. for vendors).
+  final Future<bool> Function(bool favourite)? onFavouriteChanged;
+  final double width;
   const GeneralServiceCard({
     super.key,
     required this.logo,
     required this.title,
     required this.isFavourite,
     required this.rate,
-    required this.serviceName,
     required this.description,
     required this.address,
-    required this.addFavouriteTap,
-    required this.removeFavouriteTap,
+    this.kind,
+    this.onTap,
+    this.onFavouriteChanged,
+    this.width = 200,
   });
 
   @override
@@ -40,200 +42,205 @@ class GeneralServiceCard extends StatefulWidget {
 }
 
 class _GeneralServiceCardState extends State<GeneralServiceCard> {
-  bool isServiceFavourite = false;
+  late bool _favourite = widget.isFavourite;
+  bool _busy = false;
 
   @override
-  void initState() {
-    initialFavourite();
-    super.initState();
+  void didUpdateWidget(covariant GeneralServiceCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Fresh data from the server wins over the local toggle
+    if (oldWidget.isFavourite != widget.isFavourite) {
+      _favourite = widget.isFavourite;
+    }
   }
 
-  initialFavourite() {
-    if (mounted) {
-      setState(() {
-        isServiceFavourite = widget.isFavourite;
-      });
+  Future<void> _toggleFavourite() async {
+    if (_busy) return;
+    if (UserValidationHelper.checkUserValidation() != true) {
+      UserValidationHelper.showUserValidation();
+      return;
     }
+    final next = !_favourite;
+    setState(() {
+      _favourite = next;
+      _busy = true;
+    });
+    final ok = await widget.onFavouriteChanged!(next);
+    if (!mounted) return;
+    setState(() {
+      if (!ok) _favourite = !next;
+      _busy = false;
+    });
+  }
+
+  String get _rating {
+    final value = double.tryParse(widget.rate) ?? 0;
+    return value.toStringAsFixed(1);
   }
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    Userdata? userData = DependencyInjectionHelper()
-        .sl<AuthHandlerInterface>()
-        .getUserData();
-    return Container(
-      height: 240,
-      width: 185,
-      decoration: BoxDecoration(
-        color: AppColors.natural100,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: SettingServices.mainShadow,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: 120,
-            width: 185,
-            child: Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadiusGeometry.only(
-                    topLeft: Radius.circular(12),
-                    topRight: Radius.circular(12),
-                  ),
-                  child: Image.network(
-                    widget.logo,
-                    height: 120,
-                    width: 185,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return SvgPicture.asset(
-                        AssetsStrings.noImages,
-                        fit: BoxFit.cover,
-                      );
-                    },
-                  ),
-                ),
-                // if (userData != null)
-                if (userData?.clientType == 0 || userData == null)
-                  Positioned(
-                    top: 10,
-                    left: 10,
-                    child: Container(
-                      padding: EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: AppColors.natural100,
-                        shape: BoxShape.circle,
-                      ),
-                      child: LikeButton(
-                        size: 25, // match your icon size
-                        animationDuration: const Duration(milliseconds: 300),
-                        isLiked: !isServiceFavourite,
-                        likeCountPadding: const EdgeInsets.all(0),
-                        circleColor: const CircleColor(
-                          start: AppColors.iconPrimary,
-                          end: AppColors.iconPrimary,
-                        ),
-                        bubblesColor: const BubblesColor(
-                          dotPrimaryColor: AppColors.iconPrimary,
-                          dotSecondaryColor: AppColors.iconPrimary,
-                        ),
-                        likeBuilder: (bool isLiked) {
-                          return Icon(
-                            isServiceFavourite
-                                ? Icons.favorite_outlined
-                                : Icons.favorite_outline,
-                            color: isServiceFavourite
-                                ? AppColors.iconPrimary
-                                : Colors.black,
-                            size: 24, // slightly smaller to fit nicely
-                          );
-                        },
-                        onTap: (isLike) async {
-                          if (UserValidationHelper.checkUserValidation() ==
-                              true) {
-                            if (!isLike) {
-                              widget.removeFavouriteTap();
-                            } else {
-                              widget.addFavouriteTap();
-                            }
-                            setState(() {
-                              isServiceFavourite = !isServiceFavourite;
-                            });
-                            return !isLike;
-                          } else {
-                            UserValidationHelper.showUserValidation();
-                            return false;
-                          }
-                        },
-                      ),
-                    ),
-                  ),
-              ],
+    return SizedBox(
+      width: widget.width,
+      child: Material(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        clipBehavior: Clip.antiAlias,
+        elevation: 0,
+        child: InkWell(
+          onTap: widget.onTap,
+          child: Ink(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: AppColors.natural200.withValues(alpha: 0.7),
+              ),
             ),
-          ),
-
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  widget.title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontFamily: BaseConstant.cairoBold,
-                    color: AppColors.black700,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  widget.description,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.normal,
-                    color: AppColors.natural400,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                RichText(
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  text: TextSpan(
+                SizedBox(
+                  height: 130,
+                  width: double.infinity,
+                  child: Stack(
+                    fit: StackFit.expand,
                     children: [
-                      WidgetSpan(
-                        child: RatingBar.builder(
-                          initialRating: double.parse(widget.rate),
-                          minRating: 0,
-                          itemSize: 15,
-                          direction: Axis.horizontal,
-                          allowHalfRating: true,
-                          ignoreGestures: true,
-                          itemCount: 5,
-                          itemPadding: EdgeInsets.symmetric(horizontal: 0.5),
-                          unratedColor: AppColors.natural200,
-                          itemBuilder: (context, _) =>
-                              Icon(Icons.star, color: Colors.amberAccent),
-                          onRatingUpdate: (rating) {},
+                      Image.network(
+                        widget.logo,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            SvgPicture.asset(
+                              AssetsStrings.noImages,
+                              fit: BoxFit.cover,
+                            ),
+                      ),
+                      // Rating badge
+                      PositionedDirectional(
+                        top: 10,
+                        start: 10,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.55),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.star_rounded,
+                                color: Color(0xFFFFC83D),
+                                size: 15,
+                              ),
+                              const SizedBox(width: 2),
+                              Text(
+                                _rating,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontFamily: BaseConstant.cairoBold,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      TextSpan(text: '   '),
-                      TextSpan(
-                        text: "(${widget.rate})",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey.shade600,
+                      if (widget.onFavouriteChanged != null)
+                        PositionedDirectional(
+                          top: 8,
+                          end: 8,
+                          child: Material(
+                            color: Colors.white,
+                            shape: const CircleBorder(),
+                            elevation: 2,
+                            child: InkWell(
+                              customBorder: const CircleBorder(),
+                              onTap: _toggleFavourite,
+                              child: Padding(
+                                padding: const EdgeInsets.all(7),
+                                child: AnimatedSwitcher(
+                                  duration: const Duration(milliseconds: 250),
+                                  transitionBuilder: (child, animation) =>
+                                      ScaleTransition(
+                                        scale: animation,
+                                        child: child,
+                                      ),
+                                  child: Icon(
+                                    _favourite
+                                        ? Icons.favorite_rounded
+                                        : Icons.favorite_border_rounded,
+                                    key: ValueKey(_favourite),
+                                    color: _favourite
+                                        ? AppColors.errorColor
+                                        : AppColors.natural600,
+                                    size: 20,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                      if (widget.kind != null)
+                        PositionedDirectional(
+                          bottom: 8,
+                          start: 8,
+                          child: BookingTypeIcon(
+                            itemType: widget.kind!.itemType,
+                            size: 30,
+                          ),
+                        ),
                     ],
                   ),
                 ),
-
-                const SizedBox(height: 8),
-                RichText(
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  text: TextSpan(
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      WidgetSpan(
-                        child: Icon(
-                          Icons.location_on_outlined,
-                          color: AppColors.primary500,
-                          size: 15,
+                      Text(
+                        widget.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontFamily: BaseConstant.cairoBold,
+                          color: AppColors.black700,
+                          fontSize: 15,
                         ),
                       ),
-                      TextSpan(
-                        text: ' ${widget.address}',
+                      const SizedBox(height: 2),
+                      Text(
+                        widget.description,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          fontFamily: BaseConstant.cairoBold,
-                          color: AppColors.natural400,
-                          fontSize: 10,
+                          color: AppColors.natural500,
                         ),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.location_on_rounded,
+                            color: AppColors.primary500,
+                            size: 15,
+                          ),
+                          const SizedBox(width: 3),
+                          Expanded(
+                            child: Text(
+                              widget.address,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: AppColors.natural600,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -241,7 +248,7 @@ class _GeneralServiceCardState extends State<GeneralServiceCard> {
               ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }

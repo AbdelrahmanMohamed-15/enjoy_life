@@ -304,3 +304,5 @@ final class SetCurrentService extends VendorServiceState {
   @override
   List<Object> get props => [currentService];
 }
+
+final class RemoveLogoImage extends VendorServiceState {}

@@ -1,15 +1,12 @@
 import 'package:easy_life/Core/L10n/locale_keys.dart';
-import 'package:easy_life/Core/Widget/custom_snack_bar.dart';
-import 'package:easy_life/Core/Widget/main_app_button.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Widget/global_widget/language_widget.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Widget/global_widget/name_widget.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Widget/global_widget/status_widget.dart';
+import 'package:easy_life/Features/vendorService/Presentation/Widget/global_widget/vendor_form_kit.dart';
 import 'package:easy_life/Features/vendorService/Presentation/cubit/vendor_service_cubit.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../Core/Constant/base_constant.dart';
-import '../../../../Core/Routes/app_navigation.dart';
 import '../../../../Core/Themes/app_colors.dart';
 
 class AddCategoryScreen extends StatelessWidget {
@@ -17,61 +14,33 @@ class AddCategoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
     return BlocBuilder<VendorServiceCubit, VendorServiceState>(
       builder: (context, state) {
         var vendorServiceCubit = VendorServiceCubit.get(context);
         return SafeArea(
+          bottom: false,
           child: Scaffold(
-            appBar: AppBar(
-              centerTitle: true,
-              backgroundColor: AppColors.natural100,
-              title: Text(
-                LocaleKeys.vendorAddCategory.tr(),
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: AppColors.primary500,
-                  fontFamily: BaseConstant.cairoBold,
-                ),
-              ),
-              elevation: 1,
-              leading: GestureDetector(
-                onTap: () {
-                  AppNavigation.pop();
-                },
-                child: Icon(Icons.arrow_back_ios, color: AppColors.primary500),
-              ),
-            ),
+            backgroundColor: AppColors.backgroundColor,
+            appBar: VendorAppBar(title: LocaleKeys.vendorAddCategory.tr()),
             body: ListView(
-              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
               children: [
-                LanguageWidget(),
+                const LanguageWidget(),
                 NameWidget(formKey: vendorServiceCubit.formKey),
-                StatusWidget(),
-                const SizedBox(height: 40),
-                MainAppButton(
-                  child: Text(
-                    LocaleKeys.commonAdd.tr(),
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: AppColors.natural50,
-                      fontFamily: BaseConstant.cairoBold,
-                    ),
-                  ),
-                  onTap: () {
-                    if (vendorServiceCubit.formKey.currentState!.validate()) {
-                      if (vendorServiceCubit.nameArController.text.isEmpty ||
-                          vendorServiceCubit.nameEnController.text.isEmpty) {
-                        showCustomSnackBar(
-                          LocaleKeys.vendorValidationNameBoth.tr(),
-                          backgroundColor: AppColors.darkRed,
-                        );
-                        return;
-                      } else {
-                        vendorServiceCubit.createCategory();
-                      }
-                    }
-                  },
+                VendorSectionCard(
+                  icon: Icons.tune_rounded,
+                  title: LocaleKeys.vendorSectionSettings.tr(),
+                  child: const StatusWidget(),
                 ),
               ],
+            ),
+            bottomNavigationBar: VendorSubmitButton(
+              label: LocaleKeys.vendorAddCategory.tr(),
+              icon: Icons.add_circle_rounded,
+              onTap: () {
+                if (!vendorServiceCubit.validateBilingual()) return;
+                vendorServiceCubit.createCategory();
+              },
             ),
           ),
         );

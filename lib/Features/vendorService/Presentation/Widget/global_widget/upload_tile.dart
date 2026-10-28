@@ -9,23 +9,45 @@ class UploadTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-      tileColor: AppColors.natural50,
-      leading: CircleAvatar(
-        backgroundColor: AppColors.natural100,
-        radius: 20.0,
-        child: const Icon(
-          Icons.cloud_upload_outlined,
-          color: AppColors.primary500,
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+      decoration: BoxDecoration(
+        color: AppColors.primary100.withValues(alpha: 0.25),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppColors.primary300.withValues(alpha: 0.7),
+          width: 1.2,
         ),
       ),
-      title: Text(
-        LocaleKeys.vendorUploadImage.tr(),
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-          fontSize: 14,
-          fontFamily: BaseConstant.cairoBold,
-        ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.cloud_upload_rounded,
+              color: AppColors.primary500,
+              size: 26,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            LocaleKeys.vendorUploadImage.tr(),
+            style: const TextStyle(
+              fontSize: 14,
+              fontFamily: BaseConstant.cairoBold,
+              color: AppColors.black700,
+            ),
+          ),
+          Text(
+            LocaleKeys.vendorUploadHint.tr(),
+            style: const TextStyle(fontSize: 11, color: AppColors.natural500),
+          ),
+        ],
       ),
     );
   }

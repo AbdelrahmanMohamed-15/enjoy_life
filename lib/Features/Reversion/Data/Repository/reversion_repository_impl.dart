@@ -56,6 +56,15 @@ class ReversionRepositoryImpl implements ReversionRepository {
           ),
         );
       }
+    } catch (e) {
+      // e.g. an unexpected field format while parsing the response
+      debugPrint('Get All Reversion Parse Error : $e');
+      return Left(
+        Failure(
+          code: APIResponseCode.unknown,
+          message: APIResponseMessages.unknown,
+        ),
+      );
     }
   }
 
@@ -98,6 +107,14 @@ class ReversionRepositoryImpl implements ReversionRepository {
           ),
         );
       }
+    } catch (e) {
+      debugPrint('Scan Order Parse Error : $e');
+      return Left(
+        Failure(
+          code: APIResponseCode.unknown,
+          message: APIResponseMessages.unknown,
+        ),
+      );
     }
   }
 }

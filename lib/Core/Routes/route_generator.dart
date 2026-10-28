@@ -15,6 +15,7 @@ import 'package:easy_life/Features/Profile/Presentation/View/edit_profile_screen
 import 'package:easy_life/Features/Profile/Presentation/cubit/profile_cubit.dart';
 import 'package:easy_life/Features/Reversion/Presentation/Views/qr_scanner_screen.dart';
 import 'package:easy_life/Features/Reversion/Presentation/Views/reversion_details_screen.dart';
+import 'package:easy_life/Features/Reversion/Presentation/Views/reversion_list_screen.dart';
 import 'package:easy_life/Features/Reversion/Presentation/cubit/reversion_cubit.dart';
 import 'package:easy_life/Features/Services/Presentation/Views/room_screen.dart';
 import 'package:easy_life/Features/Services/Presentation/Views/service_details_screen.dart';
@@ -209,7 +210,8 @@ class RouteGenerator {
         return _screenRoute(
           screen: BlocProvider(
             create: (context) =>
-                DependencyInjectionHelper().sl<VendorServiceCubit>(),
+                DependencyInjectionHelper().sl<VendorServiceCubit>()
+                  ..maxImages = 1,
             child: AddBranchScreen(),
           ),
           settings: settings,
@@ -259,7 +261,8 @@ class RouteGenerator {
                 DependencyInjectionHelper().sl<VendorServiceCubit>()
                   ..getAllBranches()
                   ..getAllCategory()
-                  ..getVendorResturant(),
+                  ..getVendorResturant()
+                  ..loadVendorTypes(),
             child: AddNewServiceScreen(),
           ),
           settings: settings,
@@ -272,6 +275,18 @@ class RouteGenerator {
                 DependencyInjectionHelper().sl<VendorServiceCubit>()
                   ..getAllService(),
             child: AddServiceOptionScreen(),
+          ),
+          settings: settings,
+        );
+      case AppRoutes.reversionList:
+        var args = (settings.arguments as Map<String, dynamic>);
+        return _screenRoute(
+          screen: BlocProvider(
+            create: (context) =>
+                DependencyInjectionHelper().sl<ReversionCubit>()
+                  ..serviceID = args['serviceID']
+                  ..getAllReversion(),
+            child: ReversionListScreen(serviceID: args['serviceID']),
           ),
           settings: settings,
         );
