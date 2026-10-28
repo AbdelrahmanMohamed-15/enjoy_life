@@ -1,3 +1,4 @@
+import 'package:easy_life/Core/Helper/safe_emit_mixin.dart';
 import 'package:easy_life/Core/Enums/level_message_enums.dart';
 import 'package:easy_life/Core/Routes/routes.dart';
 import 'package:easy_life/Core/Widget/custom_snack_bar.dart';
@@ -13,7 +14,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../../../Core/Themes/app_colors.dart';
 part 'reversion_state.dart';
 
-class ReversionCubit extends Cubit<ReversionState> {
+class ReversionCubit extends Cubit<ReversionState> with SafeEmitMixin<ReversionState> {
   ReversionCubit({
     required this.getAllReversionUsecases,
     required this.scanOrderUsecases,

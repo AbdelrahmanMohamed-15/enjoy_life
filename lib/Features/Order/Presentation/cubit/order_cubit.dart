@@ -1,3 +1,4 @@
+import 'package:easy_life/Core/Helper/safe_emit_mixin.dart';
 import 'package:easy_life/Core/Enums/level_message_enums.dart';
 import 'package:easy_life/Features/Order/Domain/Entity/order_history_entity.dart';
 import 'package:easy_life/Features/Order/Domain/Usecases/get_complete_order_usecases.dart';
@@ -9,7 +10,7 @@ import '../../Domain/Usecases/get_cancel_order_usecases.dart';
 
 part 'order_state.dart';
 
-class OrderCubit extends Cubit<OrderState> {
+class OrderCubit extends Cubit<OrderState> with SafeEmitMixin<OrderState> {
   OrderCubit({
     required this.getPendingOrderUsecases,
     required this.getCompleteOrderUsecases,

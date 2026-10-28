@@ -1,3 +1,4 @@
+import 'package:easy_life/Core/Helper/safe_emit_mixin.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,7 @@ import '../../Routes/app_navigation.dart';
 
 part 'language_state.dart';
 
-class LanguageCubit extends Cubit<LanguageState> {
+class LanguageCubit extends Cubit<LanguageState> with SafeEmitMixin<LanguageState> {
   LanguageCubit({
     required LocaleStorage localeStorage,
     required AuthHandlerInterface authHandler,

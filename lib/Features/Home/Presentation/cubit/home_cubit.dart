@@ -1,3 +1,4 @@
+import 'package:easy_life/Core/Helper/safe_emit_mixin.dart';
 import 'package:easy_life/Core/Enums/level_message_enums.dart';
 import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Widget/custom_snack_bar.dart';
@@ -22,7 +23,7 @@ import '../../Domain/Usecases/get_vendor_trips_usecases.dart';
 
 part 'home_state.dart';
 
-class HomeCubit extends Cubit<HomeState> {
+class HomeCubit extends Cubit<HomeState> with SafeEmitMixin<HomeState> {
   HomeCubit({
     required this.getSlidersUsecases,
     required this.getResturantUsecases,

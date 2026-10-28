@@ -1,3 +1,4 @@
+import 'package:easy_life/Core/Helper/safe_emit_mixin.dart';
 import 'package:easy_life/Core/Routes/app_navigation.dart';
 import 'package:easy_life/Core/Routes/routes.dart';
 import 'package:easy_life/Core/Widget/custom_snack_bar.dart';
@@ -22,7 +23,7 @@ import '../../Domain/Usecases/get_trip_details_usecases.dart';
 
 part 'sevice_state.dart';
 
-class ServiceCubit extends Cubit<ServiceState> {
+class ServiceCubit extends Cubit<ServiceState> with SafeEmitMixin<ServiceState> {
   ServiceCubit({
     required this.getResturantDetailsUsecases,
     required this.getHotelDetailsUsecases,

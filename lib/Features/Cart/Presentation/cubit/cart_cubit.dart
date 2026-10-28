@@ -1,3 +1,4 @@
+import 'package:easy_life/Core/Helper/safe_emit_mixin.dart';
 import 'package:easy_life/Core/Enums/level_message_enums.dart';
 import 'package:easy_life/Core/Widget/custom_snack_bar.dart';
 import 'package:easy_life/Features/Cart/Domain/Usecases/create_order_usecases.dart';
@@ -17,7 +18,7 @@ import '../../Domain/Entity/cart_entity.dart';
 
 part 'cart_state.dart';
 
-class CartCubit extends Cubit<CartState> {
+class CartCubit extends Cubit<CartState> with SafeEmitMixin<CartState> {
   CartCubit({
     required this.getCartUsecases,
     required this.updateItemQuantityUsecases,

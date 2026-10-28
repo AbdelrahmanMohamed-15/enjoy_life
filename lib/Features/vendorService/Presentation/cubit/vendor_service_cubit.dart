@@ -1,3 +1,4 @@
+import 'package:easy_life/Core/Helper/safe_emit_mixin.dart';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -42,7 +43,7 @@ import '../../Domain/Entities/all_trip_schedual_entity.dart';
 import '../../Domain/Usecases/create_hotel_usecaes.dart';
 part 'vendor_service_state.dart';
 
-class VendorServiceCubit extends Cubit<VendorServiceState> {
+class VendorServiceCubit extends Cubit<VendorServiceState> with SafeEmitMixin<VendorServiceState> {
   VendorServiceCubit({
     required this.createBranchUsecases,
     required this.createCategoryUsecases,

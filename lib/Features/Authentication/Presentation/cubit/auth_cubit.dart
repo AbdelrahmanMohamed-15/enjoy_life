@@ -1,3 +1,4 @@
+import 'package:easy_life/Core/Helper/safe_emit_mixin.dart';
 import 'package:easy_life/Core/Handler/auth_handler.dart';
 import 'package:easy_life/Core/Helper/dependency_injection_helper.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
@@ -18,7 +19,7 @@ import '../../Domain/UseCases/rest_password_usecase.dart';
 
 part 'auth_state.dart';
 
-class AuthCubit extends Cubit<AuthState> {
+class AuthCubit extends Cubit<AuthState> with SafeEmitMixin<AuthState> {
   final LoginUsecases loginUsecases;
   final ForgetPasswordUsecases forgetPasswordUsecases;
   final VerifyResetOtpUsecases verifyResetOtpUsecases;

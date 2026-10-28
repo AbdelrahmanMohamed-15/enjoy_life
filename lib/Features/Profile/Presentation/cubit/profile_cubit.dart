@@ -1,3 +1,4 @@
+import 'package:easy_life/Core/Helper/safe_emit_mixin.dart';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:easy_life/Core/Enums/level_message_enums.dart';
@@ -23,7 +24,7 @@ import '../../Domain/Usecases/update_profile_usecases.dart';
 
 part 'profile_state.dart';
 
-class ProfileCubit extends Cubit<ProfileState> {
+class ProfileCubit extends Cubit<ProfileState> with SafeEmitMixin<ProfileState> {
   ProfileCubit({
     required this.getProfileUsecases,
     required this.updateProfileUsecases,

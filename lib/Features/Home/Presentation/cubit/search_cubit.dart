@@ -1,3 +1,4 @@
+import 'package:easy_life/Core/Helper/safe_emit_mixin.dart';
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
@@ -8,7 +9,7 @@ import '../../Domain/Usecases/search_usecases.dart';
 
 part 'search_state.dart';
 
-class SearchCubit extends Cubit<SearchState> {
+class SearchCubit extends Cubit<SearchState> with SafeEmitMixin<SearchState> {
   SearchCubit({required this.searchUsecases}) : super(SearchInitial());
 
   final SearchUsecases searchUsecases;
