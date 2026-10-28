@@ -7,6 +7,7 @@ import 'package:easy_life/Features/Profile/Presentation/Widget/language_bottom_s
 import 'package:easy_life/Features/Profile/Presentation/Widget/tile_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../Core/Constant/base_constant.dart';
 import '../../../../Core/Handler/auth_handler.dart';
 import '../../../../Core/Helper/dependency_injection_helper.dart';
@@ -15,8 +16,7 @@ import '../Widget/delete_bottom_sheet.dart';
 import '../cubit/profile_cubit.dart';
 
 class VendorAccountSccreen extends StatelessWidget {
-  final VoidCallback onupdateTap;
-  const VendorAccountSccreen({super.key, required this.onupdateTap});
+  const VendorAccountSccreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -36,13 +36,13 @@ class VendorAccountSccreen extends StatelessWidget {
             ),
           ).setCenter(),
           const SizedBox(height: 20),
-          AccountUserCard(
-            onEdit: () {
-              AppNavigation.pushNamed(
-                AppRoutes.editProfile,
-                arguments: {'onupdate': onupdateTap},
-              );
-            },
+          BlocBuilder<ProfileCubit, ProfileState>(
+            builder: (context, state) => AccountUserCard(
+              onEdit: () async {
+                await AppNavigation.pushNamed(AppRoutes.editProfile);
+                profileCubit.refreshUserData();
+              },
+            ),
           ),
           const SizedBox(height: 20),
           Container(

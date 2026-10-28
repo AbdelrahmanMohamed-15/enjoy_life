@@ -24,7 +24,8 @@ import '../../Domain/Usecases/update_profile_usecases.dart';
 
 part 'profile_state.dart';
 
-class ProfileCubit extends Cubit<ProfileState> with SafeEmitMixin<ProfileState> {
+class ProfileCubit extends Cubit<ProfileState>
+    with SafeEmitMixin<ProfileState> {
   ProfileCubit({
     required this.getProfileUsecases,
     required this.updateProfileUsecases,
@@ -60,25 +61,23 @@ class ProfileCubit extends Cubit<ProfileState> with SafeEmitMixin<ProfileState> 
     userData = DependencyInjectionHelper()
         .sl<AuthHandlerInterface>()
         .getUserData();
-    emit(SetUserDataSuccess(userdata: userData!));
+    if (userData != null) emit(SetUserDataSuccess(userdata: userData!));
   }
 
-  getProfileData() async {
+  Future<void> getProfileData() async {
     emit(GetProfileLoading());
     final result = await getProfileUsecases.call();
-    result.fold(
-      (failure) {
+    await result.fold(
+      (failure) async {
         profileRequestState = RequestState.error;
         emit(GetProfileError(requestState: profileRequestState));
       },
-      (profileEntity) {
+      (profileEntity) async {
         emit(GetProfileSuccess(profileEntity: profileEntity));
-        Future.delayed(const Duration(milliseconds: 500), () async {
-          await DependencyInjectionHelper()
-              .sl<AuthHandlerInterface>()
-              .setUserData(profileEntity.data);
-          refreshUserData();
-        });
+        await DependencyInjectionHelper()
+            .sl<AuthHandlerInterface>()
+            .setUserData(profileEntity.data);
+        refreshUserData();
       },
     );
   }
@@ -108,7 +107,7 @@ class ProfileCubit extends Cubit<ProfileState> with SafeEmitMixin<ProfileState> 
     }
   }
 
-  updateProfile({required VoidCallback onSuccess}) async {
+  updateProfile() async {
     EasyLoading.show();
 
     Map<String, dynamic> body = {
@@ -142,7 +141,6 @@ class ProfileCubit extends Cubit<ProfileState> with SafeEmitMixin<ProfileState> 
         await getProfileData();
         EasyLoading.dismiss();
         AppNavigation.pop();
-        onSuccess();
         showCustomSnackBar(
           profileEntity.message ?? '',
           backgroundColor: AppColors.primary400,

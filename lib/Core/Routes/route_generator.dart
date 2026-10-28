@@ -172,13 +172,12 @@ class RouteGenerator {
           settings: settings,
         );
       case AppRoutes.editProfile:
-        var args = (settings.arguments as Map<String, dynamic>);
         return _screenRoute(
           screen: BlocProvider(
             create: (context) => DependencyInjectionHelper().sl<ProfileCubit>()
               ..getProfileData()
               ..initProfileData(),
-            child: EditProfileScreen(onupdate: args['onupdate']),
+            child: EditProfileScreen(),
           ),
           settings: settings,
         );

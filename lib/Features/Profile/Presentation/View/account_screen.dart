@@ -9,6 +9,7 @@ import 'package:easy_life/Features/Profile/Presentation/Widget/tile_widget.dart'
 import 'package:easy_life/Features/Profile/Presentation/cubit/profile_cubit.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../Core/Constant/base_constant.dart';
 import '../../../../Core/Handler/auth_handler.dart';
 import '../../../../Core/Helper/dependency_injection_helper.dart';
@@ -16,8 +17,7 @@ import '../../../../Core/Helper/user_validation_helper.dart';
 import '../../../../Core/Themes/app_colors.dart';
 
 class AccountScreen extends StatelessWidget {
-  final VoidCallback onupdateTap;
-  const AccountScreen({super.key, required this.onupdateTap});
+  const AccountScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,17 +37,17 @@ class AccountScreen extends StatelessWidget {
             ),
           ).setCenter(),
           const SizedBox(height: 20),
-          AccountUserCard(
-            onEdit: () {
-              if (UserValidationHelper.checkUserValidation() == true) {
-                AppNavigation.pushNamed(
-                  AppRoutes.editProfile,
-                  arguments: {'onupdate': onupdateTap},
-                );
-              } else {
-                UserValidationHelper.showUserValidation();
-              }
-            },
+          BlocBuilder<ProfileCubit, ProfileState>(
+            builder: (context, state) => AccountUserCard(
+              onEdit: () async {
+                if (UserValidationHelper.checkUserValidation() == true) {
+                  await AppNavigation.pushNamed(AppRoutes.editProfile);
+                  profileCubit.refreshUserData();
+                } else {
+                  UserValidationHelper.showUserValidation();
+                }
+              },
+            ),
           ),
           const SizedBox(height: 20),
           Container(
@@ -59,7 +59,10 @@ class AccountScreen extends StatelessWidget {
             child: Column(
               children: [
                 if (UserValidationHelper.checkUserValidation() == true) ...[
-                  TileWidget(icon: Icons.credit_card, title: LocaleKeys.profilePaymentMethods.tr()),
+                  TileWidget(
+                    icon: Icons.credit_card,
+                    title: LocaleKeys.profilePaymentMethods.tr(),
+                  ),
                   Divider(color: AppColors.natural400),
                   TileWidget(
                     icon: Icons.wallet_giftcard_rounded,

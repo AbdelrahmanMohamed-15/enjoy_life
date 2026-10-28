@@ -41,13 +41,7 @@ class _MainNavScreenState extends State<MainNavScreen> {
       BlocProvider(
         create: (context) =>
             DependencyInjectionHelper().sl<ProfileCubit>()..getProfileData(),
-        child: AccountScreen(
-          onupdateTap: () {
-            setState(() {
-              currentIndex = 1;
-            });
-          },
-        ),
+        child: AccountScreen(),
       ),
     ];
     List<Widget> vendorPages = [
@@ -57,13 +51,7 @@ class _MainNavScreenState extends State<MainNavScreen> {
       BlocProvider(
         create: (context) =>
             DependencyInjectionHelper().sl<ProfileCubit>()..getProfileData(),
-        child: VendorAccountSccreen(
-          onupdateTap: () {
-            setState(() {
-              currentIndex = 1;
-            });
-          },
-        ),
+        child: VendorAccountSccreen(),
       ),
     ];
     var theme = Theme.of(context);

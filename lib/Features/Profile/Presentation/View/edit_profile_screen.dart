@@ -14,8 +14,7 @@ import '../../../../Core/Widget/main_app_button.dart';
 import '../Widget/pick_bottom_sheet.dart';
 
 class EditProfileScreen extends StatelessWidget {
-  final VoidCallback onupdate;
-  const EditProfileScreen({super.key, required this.onupdate});
+  const EditProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -186,7 +185,7 @@ class EditProfileScreen extends StatelessWidget {
                     bgColor: AppColors.primary500,
                     onTap: () {
                       if (profileCubit.formKey.currentState!.validate()) {
-                        profileCubit.updateProfile(onSuccess: onupdate);
+                        profileCubit.updateProfile();
                       }
                     },
                     child: Text(
