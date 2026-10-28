@@ -15,9 +15,9 @@ class HotelItemModel {
     TextEditingController? capacity,
     TextEditingController? price,
     TextEditingController? deposit,
-  })  : roomNumber = roomNumber ?? TextEditingController(),
-        floorNumber = floorNumber ?? TextEditingController(),
-        capacity = capacity ?? TextEditingController(),
-        price = price ?? TextEditingController(),
-        deposit = deposit ?? TextEditingController();
+  }) : roomNumber = roomNumber ?? TextEditingController(),
+       floorNumber = floorNumber ?? TextEditingController(),
+       capacity = capacity ?? TextEditingController(),
+       price = price ?? TextEditingController(),
+       deposit = deposit ?? TextEditingController();
 }

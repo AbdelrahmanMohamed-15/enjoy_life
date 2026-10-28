@@ -1,3 +1,6 @@
+import 'package:easy_life/Core/Handler/auth_handler.dart';
+import 'package:easy_life/Core/Helper/dependency_injection_helper.dart';
+import 'package:easy_life/Core/Helper/service_kind.dart';
 import 'package:easy_life/Core/Helper/safe_emit_mixin.dart';
 import 'package:easy_life/Core/Enums/level_message_enums.dart';
 import 'package:easy_life/Core/L10n/locale_keys.dart';
@@ -246,11 +249,14 @@ class HomeCubit extends Cubit<HomeState> with SafeEmitMixin<HomeState> {
     ]);
   }
 
-  Future<void> addFavourite({required int id, required String type}) async {
+  /// Returns whether the server accepted the change, so callers can undo
+  /// an optimistic toggle.
+  Future<bool> addFavourite({required int id, required String type}) async {
     final result = await addFavouriteUsecases.call(id: id, type: type);
-    result.fold(
+    return result.fold(
       (failure) {
         showCustomSnackBar(failure.message, backgroundColor: AppColors.darkRed);
+        return false;
       },
       (favourite) {
         if (favourite == true) {
@@ -258,21 +264,25 @@ class HomeCubit extends Cubit<HomeState> with SafeEmitMixin<HomeState> {
             LocaleKeys.commonAddSuccess.tr(),
             backgroundColor: AppColors.primary400,
           );
-        } else {
-          showCustomSnackBar(
-            LocaleKeys.commonErrorOccurred.tr(),
-            backgroundColor: AppColors.darkRed,
-          );
+          return true;
         }
+        showCustomSnackBar(
+          LocaleKeys.commonErrorOccurred.tr(),
+          backgroundColor: AppColors.darkRed,
+        );
+        return false;
       },
     );
   }
 
-  Future<void> removeFavourite({required int id, required String type}) async {
+  /// Returns whether the server accepted the change, so callers can undo
+  /// an optimistic toggle.
+  Future<bool> removeFavourite({required int id, required String type}) async {
     final result = await removeFavouriteUsecases.call(id: id, type: type);
-    result.fold(
+    return result.fold(
       (failure) {
         showCustomSnackBar(failure.message, backgroundColor: AppColors.darkRed);
+        return false;
       },
       (favourite) {
         if (favourite == true) {
@@ -280,12 +290,13 @@ class HomeCubit extends Cubit<HomeState> with SafeEmitMixin<HomeState> {
             LocaleKeys.commonRemoveSuccess.tr(),
             backgroundColor: AppColors.primary400,
           );
-        } else {
-          showCustomSnackBar(
-            LocaleKeys.commonErrorOccurred.tr(),
-            backgroundColor: AppColors.darkRed,
-          );
+          return true;
         }
+        showCustomSnackBar(
+          LocaleKeys.commonErrorOccurred.tr(),
+          backgroundColor: AppColors.darkRed,
+        );
+        return false;
       },
     );
   }
@@ -315,7 +326,18 @@ class HomeCubit extends Cubit<HomeState> with SafeEmitMixin<HomeState> {
   getAllHome({required String type}) async {
     totalHomeRequestState = RequestState.loading;
     emit(HomeLoadingState());
-    final result = await getAllHomeUsecases.call(type: type);
+    final user = DependencyInjectionHelper()
+        .sl<AuthHandlerInterface>()
+        .getUserData();
+    final isVendor = user != null && user.clientType != 0;
+    // Vendors only manage their own listings, not every listing in the app
+    final result = !isVendor
+        ? await getAllHomeUsecases.call(type: type)
+        : switch (ServiceKind.of(name: type)) {
+            ServiceKind.hotel => await getVendorHotelsUsecases.call(),
+            ServiceKind.trip => await getVendorTripsUsecases.call(),
+            _ => await getVendorResturantUsecases.call(),
+          };
     result.fold(
       (failure) {
         totalHomeRequestState = RequestState.error;

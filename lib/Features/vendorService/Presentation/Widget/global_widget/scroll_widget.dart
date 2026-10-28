@@ -135,9 +135,11 @@ class ScrollWidget extends StatelessWidget {
                   height: 40,
                   onTap: () {
                     if (type == 'resturant') {
-                      if (!_isResturantItemValid(
-                        vendorServiceCubit.tableList.first,
-                      )) {
+                      // Every row is sent, so every row must be complete
+                      if (vendorServiceCubit.tableList.isEmpty ||
+                          !vendorServiceCubit.tableList.every(
+                            _isResturantItemValid,
+                          )) {
                         showCustomSnackBar(
                           LocaleKeys.vendorValidationTablesRequired.tr(),
                           backgroundColor: AppColors.darkRed,
@@ -150,9 +152,10 @@ class ScrollWidget extends StatelessWidget {
                         );
                       }
                     } else if (type == 'hotel') {
-                      if (!_isHotelItemValid(
-                        vendorServiceCubit.roomList.first,
-                      )) {
+                      if (vendorServiceCubit.roomList.isEmpty ||
+                          !vendorServiceCubit.roomList.every(
+                            _isHotelItemValid,
+                          )) {
                         showCustomSnackBar(
                           LocaleKeys.vendorValidationRoomsRequired.tr(),
                           backgroundColor: AppColors.darkRed,
@@ -169,11 +172,12 @@ class ScrollWidget extends StatelessWidget {
                         );
                         return;
                       } else {
-                        if (!_isTripItemValid(
-                          vendorServiceCubit.tripScheduleList.first,
+                        if (!vendorServiceCubit.tripScheduleList.every(
+                          _isTripItemValid,
                         )) {
                           showCustomSnackBar(
-                            LocaleKeys.vendorValidationTripScheduleRequired.tr(),
+                            LocaleKeys.vendorValidationTripScheduleRequired
+                                .tr(),
                             backgroundColor: AppColors.darkRed,
                           );
                           return;
@@ -201,6 +205,7 @@ class ScrollWidget extends StatelessWidget {
 
   bool _isTripItemValid(TripScheduleItemModel item) {
     return item.tripScheduleID != null &&
+        item.branchID != null &&
         item.capacity.text.trim().isNotEmpty &&
         item.price.text.trim().isNotEmpty &&
         item.deposit.text.trim().isNotEmpty &&

@@ -1,3 +1,5 @@
+import 'package:easy_life/Core/L10n/locale_keys.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_life/Core/Widget/state_message_widget.dart';
 import 'package:easy_life/Core/Extentions/padding_ext.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
@@ -23,6 +25,15 @@ class ServiceScreen extends StatelessWidget {
     required this.title,
     required this.serviceCubit,
   });
+
+  static String _price(ServiceBranch service) {
+    final price = double.tryParse(service.price ?? '') ?? 0;
+    final discount = double.tryParse(service.discount ?? '') ?? 0;
+    final value = discount > 0 && discount < price ? price - discount : price;
+    return value == value.roundToDouble()
+        ? value.toInt().toString()
+        : value.toStringAsFixed(2);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,20 +129,17 @@ class ServiceScreen extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               text: TextSpan(
                                 children: [
-                                  service.discount != '0'
-                                      ? TextSpan(
-                                          text: service.discount ?? '0',
-                                          style: TextStyle(color: Colors.black),
-                                        )
-                                      : TextSpan(
-                                          text: service.price ?? '0',
-                                          style: theme.textTheme.bodyMedium
-                                              ?.copyWith(
-                                                color: AppColors.primary400,
-                                              ),
-                                        ),
+                                  // Discount is an amount off the price
+                                  // (it was shown as if it were the price)
                                   TextSpan(
-                                    text: ' جنيه',
+                                    text: _price(service),
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      color: AppColors.primary400,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text:
+                                        ' ${LocaleKeys.commonCurrencyEgp.tr()}',
                                     style: theme.textTheme.bodyMedium?.copyWith(
                                       color: AppColors.natural300,
                                     ),

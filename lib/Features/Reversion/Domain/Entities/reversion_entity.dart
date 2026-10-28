@@ -122,12 +122,8 @@ class Order {
     taxesFees: (json["taxes_fees"] ?? 0).toString(),
     couponDiscount: (json["coupon_discount"] ?? 0).toString(),
     pointPrice: (json["point_price"] ?? 0).toString(),
-    createdAt: json["created_at"] == null
-        ? null
-        : DateTime.parse(json["created_at"]),
-    updatedAt: json["updated_at"] == null
-        ? null
-        : DateTime.parse(json["updated_at"]),
+    createdAt: _asDate(json["created_at"]),
+    updatedAt: _asDate(json["updated_at"]),
     name: json["service_name"] ?? "",
     image: json["service_image"] ?? "",
   );
@@ -158,8 +154,8 @@ class OrderDetail {
   final String? totalPrice;
   final DateTime? startTime;
   final DateTime? endTime;
-  final DateTime? hourPrice;
-  final DateTime? nightPrice;
+  final String? hourPrice;
+  final String? nightPrice;
   final String? status;
   final int? qrcodeApprove;
   final DateTime? qrcodeApprovalDate;
@@ -189,21 +185,13 @@ class OrderDetail {
     discount: (json["discount"] ?? 0).toString(),
     delivery: (json["delivery"] ?? 0).toString(),
     totalPrice: (json["total_price"] ?? 0).toString(),
-    startTime: json["start_time"] == null
-        ? null
-        : DateTime.parse(json["start_time"]),
-    endTime: json["end_time"] == null ? null : DateTime.parse(json["end_time"]),
-    hourPrice: json["hour_price"] == null
-        ? null
-        : DateTime.parse(json["hour_price"]),
-    nightPrice: json["night_price"] == null
-        ? null
-        : DateTime.parse(json["night_price"]),
+    startTime: _asDate(json["start_time"]),
+    endTime: _asDate(json["end_time"]),
+    hourPrice: json["hour_price"]?.toString(),
+    nightPrice: json["night_price"]?.toString(),
     status: json["status"] ?? "",
     qrcodeApprove: json["qrcode_approve"] ?? 0,
-    qrcodeApprovalDate: json["qrcode_approval_date"] == null
-        ? null
-        : DateTime.parse(json["qrcode_approval_date"]),
+    qrcodeApprovalDate: _asDate(json["qrcode_approval_date"]),
     type: json["type"] ?? "",
     serviceBranch: json["service_branch"] == null
         ? null
@@ -216,13 +204,13 @@ class OrderDetail {
     "discount": discount,
     "delivery": delivery,
     "total_price": totalPrice,
-    "start_time": startTime,
-    "end_time": endTime,
+    "start_time": startTime?.toIso8601String(),
+    "end_time": endTime?.toIso8601String(),
     "hour_price": hourPrice,
     "night_price": nightPrice,
     "status": status,
     "qrcode_approve": qrcodeApprove,
-    "qrcode_approval_date": qrcodeApprovalDate,
+    "qrcode_approval_date": qrcodeApprovalDate?.toIso8601String(),
     "type": type,
     "service_branch": serviceBranch?.toJson(),
   };
@@ -264,4 +252,10 @@ class Service {
       Service(id: json["id"] ?? 0, name: json["name"] ?? "");
 
   Map<String, dynamic> toJson() => {"id": id, "name": name};
+}
+
+/// Parses API dates without throwing on empty or unexpected values.
+DateTime? _asDate(dynamic value) {
+  if (value == null) return null;
+  return DateTime.tryParse(value.toString());
 }

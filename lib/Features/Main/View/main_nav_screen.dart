@@ -55,49 +55,56 @@ class _MainNavScreenState extends State<MainNavScreen> {
       ),
     ];
     var theme = Theme.of(context);
-    return SafeArea(
-      child: Scaffold(
-        body: userData == null
-            ? userPages[currentIndex]
-            : userData?.clientType == 0
-            ? userPages[currentIndex]
-            : vendorPages[currentIndex],
-        bottomNavigationBar: BottomNavigationBar(
-          elevation: 0,
-          currentIndex: currentIndex,
-          backgroundColor: AppColors.natural100,
-          // showUnselectedLabels: true,
-          selectedLabelStyle: theme.textTheme.bodySmall?.copyWith(
-            color: AppColors.primary400,
-            fontFamily: BaseConstant.cairoBold,
-          ),
-          unselectedLabelStyle: theme.textTheme.bodySmall?.copyWith(
-            color: AppColors.natural400,
-          ),
-          selectedItemColor: AppColors.primary400,
-          unselectedItemColor: AppColors.natural400,
-          onTap: (value) {
-            if (value == 2) {
-              if (UserValidationHelper.checkUserValidation() == true) {
+    return PopScope(
+      // Back on another tab returns to Home before leaving the app
+      canPop: currentIndex == 0,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) setState(() => currentIndex = 0);
+      },
+      child: SafeArea(
+        child: Scaffold(
+          body: userData == null
+              ? userPages[currentIndex]
+              : userData?.clientType == 0
+              ? userPages[currentIndex]
+              : vendorPages[currentIndex],
+          bottomNavigationBar: BottomNavigationBar(
+            elevation: 0,
+            currentIndex: currentIndex,
+            backgroundColor: AppColors.natural100,
+            // showUnselectedLabels: true,
+            selectedLabelStyle: theme.textTheme.bodySmall?.copyWith(
+              color: AppColors.primary400,
+              fontFamily: BaseConstant.cairoBold,
+            ),
+            unselectedLabelStyle: theme.textTheme.bodySmall?.copyWith(
+              color: AppColors.natural400,
+            ),
+            selectedItemColor: AppColors.primary400,
+            unselectedItemColor: AppColors.natural400,
+            onTap: (value) {
+              if (value == 2) {
+                if (UserValidationHelper.checkUserValidation() == true) {
+                  setState(() {
+                    currentIndex = value;
+                  });
+                } else {
+                  UserValidationHelper.showUserValidation();
+                }
+              } else {
                 setState(() {
                   currentIndex = value;
                 });
-              } else {
-                UserValidationHelper.showUserValidation();
               }
-            } else {
-              setState(() {
-                currentIndex = value;
-              });
-            }
-          },
-          items: userData == null
-              ? NavBarItemWidget(currentIndex: currentIndex).userNavBarItems
-              : userData?.clientType == 0
-              ? NavBarItemWidget(currentIndex: currentIndex).userNavBarItems
-              : NavBarItemWidget(
-                  currentIndex: currentIndex,
-                ).providerNavBarItems,
+            },
+            items: userData == null
+                ? NavBarItemWidget(currentIndex: currentIndex).userNavBarItems
+                : userData?.clientType == 0
+                ? NavBarItemWidget(currentIndex: currentIndex).userNavBarItems
+                : NavBarItemWidget(
+                    currentIndex: currentIndex,
+                  ).providerNavBarItems,
+          ),
         ),
       ),
     );

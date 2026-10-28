@@ -61,11 +61,9 @@ class _TripScheduleItemWidgetState extends State<TripScheduleItemWidget> {
 
   @override
   void dispose() {
-    final vendorServiceCubit = VendorServiceCubit.get(context);
-    if (widget.index < vendorServiceCubit.tripScheduleList.length) {
-      final item = vendorServiceCubit.tripScheduleList[widget.index];
-      _removeListeners(item);
-    }
+    // Looking up the cubit from context is unsafe here, so use the item the
+    // listeners were attached to
+    if (_currentItem != null) _removeListeners(_currentItem!);
     super.dispose();
   }
 

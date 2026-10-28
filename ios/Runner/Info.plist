@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSCameraUsageDescription</key>
+	<string>The camera is used to scan order QR codes and to take photos for your listings.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Photos are used for your profile picture and your listings.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Your location is used to set the position of your branches and listings on the map.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

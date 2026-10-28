@@ -48,7 +48,7 @@ class NameWidget extends StatelessWidget {
                   hintText: vendorServiceCubit.language != 'ar'
                       ? LocaleKeys.vendorNameEnHint.tr()
                       : LocaleKeys.vendorNameArHint.tr(),
-                  validator: (value) => InputValidator.validateName(value!),
+                  validator: (value) => InputValidator.validateNotEmpty(value),
                 ),
               ],
             ),

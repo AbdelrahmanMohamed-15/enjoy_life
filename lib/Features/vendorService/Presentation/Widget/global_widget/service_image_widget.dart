@@ -2,6 +2,7 @@ import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'picked_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../Core/Constant/base_constant.dart';
@@ -70,7 +71,7 @@ class ServiceImageWidget extends StatelessWidget {
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
-                              child: Image.file(
+                              child: pickedImage(
                                 vendorServiceCubit.imageFiles[index],
                                 fit: BoxFit.fill,
                                 height: 200,

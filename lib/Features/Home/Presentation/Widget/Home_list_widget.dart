@@ -7,6 +7,7 @@ import 'package:easy_life/Features/Authentication/Domain/Entity/user_entity.dart
 import 'package:easy_life/Features/Home/Domain/Entity/resturant_entity.dart';
 import 'package:easy_life/Features/Home/Presentation/cubit/home_cubit.dart';
 import 'package:flutter/material.dart';
+import 'service_actions.dart';
 
 import '../../../../Core/Handler/auth_handler.dart';
 import '../../../../Core/Helper/dependency_injection_helper.dart';
@@ -75,55 +76,7 @@ class HomeListWidget extends StatelessWidget {
               return Align(
                 alignment: Alignment.centerRight,
                 child: GestureDetector(
-                  onTap: () {
-                    debugPrint('UserData ${userData?.clientType}');
-                    debugPrint('serviceID ${data.id}');
-                    debugPrint('serviceID ${data.serviceName}');
-                    if (userData?.clientType == 0 || userData == null) {
-                      debugPrint('serviceID ${data.id}');
-                      debugPrint('serviceID ${data.serviceName}');
-                      AppNavigation.pushNamed(
-                        AppRoutes.resturantDetails,
-                        arguments: {
-                          "serviceID": data.id,
-                          "type": data.serviceName,
-                        },
-                      );
-                    } else {
-                      if (data.serviceName == 'resturant' ||
-                          data.serviceName == 'مطعم') {
-                        AppNavigation.pushNamed(
-                          AppRoutes.addService,
-                          arguments: {
-                            'type': 'resturant',
-                            'isEdit': true,
-                            'id': data.id,
-                          },
-                        );
-                      } else if (data.serviceName == 'hotel' ||
-                          data.serviceName == 'فندق') {
-                        AppNavigation.pushNamed(
-                          AppRoutes.addService,
-                          arguments: {
-                            'type': 'hotel',
-                            'isEdit': true,
-                            'id': data.id,
-                          },
-                        );
-                      } else {
-                        debugPrint('serviceID Trip ${data.id}');
-                        debugPrint('serviceID Trip ${data.serviceName}');
-                        AppNavigation.pushNamed(
-                          AppRoutes.addService,
-                          arguments: {
-                            'type': 'trip',
-                            'isEdit': true,
-                            'id': data.id,
-                          },
-                        );
-                      }
-                    }
-                  },
+                  onTap: () => ServiceActions.open(data),
                   child: GeneralServiceCard(
                     logo: data.logo ?? '',
                     title: data.name ?? '',
@@ -132,48 +85,10 @@ class HomeListWidget extends StatelessWidget {
                     serviceName: data.serviceName ?? '',
                     description: data.description ?? '',
                     address: data.address ?? '',
-                    addFavouriteTap: () {
-                      if (data.serviceName == 'Restaurant'.toUpperCase() ||
-                          data.serviceName == 'مطعم') {
-                        homeCubit.addFavourite(
-                          id: data.id ?? 0,
-                          type: 'resturant',
-                        );
-                        homeCubit.getResturant();
-                      } else if (data.serviceName == 'Hotel'.toUpperCase() ||
-                          data.serviceName == 'فندق') {
-                        homeCubit.addFavourite(id: data.id ?? 0, type: 'hotel');
-                        homeCubit.getHotels();
-                      } else if (data.serviceName == 'Trip'.toUpperCase() ||
-                          data.serviceName == 'رحلة') {
-                        homeCubit.addFavourite(id: data.id ?? 0, type: 'trip');
-                        homeCubit.getTrips();
-                      }
-                    },
-                    removeFavouriteTap: () {
-                      if (data.serviceName == 'Restaurant'.toUpperCase() ||
-                          data.serviceName == 'مطعم') {
-                        homeCubit.removeFavourite(
-                          id: data.id ?? 0,
-                          type: 'resturant',
-                        );
-                        homeCubit.getResturant();
-                      } else if (data.serviceName == 'Hotel'.toUpperCase() ||
-                          data.serviceName == 'فندق') {
-                        homeCubit.removeFavourite(
-                          id: data.id ?? 0,
-                          type: 'hotel',
-                        );
-                        homeCubit.getHotels();
-                      } else if (data.serviceName == 'Trip'.toUpperCase() ||
-                          data.serviceName == 'رحلة') {
-                        homeCubit.removeFavourite(
-                          id: data.id ?? 0,
-                          type: 'trip',
-                        );
-                        homeCubit.getTrips();
-                      }
-                    },
+                    addFavouriteTap: () =>
+                        ServiceActions.setFavourite(homeCubit, data, true),
+                    removeFavouriteTap: () =>
+                        ServiceActions.setFavourite(homeCubit, data, false),
                   ).setHorizontalPadding(context, 8, enableMediaQuery: false),
                 ),
               );

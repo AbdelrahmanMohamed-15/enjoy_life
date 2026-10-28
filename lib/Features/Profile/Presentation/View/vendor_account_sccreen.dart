@@ -1,3 +1,4 @@
+import 'package:easy_life/Core/Helper/vendor_service_types.dart';
 import 'package:easy_life/Core/Extentions/center_ext.dart';
 import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Routes/app_navigation.dart';
@@ -21,161 +22,175 @@ class VendorAccountSccreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final profileCubit = ProfileCubit.get(context);
+    final vendorTypes = DependencyInjectionHelper().sl<VendorServiceTypes>()
+      ..loadOnce();
     var theme = Theme.of(context);
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      body: ListView(
-        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-        children: [
-          Text(
-            LocaleKeys.profileTitle.tr(),
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontFamily: BaseConstant.cairoBold,
-              color: AppColors.black700,
-              fontSize: 22,
+      body: ValueListenableBuilder(
+        valueListenable: vendorTypes.types,
+        builder: (context, _, _) => ListView(
+          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+          children: [
+            Text(
+              LocaleKeys.profileTitle.tr(),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontFamily: BaseConstant.cairoBold,
+                color: AppColors.black700,
+                fontSize: 22,
+              ),
+            ).setCenter(),
+            const SizedBox(height: 20),
+            BlocBuilder<ProfileCubit, ProfileState>(
+              builder: (context, state) => AccountUserCard(
+                onEdit: () async {
+                  await AppNavigation.pushNamed(AppRoutes.editProfile);
+                  profileCubit.refreshUserData();
+                },
+              ),
             ),
-          ).setCenter(),
-          const SizedBox(height: 20),
-          BlocBuilder<ProfileCubit, ProfileState>(
-            builder: (context, state) => AccountUserCard(
-              onEdit: () async {
-                await AppNavigation.pushNamed(AppRoutes.editProfile);
-                profileCubit.refreshUserData();
-              },
-            ),
-          ),
-          const SizedBox(height: 20),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: AppColors.natural100,
-            ),
-            child: Column(
-              children: [
-                TileWidget(
-                  icon: Icons.add,
-                  title: LocaleKeys.vendorAddCategory.tr(),
-                  onTap: () {
-                    AppNavigation.pushNamed(AppRoutes.addCategory);
-                  },
-                ),
-                Divider(color: AppColors.natural400),
-                TileWidget(
-                  icon: Icons.add,
-                  title: LocaleKeys.vendorAddBranch.tr(),
-                  onTap: () {
-                    AppNavigation.pushNamed(AppRoutes.addBranch);
-                  },
-                ),
-                Divider(color: AppColors.natural400),
-                TileWidget(
-                  icon: Icons.add,
-                  title: LocaleKeys.vendorAddRestaurant.tr(),
-                  onTap: () {
-                    AppNavigation.pushNamed(
-                      AppRoutes.addService,
-                      arguments: {'type': 'resturant', 'isEdit': false},
-                    );
-                  },
-                ),
-                Divider(color: AppColors.natural400),
-                TileWidget(
-                  icon: Icons.add,
-                  title: LocaleKeys.vendorAddHotel.tr(),
-                  onTap: () {
-                    AppNavigation.pushNamed(
-                      AppRoutes.addService,
-                      arguments: {'type': 'hotel', 'isEdit': false},
-                    );
-                  },
-                ),
-                Divider(color: AppColors.natural400),
-                TileWidget(
-                  icon: Icons.add,
-                  title: LocaleKeys.vendorAddTrip.tr(),
-                  onTap: () {
-                    AppNavigation.pushNamed(
-                      AppRoutes.addService,
-                      arguments: {'type': 'trip', 'isEdit': false},
-                    );
-                  },
-                ),
-                Divider(color: AppColors.natural400),
-                TileWidget(
-                  icon: Icons.add,
-                  title: LocaleKeys.vendorAddService.tr(),
-                  onTap: () {
-                    AppNavigation.pushNamed(AppRoutes.addNewServiceScreen);
-                  },
-                ),
-                Divider(color: AppColors.natural400),
-                TileWidget(
-                  icon: Icons.add,
-                  title: LocaleKeys.vendorAddServiceOption.tr(),
-                  onTap: () {
-                    AppNavigation.pushNamed(AppRoutes.addServiceOption);
-                  },
-                ),
-                Divider(color: AppColors.natural400),
-                TileWidget(
-                  icon: Icons.language,
-                  title: LocaleKeys.profileLanguage.tr(),
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(20),
-                        ),
-                      ),
-                      builder: (context) => const LanguageBottomSheet(),
-                    );
-                  },
-                ),
-                Divider(color: AppColors.natural400),
-                TileWidget(
-                  icon: Icons.power_settings_new,
-                  title: LocaleKeys.profileLogout.tr(),
-                  onTap: () async {
-                    await DependencyInjectionHelper()
-                        .sl<AuthHandlerInterface>()
-                        .clearAllData();
-                    AppNavigation.pushNamedAndRemoveUntil(AppRoutes.splash);
-                  },
-                ),
-                Divider(color: AppColors.natural400),
-                TileWidget(
-                  icon: Icons.delete_sweep,
-                  title: LocaleKeys.profileDeleteAccount.tr(),
-                  iconColor: Colors.red,
-                  textColor: Colors.red,
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(20),
-                        ),
-                      ),
-                      builder: (context) {
-                        return DeleteBottomSheet(profileCubit: profileCubit);
+            const SizedBox(height: 20),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: AppColors.natural100,
+              ),
+              child: Column(
+                children: [
+                  TileWidget(
+                    icon: Icons.add,
+                    title: LocaleKeys.vendorAddCategory.tr(),
+                    onTap: () {
+                      AppNavigation.pushNamed(AppRoutes.addCategory);
+                    },
+                  ),
+                  Divider(color: AppColors.natural400),
+                  TileWidget(
+                    icon: Icons.add,
+                    title: LocaleKeys.vendorAddBranch.tr(),
+                    onTap: () {
+                      AppNavigation.pushNamed(AppRoutes.addBranch);
+                    },
+                  ),
+                  Divider(color: AppColors.natural400),
+                  // Only the services this vendor runs
+                  if (vendorTypes.current.contains(1)) ...[
+                    TileWidget(
+                      icon: Icons.add,
+                      title: LocaleKeys.vendorAddRestaurant.tr(),
+                      onTap: () {
+                        AppNavigation.pushNamed(
+                          AppRoutes.addService,
+                          arguments: {'type': 'resturant', 'isEdit': false},
+                        );
                       },
-                    );
-                  },
-                ),
-              ],
+                    ),
+                    Divider(color: AppColors.natural400),
+                  ],
+                  // Only the services this vendor runs
+                  if (vendorTypes.current.contains(2)) ...[
+                    TileWidget(
+                      icon: Icons.add,
+                      title: LocaleKeys.vendorAddHotel.tr(),
+                      onTap: () {
+                        AppNavigation.pushNamed(
+                          AppRoutes.addService,
+                          arguments: {'type': 'hotel', 'isEdit': false},
+                        );
+                      },
+                    ),
+                    Divider(color: AppColors.natural400),
+                  ],
+                  // Only the services this vendor runs
+                  if (vendorTypes.current.contains(3)) ...[
+                    TileWidget(
+                      icon: Icons.add,
+                      title: LocaleKeys.vendorAddTrip.tr(),
+                      onTap: () {
+                        AppNavigation.pushNamed(
+                          AppRoutes.addService,
+                          arguments: {'type': 'trip', 'isEdit': false},
+                        );
+                      },
+                    ),
+                    Divider(color: AppColors.natural400),
+                  ],
+                  TileWidget(
+                    icon: Icons.add,
+                    title: LocaleKeys.vendorAddService.tr(),
+                    onTap: () {
+                      AppNavigation.pushNamed(AppRoutes.addNewServiceScreen);
+                    },
+                  ),
+                  Divider(color: AppColors.natural400),
+                  TileWidget(
+                    icon: Icons.add,
+                    title: LocaleKeys.vendorAddServiceOption.tr(),
+                    onTap: () {
+                      AppNavigation.pushNamed(AppRoutes.addServiceOption);
+                    },
+                  ),
+                  Divider(color: AppColors.natural400),
+                  TileWidget(
+                    icon: Icons.language,
+                    title: LocaleKeys.profileLanguage.tr(),
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(20),
+                          ),
+                        ),
+                        builder: (context) => const LanguageBottomSheet(),
+                      );
+                    },
+                  ),
+                  Divider(color: AppColors.natural400),
+                  TileWidget(
+                    icon: Icons.power_settings_new,
+                    title: LocaleKeys.profileLogout.tr(),
+                    onTap: () async {
+                      await DependencyInjectionHelper()
+                          .sl<AuthHandlerInterface>()
+                          .clearAllData();
+                      AppNavigation.pushNamedAndRemoveUntil(AppRoutes.splash);
+                    },
+                  ),
+                  Divider(color: AppColors.natural400),
+                  TileWidget(
+                    icon: Icons.delete_sweep,
+                    title: LocaleKeys.profileDeleteAccount.tr(),
+                    iconColor: Colors.red,
+                    textColor: Colors.red,
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(20),
+                          ),
+                        ),
+                        builder: (context) {
+                          return DeleteBottomSheet(profileCubit: profileCubit);
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            BaseConstant.appVersion,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: AppColors.primary500,
-              fontFamily: BaseConstant.cairoBold,
-            ),
-          ).setCenter(),
-        ],
+            const SizedBox(height: 20),
+            Text(
+              BaseConstant.appVersion,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: AppColors.primary500,
+                fontFamily: BaseConstant.cairoBold,
+              ),
+            ).setCenter(),
+          ],
+        ),
       ),
     );
   }

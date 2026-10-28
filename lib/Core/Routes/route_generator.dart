@@ -208,8 +208,10 @@ class RouteGenerator {
         // var args = (settings.arguments as Map<String, dynamic>);
         return _screenRoute(
           screen: BlocProvider(
+            // Add Branch uploads a single image
             create: (context) =>
-                DependencyInjectionHelper().sl<VendorServiceCubit>(),
+                DependencyInjectionHelper().sl<VendorServiceCubit>()
+                  ..maxImages = 1,
             child: AddBranchScreen(),
           ),
           settings: settings,
@@ -259,7 +261,8 @@ class RouteGenerator {
                 DependencyInjectionHelper().sl<VendorServiceCubit>()
                   ..getAllBranches()
                   ..getAllCategory()
-                  ..getVendorResturant(),
+                  ..getVendorResturant()
+                  ..loadVendorTypes(),
             child: AddNewServiceScreen(),
           ),
           settings: settings,

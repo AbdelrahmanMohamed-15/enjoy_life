@@ -1,4 +1,6 @@
+import 'package:easy_life/Core/Helper/dependency_injection_helper.dart';
 import 'package:easy_life/Core/Helper/safe_emit_mixin.dart';
+import 'package:easy_life/Core/Helper/vendor_service_types.dart';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -43,7 +45,8 @@ import '../../Domain/Entities/all_trip_schedual_entity.dart';
 import '../../Domain/Usecases/create_hotel_usecaes.dart';
 part 'vendor_service_state.dart';
 
-class VendorServiceCubit extends Cubit<VendorServiceState> with SafeEmitMixin<VendorServiceState> {
+class VendorServiceCubit extends Cubit<VendorServiceState>
+    with SafeEmitMixin<VendorServiceState> {
   VendorServiceCubit({
     required this.createBranchUsecases,
     required this.createCategoryUsecases,
@@ -73,7 +76,9 @@ class VendorServiceCubit extends Cubit<VendorServiceState> with SafeEmitMixin<Ve
   File? logoImage;
   String language = 'ar';
   List<File> imageFiles = [];
-  final int maxImages = 3;
+
+  /// Add Branch sends a single `image`, so its route lowers this to 1
+  int maxImages = 3;
   int initialCountryID = 1;
   int initialStatusID = 1;
   int initialTypeID = 1;
@@ -304,9 +309,10 @@ class VendorServiceCubit extends Cubit<VendorServiceState> with SafeEmitMixin<Ve
         data['logo'] = await MultipartFile.fromFile(logoImage!.path);
       }
       if (imageFiles.isNotEmpty) {
-        data['images[]'] = imageFiles
-            .map((e) async => await MultipartFile.fromFile(e.path))
-            .toList();
+        data['images[]'] = [
+          for (final file in imageFiles)
+            await MultipartFile.fromFile(file.path),
+        ];
       }
     } else {
       data['_method'] = 'put';
@@ -369,9 +375,10 @@ class VendorServiceCubit extends Cubit<VendorServiceState> with SafeEmitMixin<Ve
         data['logo'] = await MultipartFile.fromFile(logoImage!.path);
       }
       if (imageFiles.isNotEmpty) {
-        data['images[]'] = imageFiles
-            .map((e) async => await MultipartFile.fromFile(e.path))
-            .toList();
+        data['images[]'] = [
+          for (final file in imageFiles)
+            await MultipartFile.fromFile(file.path),
+        ];
       }
     } else {
       data['_method'] = 'put';
@@ -434,9 +441,10 @@ class VendorServiceCubit extends Cubit<VendorServiceState> with SafeEmitMixin<Ve
         data['logo'] = await MultipartFile.fromFile(logoImage!.path);
       }
       if (imageFiles.isNotEmpty) {
-        data['images[]'] = imageFiles
-            .map((e) async => await MultipartFile.fromFile(e.path))
-            .toList();
+        data['images[]'] = [
+          for (final file in imageFiles)
+            await MultipartFile.fromFile(file.path),
+        ];
       }
     } else {
       data['_method'] = 'put';
@@ -737,6 +745,64 @@ class VendorServiceCubit extends Cubit<VendorServiceState> with SafeEmitMixin<Ve
     return '$year-$month-$day $hour:$minute';
   }
 
+  /// Checks the Arabic and English name (and description) are filled. When
+  /// one is missing it switches to that language tab and explains why.
+  bool validateBilingual({bool withDescription = false}) {
+    bool filled(TextEditingController c) => c.text.trim().isNotEmpty;
+    final arOk =
+        filled(nameArController) &&
+        (!withDescription || filled(descriptionArController));
+    final enOk =
+        filled(nameEnController) &&
+        (!withDescription || filled(descriptionEnController));
+    if (arOk && enOk) return true;
+    setLanguage(lang: arOk ? 'en' : 'ar');
+    final namesOk = filled(nameArController) && filled(nameEnController);
+    showCustomSnackBar(
+      namesOk
+          ? LocaleKeys.vendorValidationDescriptionBoth.tr()
+          : LocaleKeys.vendorValidationNameBoth.tr(),
+      backgroundColor: AppColors.darkRed,
+    );
+    return false;
+  }
+
+  /// Address, phone and map location of a branch / restaurant / hotel / trip.
+  bool validateContact() {
+    String? error;
+    final phone = phoneController.text.trim();
+    if (addressArController.text.trim().isEmpty) {
+      error = LocaleKeys.vendorValidationAddressAr.tr();
+    } else if (!RegExp(r'^\+?[0-9]{7,15}$').hasMatch(phone)) {
+      error = LocaleKeys.vendorValidationPhone.tr();
+    } else if (initialLatitude == null || initialLongitude == null) {
+      error = LocaleKeys.vendorValidationLocationRequired.tr();
+    }
+    if (error == null) return true;
+    showCustomSnackBar(error, backgroundColor: AppColors.darkRed);
+    return false;
+  }
+
+  /// Price must be a positive number; an empty discount defaults to 0.
+  bool validatePricing() {
+    final price = double.tryParse(priceController.text.trim());
+    if (discountController.text.trim().isEmpty) discountController.text = '0';
+    final discount = double.tryParse(discountController.text.trim());
+    String? error;
+    if (price == null || price <= 0) {
+      error = LocaleKeys.vendorValidationPriceRequired.tr();
+    } else if (discount == null || discount < 0) {
+      error = LocaleKeys.vendorValidationDiscountRequired.tr();
+    }
+    if (error == null) return true;
+    showCustomSnackBar(error, backgroundColor: AppColors.darkRed);
+    return false;
+  }
+
+  /// Refresh which services the vendor runs (drives the type picker)
+  void loadVendorTypes() =>
+      DependencyInjectionHelper().sl<VendorServiceTypes>().load();
+
   setLanguage({required String lang}) {
     language = lang;
     emit(SetLanguageState(language: language));
@@ -760,6 +826,7 @@ class VendorServiceCubit extends Cubit<VendorServiceState> with SafeEmitMixin<Ve
 
   setTypeID({required int type}) {
     initialTypeID = type;
+    selectedService = 0;
     emit(SetTypeState(type: type));
     if (type == 1) getVendorResturant();
     if (type == 2) getVendorHotels();
@@ -844,6 +911,7 @@ class VendorServiceCubit extends Cubit<VendorServiceState> with SafeEmitMixin<Ve
 
   bool _isTripScheduleItemValid(TripScheduleItemModel item) {
     return item.tripScheduleID != null &&
+        item.branchID != null &&
         item.capacity.text.trim().isNotEmpty &&
         item.price.text.trim().isNotEmpty &&
         item.deposit.text.trim().isNotEmpty &&
@@ -898,12 +966,15 @@ class VendorServiceCubit extends Cubit<VendorServiceState> with SafeEmitMixin<Ve
     }
   }
 
+  removeLogo() {
+    logoImage = null;
+    emit(RemoveLogoImage());
+  }
+
   pickFile({required ImageSource source}) async {
     if (imageFiles.length >= maxImages) {
       showCustomSnackBar(
-        LocaleKeys.vendorImageMaxLimit.tr(
-          namedArgs: {'max': '$maxImages'},
-        ),
+        LocaleKeys.vendorImageMaxLimit.tr(namedArgs: {'max': '$maxImages'}),
         backgroundColor: AppColors.darkRed,
       );
       return;
@@ -936,10 +1007,7 @@ class VendorServiceCubit extends Cubit<VendorServiceState> with SafeEmitMixin<Ve
         if (pickedFiles.length > remainingSlots) {
           showCustomSnackBar(
             LocaleKeys.vendorImagePartialAdd.tr(
-              namedArgs: {
-                'count': '$remainingSlots',
-                'max': '$maxImages',
-              },
+              namedArgs: {'count': '$remainingSlots', 'max': '$maxImages'},
             ),
             backgroundColor: AppColors.darkRed,
           );
@@ -1053,6 +1121,7 @@ class VendorServiceCubit extends Cubit<VendorServiceState> with SafeEmitMixin<Ve
       (resturant) {
         vendorResturantEntity = resturant;
         if (resturant.data!.isNotEmpty) {
+          vendorResturantRequestState = RequestState.loaded;
           emit(HomeResturantSuccessState(resturant: resturant));
         } else {
           vendorResturantRequestState = RequestState.empty;
@@ -1074,6 +1143,7 @@ class VendorServiceCubit extends Cubit<VendorServiceState> with SafeEmitMixin<Ve
       (trips) {
         vendorTripsEntity = trips;
         if (trips.data!.isNotEmpty) {
+          vendorTripsRequestState = RequestState.loaded;
           emit(HomeTripsSuccessState(trips: trips));
         } else {
           vendorTripsRequestState = RequestState.empty;
@@ -1093,6 +1163,7 @@ class VendorServiceCubit extends Cubit<VendorServiceState> with SafeEmitMixin<Ve
       (hotels) {
         vendorHotelsEntity = hotels;
         if (hotels.data!.isNotEmpty) {
+          vendorHotelsRequestState = RequestState.loaded;
           emit(HomeHotelsSuccessState(hotels: hotels));
         } else {
           vendorHotelsRequestState = RequestState.empty;
@@ -1214,5 +1285,24 @@ class VendorServiceCubit extends Cubit<VendorServiceState> with SafeEmitMixin<Ve
         }
       },
     );
+  }
+
+  // Created per screen (registerFactory), so release the controllers with it
+  @override
+  Future<void> close() {
+    for (final controller in [
+      nameArController,
+      nameEnController,
+      descriptionArController,
+      descriptionEnController,
+      addressArController,
+      phoneController,
+      priceController,
+      discountController,
+    ]) {
+      controller.dispose();
+    }
+    pageController.dispose();
+    return super.close();
   }
 }

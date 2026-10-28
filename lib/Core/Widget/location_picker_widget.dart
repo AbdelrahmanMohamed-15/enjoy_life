@@ -1,5 +1,7 @@
 import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -75,7 +77,7 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
         widget.initialLongitude!,
       );
       _updateMarker();
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     } else {
       await _getCurrentLocation();
     }
@@ -94,7 +96,7 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
               backgroundColor: AppColors.darkRed,
             );
           }
-          setState(() => _isLoading = false);
+          if (mounted) setState(() => _isLoading = false);
           return;
         }
       }
@@ -110,7 +112,7 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
               backgroundColor: AppColors.darkRed,
             );
           }
-          setState(() => _isLoading = false);
+          if (mounted) setState(() => _isLoading = false);
           return;
         }
       }
@@ -140,7 +142,7 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
             },
           );
         }
-        setState(() => _isLoading = false);
+        if (mounted) setState(() => _isLoading = false);
         return;
       }
 
@@ -148,13 +150,21 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
       if (permissionGranted == PermissionStatus.granted ||
           permissionGranted == PermissionStatus.grantedLimited) {
         _hasLocationPermission = true;
-        LocationData locationData = await _location.getLocation();
+        // getLocation() can hang forever without a GPS fix (e.g. emulators)
+        LocationData locationData = await _location.getLocation().timeout(
+          const Duration(seconds: 10),
+        );
 
         _selectedLocation = LatLng(
           locationData.latitude ?? _selectedLocation.latitude,
           locationData.longitude ?? _selectedLocation.longitude,
         );
         _updateMarker();
+        // Report it so the form has a location without moving the map
+        widget.onLocationSelected(
+          _selectedLocation.latitude,
+          _selectedLocation.longitude,
+        );
 
         if (_mapController != null) {
           await _mapController!.animateCamera(
@@ -274,6 +284,12 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
                   if (mounted) {
                     _updateMarker();
                   }
+                },
+                // Let the map own drag gestures inside scrollable forms
+                gestureRecognizers: {
+                  Factory<OneSequenceGestureRecognizer>(
+                    () => EagerGestureRecognizer(),
+                  ),
                 },
                 onTap: _onMapTap,
                 onCameraMove: _onCameraMove,

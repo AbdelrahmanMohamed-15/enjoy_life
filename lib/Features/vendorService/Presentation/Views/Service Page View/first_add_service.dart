@@ -38,6 +38,9 @@ class FirstAddService extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             LocationPickerWidget(
+              // Reuse the chosen pin when the page is rebuilt
+              initialLatitude: vendorServiceCubit.initialLatitude,
+              initialLongitude: vendorServiceCubit.initialLongitude,
               onLocationSelected: (lat, lng) {
                 vendorServiceCubit.setLatitudeLongitude(
                   latitude: lat,

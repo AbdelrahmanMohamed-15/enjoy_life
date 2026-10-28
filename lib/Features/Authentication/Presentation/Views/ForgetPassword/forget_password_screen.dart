@@ -34,7 +34,8 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
       builder: (context, state) {
         var authCubit = AuthCubit.get(context);
         return PopScope(
-          canPop: false,
+          // Guests reach this from inside the app and must be able to go back
+          canPop: true,
           child: SafeArea(
             child: Scaffold(
               appBar: AppBar(
@@ -46,7 +47,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                     AppNavigation.pop();
                     authCubit.emailRestController.clear();
                     authCubit.newPasswordController.clear();
-                    authCubit.confirmPasswordController.clear();
+                    authCubit.confirmRestPasswordController.clear();
                   },
                   child: Icon(
                     Icons.arrow_back_ios,
@@ -101,7 +102,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                     ),
                     SizedBox(height: 20),
                     CustomTextFormField(
-                      controller: authCubit.confirmPasswordController,
+                      controller: authCubit.confirmRestPasswordController,
                       hintText: LocaleKeys.authForgotConfirmHint.tr(),
                       textInputType: TextInputType.visiblePassword,
                       obscureText: isObscure2,

@@ -1,3 +1,5 @@
+import 'package:easy_life/Core/Services/push_notification_service.dart';
+import 'package:easy_life/Core/Helper/vendor_service_types.dart';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -47,8 +49,6 @@ import 'package:easy_life/Features/vendorService/Domain/Usecases/show_hotel_usec
 import 'package:easy_life/Features/vendorService/Domain/Usecases/show_resturant_usecase.dart';
 import 'package:easy_life/Features/vendorService/Domain/Usecases/show_trip_usecases.dart';
 import 'package:easy_life/Features/vendorService/Presentation/cubit/vendor_service_cubit.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
@@ -96,7 +96,6 @@ import '../Handler/auth_handler.dart';
 import '../Helper/locale_storage.dart';
 import '../main cubit/cubit/language_cubit.dart';
 import '../Services/network_service.dart';
-import 'default_firebase_option.dart';
 
 class DependencyInjectionHelper {
   final sl = GetIt.instance; // sl = service locator
@@ -110,22 +109,6 @@ class DependencyInjectionHelper {
     await _registerRepositories();
     await _registerUseCases();
     await _registerBloc();
-    await _initFirebase();
-  }
-
-  Future<void> _initFirebase() async {
-    try {
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
-      final fcmToken = Platform.isAndroid
-          ? await FirebaseMessaging.instance.getToken()
-          : await FirebaseMessaging.instance.getAPNSToken();
-      debugPrint("firebase fcmToken data : $fcmToken");
-      await sl<AuthDatasource>().updateFCM(fcmToken: fcmToken!);
-    } catch (e) {
-      debugPrint("Firebase initialization error: $e");
-    }
   }
 
   /// Registers all core components like services
@@ -136,9 +119,7 @@ class DependencyInjectionHelper {
     );
     sl.registerLazySingleton(() => sharedPreferences);
     sl.registerLazySingleton(() => flutterSecureStorage);
-    sl.registerLazySingleton(
-      () => LocaleStorage(sl<SharedPreferences>()),
-    );
+    sl.registerLazySingleton(() => LocaleStorage(sl<SharedPreferences>()));
     // sl.registerLazySingleton<AuthService>(
     //   () => AuthService(sl()),
     // );
@@ -257,6 +238,20 @@ class DependencyInjectionHelper {
     );
     sl.registerLazySingleton<GetVendorTripsUsecases>(
       () => GetVendorTripsUsecases(homeRepository: sl<HomeRepository>()),
+    );
+    sl.registerLazySingleton<PushNotificationService>(
+      () => PushNotificationService(
+        privateDio: sl<NetworkService>().privateDio,
+        authHandler: sl<AuthHandlerInterface>(),
+      ),
+    );
+    sl.registerLazySingleton<VendorServiceTypes>(
+      () => VendorServiceTypes(
+        authHandler: sl<AuthHandlerInterface>(),
+        getVendorResturantUsecases: sl<GetVendorResturantUsecases>(),
+        getVendorHotelsUsecases: sl<GetVendorHotelsUsecases>(),
+        getVendorTripsUsecases: sl<GetVendorTripsUsecases>(),
+      ),
     );
     sl.registerLazySingleton<AddFavouriteUsecases>(
       () => AddFavouriteUsecases(homeRepository: sl<HomeRepository>()),

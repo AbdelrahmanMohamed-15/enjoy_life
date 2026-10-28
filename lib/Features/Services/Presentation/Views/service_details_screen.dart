@@ -1,3 +1,5 @@
+import 'package:easy_life/Core/Helper/service_kind.dart';
+import 'package:easy_life/Core/Helper/user_validation_helper.dart';
 import 'package:easy_life/Core/Widget/state_message_widget.dart';
 import 'package:easy_life/Core/Widget/custom_network_image.dart';
 import 'package:easy_life/Core/L10n/locale_keys.dart';
@@ -306,7 +308,7 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                           double.tryParse(resturant.longitude ?? '0.0') ?? 0.0,
                     ),
                     const SizedBox(height: 20),
-                    if (resturant.rates!.isNotEmpty) ...[
+                    if ((resturant.rates ?? []).isNotEmpty) ...[
                       ListView.separated(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
@@ -358,9 +360,11 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                                         children: [
                                           WidgetSpan(
                                             child: RatingBar.builder(
-                                              initialRating: double.parse(
-                                                rates.rating ?? '0.0',
-                                              ),
+                                              initialRating:
+                                                  double.tryParse(
+                                                    rates.rating ?? '',
+                                                  ) ??
+                                                  0,
                                               minRating: 0,
                                               itemSize: 18,
                                               direction: Axis.horizontal,
@@ -417,6 +421,20 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                 padding: const EdgeInsets.all(12),
                 child: Row(
                   children: [
+                    if (userData == null)
+                      Expanded(
+                        child: MainAppButton(
+                          bgColor: AppColors.primary400,
+                          child: Text(
+                            LocaleKeys.servicesLoginToBook.tr(),
+                            style: theme.textTheme.bodyMedium!.copyWith(
+                              color: AppColors.natural100,
+                              fontFamily: BaseConstant.cairoBold,
+                            ),
+                          ),
+                          onTap: UserValidationHelper.showUserValidation,
+                        ),
+                      ),
                     if (userData != null)
                       if (userData.clientType == 0) ...[
                         // 🔹 Show only if serviceBranches not empty
@@ -458,10 +476,10 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                               ),
                             ),
                             onTap: () {
-                              if (widget.type.toLowerCase() == 'resturant' ||
-                                  widget.type.toLowerCase() == 'مطعم' ||
-                                  widget.type.toLowerCase() == 'hotel' ||
-                                  widget.type.toLowerCase() == 'فندق') {
+                              // The API name is localized ("Restaurant"),
+                              // so compare the kind, not the raw string
+                              if (ServiceKind.of(name: widget.type) !=
+                                  ServiceKind.trip) {
                                 showModalBottomSheet(
                                   context: context,
                                   shape: RoundedRectangleBorder(

@@ -53,11 +53,9 @@ class _ReturantItemWidgetState extends State<ReturantItemWidget> {
 
   @override
   void dispose() {
-    final vendorServiceCubit = VendorServiceCubit.get(context);
-    if (widget.index < vendorServiceCubit.tableList.length) {
-      final item = vendorServiceCubit.tableList[widget.index];
-      _removeListeners(item);
-    }
+    // Looking up the cubit from context is unsafe here, so use the item the
+    // listeners were attached to
+    if (_currentItem != null) _removeListeners(_currentItem!);
     super.dispose();
   }
 

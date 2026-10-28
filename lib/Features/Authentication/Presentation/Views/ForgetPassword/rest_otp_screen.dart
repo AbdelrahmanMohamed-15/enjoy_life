@@ -89,7 +89,8 @@ class _RestOtpScreenState extends State<RestOtpScreen> {
     var theme = Theme.of(context);
     var size = MediaQuery.sizeOf(context);
     return PopScope(
-      canPop: false,
+      // Guests reach this from inside the app and must be able to go back
+      canPop: true,
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(
@@ -101,7 +102,7 @@ class _RestOtpScreenState extends State<RestOtpScreen> {
                 AppNavigation.pop();
                 widget.authCubit.emailRestController.clear();
                 widget.authCubit.newPasswordController.clear();
-                widget.authCubit.confirmPasswordController.clear();
+                widget.authCubit.confirmRestPasswordController.clear();
               },
               child: Icon(Icons.arrow_back_ios, color: AppColors.primary400),
             ),
@@ -164,7 +165,8 @@ class _RestOtpScreenState extends State<RestOtpScreen> {
                   onTap: () {
                     if (_formKey.currentState!.validate()) {
                       if (widget.isRegister == false) {
-                        widget.authCubit.resetPassword();
+                        // Verifies the code, then resets the password
+                        widget.authCubit.verifyResetOtp();
                       } else {
                         widget.authCubit.activeEmail();
                       }

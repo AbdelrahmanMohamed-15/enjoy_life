@@ -48,7 +48,7 @@ class NameDecWidget extends StatelessWidget {
                   hintText: vendorServiceCubit.language != 'ar'
                       ? LocaleKeys.vendorNameEnHint.tr()
                       : LocaleKeys.vendorNameArHint.tr(),
-                  validator: (value) => InputValidator.validateName(value!),
+                  validator: (value) => InputValidator.validateNotEmpty(value),
                 ),
                 SizedBox(height: 15),
                 Text(
@@ -68,7 +68,7 @@ class NameDecWidget extends StatelessWidget {
                   hintText: vendorServiceCubit.language != 'ar'
                       ? LocaleKeys.vendorDescriptionEnHint.tr()
                       : LocaleKeys.vendorDescriptionArHint.tr(),
-                  validator: (value) => InputValidator.validateName(value!),
+                  validator: (value) => InputValidator.validateNotEmpty(value),
                   maxLines: 4,
                 ),
               ],

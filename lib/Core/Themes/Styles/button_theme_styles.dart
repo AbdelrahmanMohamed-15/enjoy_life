@@ -8,6 +8,7 @@ class ButtonThemeStyles {
     style: ElevatedButton.styleFrom(
       padding: const EdgeInsets.symmetric(vertical: 12.0),
       backgroundColor: AppColors.primary500,
+      foregroundColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
       textStyle: const TextStyle(
         fontFamily: 'Cairo-Bold',
@@ -23,8 +24,11 @@ class ButtonThemeStyles {
   static OutlinedButtonThemeData outlinedButtonTheme = OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
       side: BorderSide(width: 1.w, color: AppColors.roundButtonBorderColor),
+      foregroundColor: AppColors.primary500,
+      // Elevation on a transparent button renders as a grey tinted fill in
+      // Material 3, so outlined buttons stay flat
       backgroundColor: Colors.transparent,
-      elevation: 3,
+      elevation: 0,
       shape: RoundedRectangleBorder(
         side: BorderSide(color: AppColors.roundButtonBorderColor, width: 10.w),
         borderRadius: BorderRadius.circular(33.r),

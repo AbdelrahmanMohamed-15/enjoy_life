@@ -60,6 +60,8 @@ class UserValidationHelper {
                     ),
                   ),
                   onTap: () {
+                    // Close the sheet so it is not still open when coming back
+                    AppNavigation.pop();
                     AppNavigation.pushNamed(AppRoutes.login);
                   },
                 ),

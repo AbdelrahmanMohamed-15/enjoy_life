@@ -17,7 +17,6 @@ class QRScannerScreen extends StatefulWidget {
 class _QRScannerScreenState extends State<QRScannerScreen> {
   final MobileScannerController controller = MobileScannerController();
   bool _isScanning = true;
-  bool _hasResetFlag = false;
 
   @override
   void dispose() {
@@ -25,12 +24,28 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
     super.dispose();
   }
 
-  void _stopScanner() {
-    if (_isScanning) {
-      controller.stop();
-      setState(() {
-        _isScanning = false;
-      });
+  /// Stops the camera while the code is confirmed; on success the screen
+  /// closes, otherwise scanning resumes so the vendor can try again.
+  Future<void> _onDetect(ReversionCubit cubit, BarcodeCapture capture) async {
+    if (!_isScanning) return;
+    String? code;
+    for (final barcode in capture.barcodes) {
+      final value = barcode.rawValue?.trim();
+      if (value != null && value.isNotEmpty) {
+        code = value;
+        break;
+      }
+    }
+    if (code == null) return;
+    setState(() => _isScanning = false);
+    await controller.stop();
+    final success = await cubit.scanOrder(qrCode: code);
+    if (!mounted) return;
+    if (success) {
+      Navigator.of(context).pop(code);
+    } else {
+      setState(() => _isScanning = true);
+      await controller.start();
     }
   }
 
@@ -40,15 +55,6 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
     return BlocBuilder<ReversionCubit, ReversionState>(
       builder: (context, state) {
         var reversionCubit = ReversionCubit.get(context);
-        // Reset scan flag when screen is first built (only once)
-        if (!_hasResetFlag) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) {
-              reversionCubit.resetScanFlag();
-              _hasResetFlag = true;
-            }
-          });
-        }
         return SafeArea(
           child: Scaffold(
             backgroundColor: AppColors.natural100,
@@ -74,12 +80,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                 // Camera view
                 MobileScanner(
                   controller: controller,
-                  onDetect: (val) {
-                    if (_isScanning) {
-                      reversionCubit.onDetect(val);
-                      _stopScanner();
-                    }
-                  },
+                  onDetect: (val) => _onDetect(reversionCubit, val),
                 ),
                 // Scanning overlay with white frame
                 _buildScanningOverlay(context),

@@ -55,11 +55,9 @@ class _HotelItemWidgetState extends State<HotelItemWidget> {
 
   @override
   void dispose() {
-    final vendorServiceCubit = VendorServiceCubit.get(context);
-    if (widget.index < vendorServiceCubit.roomList.length) {
-      final item = vendorServiceCubit.roomList[widget.index];
-      _removeListeners(item);
-    }
+    // Looking up the cubit from context is unsafe here, so use the item the
+    // listeners were attached to
+    if (_currentItem != null) _removeListeners(_currentItem!);
     super.dispose();
   }
 
@@ -209,8 +207,8 @@ class _HotelItemWidgetState extends State<HotelItemWidget> {
                   children: [
                     if (widget.index != 0)
                       IconButton(
-                        onPressed: () => vendorServiceCubit
-                            .removeHotelTable(widget.index),
+                        onPressed: () =>
+                            vendorServiceCubit.removeHotelTable(widget.index),
                         icon: const Icon(
                           Icons.delete,
                           color: AppColors.darkRed,

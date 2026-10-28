@@ -1,3 +1,4 @@
+import 'package:easy_life/Core/Helper/service_kind.dart';
 import 'package:easy_life/Core/Widget/state_message_widget.dart';
 import 'package:easy_life/Core/Widget/custom_network_image.dart';
 import 'package:easy_life/Core/Enums/level_message_enums.dart';
@@ -263,14 +264,21 @@ class MyFavouriteScreen extends StatelessWidget {
                                           debugPrint(
                                             'Service Name : ${favourite.serviceName}',
                                           );
-                                          await homeCubit.removeFavourite(
-                                            id: favourite.itemID!,
-                                            type: favourite.serviceName!,
+                                          // The localized name failed in
+                                          // English; use the service id
+                                          final kind = ServiceKind.of(
+                                            id: favourite.serviceId,
+                                            name: favourite.serviceName,
                                           );
-                                          await homeCubit.getMyFavourite();
-                                          await homeCubit.getResturant();
-                                          await homeCubit.getHotels();
-                                          await homeCubit.getTrips();
+                                          if (kind == null) return isLike;
+                                          final ok = await homeCubit
+                                              .removeFavourite(
+                                                id: favourite.itemID!,
+                                                type: kind.apiKey,
+                                              );
+                                          if (ok) {
+                                            await homeCubit.getMyFavourite();
+                                          }
                                           return !isLike;
                                         },
                                       ),

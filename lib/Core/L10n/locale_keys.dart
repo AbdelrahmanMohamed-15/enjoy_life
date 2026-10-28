@@ -3,6 +3,7 @@ class LocaleKeys {
 
   // Common
   static const commonCancel = 'common.cancel';
+  static const commonSessionExpired = 'common.session_expired';
   static const commonAdd = 'common.add';
   static const commonEdit = 'common.edit';
   static const commonNext = 'common.next';
@@ -57,6 +58,11 @@ class LocaleKeys {
 
   // Auth
   static const authLoginTitle = 'auth.login_title';
+  static const authLoginSubtitle = 'auth.login_subtitle';
+  static const authRegisterSubtitle = 'auth.register_subtitle';
+  static const authForgotSubtitle = 'auth.forgot_subtitle';
+  static const authOtpSubtitle = 'auth.otp_subtitle';
+  static const authContinueAsGuest = 'auth.continue_as_guest';
   static const authLoginPhoneHint = 'auth.login_phone_hint';
   static const authLoginPhoneRequired = 'auth.login_phone_required';
   static const authLoginPasswordHint = 'auth.login_password_hint';
@@ -72,7 +78,8 @@ class LocaleKeys {
   static const authRegisterPhoneHint = 'auth.register_phone_hint';
   static const authRegisterAddressHint = 'auth.register_address_hint';
   static const authRegisterPasswordHint = 'auth.register_password_hint';
-  static const authRegisterConfirmPasswordHint = 'auth.register_confirm_password_hint';
+  static const authRegisterConfirmPasswordHint =
+      'auth.register_confirm_password_hint';
   static const authRegisterButton = 'auth.register_button';
   static const authRegisterHaveAccount = 'auth.register_have_account';
   static const authRegisterLoginLink = 'auth.register_login_link';
@@ -128,6 +135,16 @@ class LocaleKeys {
   static const profilePrivacy = 'profile.privacy_policy';
   static const profileFaq = 'profile.faq';
   static const profileLogout = 'profile.logout';
+  static const profileSectionAccount = 'profile.section_account';
+  static const profileSectionPreferences = 'profile.section_preferences';
+  static const profileSectionHelp = 'profile.section_help';
+  static const profileSectionQuickAdd = 'profile.section_quick_add';
+  static const profileSectionBusiness = 'profile.section_business';
+  static const profileGuestName = 'profile.guest_name';
+  static const profileGuestHint = 'profile.guest_hint';
+  static const profileSignIn = 'profile.sign_in';
+  static const profileLogoutTitle = 'profile.logout_title';
+  static const profileLogoutMessage = 'profile.logout_message';
   static const profileDeleteAccount = 'profile.delete_account';
   static const profileTerms = 'profile.terms';
   static const profileAdditionalEmpty = 'profile.additional_empty';
@@ -173,9 +190,30 @@ class LocaleKeys {
   static const cartEmpty = 'cart.empty';
   static const cartTotal = 'cart.total';
   static const cartCheckout = 'cart.checkout';
+  static const cartSummary = 'cart.summary';
+  static const cartItemsCount = 'cart.items_count';
+  static const cartRemoveTitle = 'cart.remove_title';
+  static const cartRemoveMessage = 'cart.remove_message';
+  static const cartRemove = 'cart.remove';
+  static const cartTypeRestaurant = 'cart.type_restaurant';
+  static const cartTypeHotel = 'cart.type_hotel';
+  static const cartTypeTrip = 'cart.type_trip';
+  static const cartTypeService = 'cart.type_service';
 
   // Services
   static const servicesLoadError = 'services.load_error';
+  static const servicesAddToCart = 'services.add_to_cart';
+  static const servicesAdded = 'services.added';
+  static const servicesAbout = 'services.about';
+  static const servicesLocation = 'services.location';
+  static const servicesReviews = 'services.reviews';
+  static const servicesBranches = 'services.branches';
+  static const servicesBranchHint = 'services.branch_hint';
+  static const servicesBookingTitle = 'services.booking_title';
+  static const servicesBookingEndBeforeStart = 'services.booking_end_before_start';
+  static const servicesLoginToBook = 'services.login_to_book';
+  static const servicesShareText = 'services.share_text';
+  static const servicesAvailableCount = 'services.available_count';
   static const servicesSelectBranch = 'services.select_branch';
   static const servicesServices = 'services.services';
   static const servicesBookNow = 'services.book_now';
@@ -204,9 +242,28 @@ class LocaleKeys {
   static const orderItems = 'order.items';
   static const orderTotal = 'order.total';
   static const orderDate = 'order.date';
+  static const orderItemsCount = 'order.items_count';
+  static const orderShowQr = 'order.show_qr';
+  static const orderQrTitle = 'order.qr_title';
+  static const orderQrHint = 'order.qr_hint';
+  static const orderCodeCopied = 'order.code_copied';
 
   // Reversion
   static const reversionTitle = 'reversion.title';
+  static const reversionScanSubtitle = 'reversion.scan_subtitle';
+  static const reversionScanManual = 'reversion.scan_manual';
+  static const reversionScanManualHint = 'reversion.scan_manual_hint';
+  static const reversionScanConfirm = 'reversion.scan_confirm';
+  static const reversionScanStepsTitle = 'reversion.scan_steps_title';
+  static const reversionScanStep1 = 'reversion.scan_step1';
+  static const reversionScanStep2 = 'reversion.scan_step2';
+  static const reversionScanStep3 = 'reversion.scan_step3';
+  static const reversionScanSuccess = 'reversion.scan_success';
+  static const reversionScanLast = 'reversion.scan_last';
+  static const reversionScanTorch = 'reversion.scan_torch';
+  static const reversionScanFlip = 'reversion.scan_flip';
+  static const reversionScanCameraError = 'reversion.scan_camera_error';
+  static const reversionScanAlign = 'reversion.scan_align';
   static const reversionEmpty = 'reversion.empty';
   static const reversionDetailsTitle = 'reversion.details_title';
   static const reversionServices = 'reversion.services';
@@ -226,8 +283,32 @@ class LocaleKeys {
   static const reversionStatusPending = 'reversion.status_pending';
   static const reversionStatusApproved = 'reversion.status_approved';
   static const reversionStatusCancelled = 'reversion.status_cancelled';
+  static const reversionHubSubtitle = 'reversion.hub_subtitle';
+  static const reversionRestaurantDesc = 'reversion.restaurant_desc';
+  static const reversionHotelDesc = 'reversion.hotel_desc';
+  static const reversionTripDesc = 'reversion.trip_desc';
 
   // Vendor
+  static const vendorSectionBasic = 'vendor.section_basic';
+  static const vendorSectionContact = 'vendor.section_contact';
+  static const vendorSectionMedia = 'vendor.section_media';
+  static const vendorSectionSettings = 'vendor.section_settings';
+  static const vendorSectionPricing = 'vendor.section_pricing';
+  static const vendorSectionLinks = 'vendor.section_links';
+  static const vendorLanguageHint = 'vendor.language_hint';
+  static const vendorLocation = 'vendor.location';
+  static const vendorLocationHint = 'vendor.location_hint';
+  static const vendorStatusActive = 'vendor.status_active';
+  static const vendorStatusActiveHint = 'vendor.status_active_hint';
+  static const vendorStatusInactiveHint = 'vendor.status_inactive_hint';
+  static const vendorUploadHint = 'vendor.upload_hint';
+  static const vendorChange = 'vendor.change';
+  static const vendorRemove = 'vendor.remove';
+  static const vendorStepInfo = 'vendor.step_info';
+  static const vendorStepMedia = 'vendor.step_media';
+  static const vendorStepTables = 'vendor.step_tables';
+  static const vendorStepRooms = 'vendor.step_rooms';
+  static const vendorStepSchedules = 'vendor.step_schedules';
   static const vendorAddBranch = 'vendor.add_branch';
   static const vendorAddCategory = 'vendor.add_category';
   static const vendorAddService = 'vendor.add_service';
@@ -282,23 +363,37 @@ class LocaleKeys {
   static const vendorPickGallery = 'vendor.pick_gallery';
   static const vendorSelectDateTime = 'vendor.select_date_time';
   static const vendorValidationNameBoth = 'vendor.validation_name_both';
-  static const vendorValidationDescriptionBoth = 'vendor.validation_description_both';
+  static const vendorValidationDescriptionBoth =
+      'vendor.validation_description_both';
   static const vendorValidationAddressAr = 'vendor.validation_address_ar';
   static const vendorValidationPhone = 'vendor.validation_phone';
   static const vendorValidationLogoRequired = 'vendor.validation_logo_required';
-  static const vendorValidationBranchImageRequired = 'vendor.validation_branch_image_required';
-  static const vendorValidationLocationRequired = 'vendor.validation_location_required';
-  static const vendorValidationBranchRequired = 'vendor.validation_branch_required';
-  static const vendorValidationServiceRequired = 'vendor.validation_service_required';
-  static const vendorValidationCategoryRequired = 'vendor.validation_category_required';
-  static const vendorValidationServiceTypeRequired = 'vendor.validation_service_type_required';
-  static const vendorValidationPriceRequired = 'vendor.validation_price_required';
-  static const vendorValidationDiscountRequired = 'vendor.validation_discount_required';
-  static const vendorValidationImageRequired = 'vendor.validation_image_required';
-  static const vendorValidationTablesRequired = 'vendor.validation_tables_required';
-  static const vendorValidationRoomsRequired = 'vendor.validation_rooms_required';
-  static const vendorValidationTripScheduleRequired = 'vendor.validation_trip_schedule_required';
-  static const vendorValidationFillCurrentItem = 'vendor.validation_fill_current_item';
+  static const vendorValidationBranchImageRequired =
+      'vendor.validation_branch_image_required';
+  static const vendorValidationLocationRequired =
+      'vendor.validation_location_required';
+  static const vendorValidationBranchRequired =
+      'vendor.validation_branch_required';
+  static const vendorValidationServiceRequired =
+      'vendor.validation_service_required';
+  static const vendorValidationCategoryRequired =
+      'vendor.validation_category_required';
+  static const vendorValidationServiceTypeRequired =
+      'vendor.validation_service_type_required';
+  static const vendorValidationPriceRequired =
+      'vendor.validation_price_required';
+  static const vendorValidationDiscountRequired =
+      'vendor.validation_discount_required';
+  static const vendorValidationImageRequired =
+      'vendor.validation_image_required';
+  static const vendorValidationTablesRequired =
+      'vendor.validation_tables_required';
+  static const vendorValidationRoomsRequired =
+      'vendor.validation_rooms_required';
+  static const vendorValidationTripScheduleRequired =
+      'vendor.validation_trip_schedule_required';
+  static const vendorValidationFillCurrentItem =
+      'vendor.validation_fill_current_item';
   static const vendorImageMaxLimit = 'vendor.image_max_limit';
   static const vendorImagePartialAdd = 'vendor.image_partial_add';
   static const vendorImageAddSuccessCount = 'vendor.image_add_success_count';

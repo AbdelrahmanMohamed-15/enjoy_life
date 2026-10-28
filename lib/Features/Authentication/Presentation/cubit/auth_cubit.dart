@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:easy_life/Core/Services/push_notification_service.dart';
 import 'package:easy_life/Core/Helper/safe_emit_mixin.dart';
 import 'package:easy_life/Core/Handler/auth_handler.dart';
 import 'package:easy_life/Core/Helper/dependency_injection_helper.dart';
@@ -77,15 +79,22 @@ class AuthCubit extends Cubit<AuthState> with SafeEmitMixin<AuthState> {
       (userEntity) {
         EasyLoading.dismiss();
         if (userEntity.status == true) {
-          Future.delayed(const Duration(milliseconds: 500), () {
-            _di.sl<AuthHandlerInterface>().setToken(
+          Future.delayed(const Duration(milliseconds: 500), () async {
+            await _di.sl<AuthHandlerInterface>().setToken(
               userEntity.data!.token!.original!.accessToken!,
             );
-            _di.sl<AuthHandlerInterface>().setUserData(
+            await _di.sl<AuthHandlerInterface>().setUserData(
               userEntity.data!.userdata,
             );
+            // Register this device for push now that the user is known
+            unawaited(_di.sl<PushNotificationService>().syncToken());
 
-            AppNavigation.pushReplacementNamed(AppRoutes.mainNav);
+            // A fresh stack: a guest home left below login would come back
+            // on the back button, still showing the logged-out state
+            AppNavigation.pushNamedAndRemoveUntil(
+              AppRoutes.mainNav,
+              predicate: (_) => false,
+            );
             showCustomSnackBar(
               userEntity.message ?? '',
               backgroundColor: AppColors.primary400,
@@ -314,5 +323,23 @@ class AuthCubit extends Cubit<AuthState> with SafeEmitMixin<AuthState> {
         }
       },
     );
+  }
+
+  // Created per screen (registerFactory), so release the controllers with it
+  @override
+  Future<void> close() {
+    phoneController.dispose();
+    passwordController.dispose();
+    regPhoneController.dispose();
+    nameController.dispose();
+    emailController.dispose();
+    regPasswordController.dispose();
+    confirmPasswordController.dispose();
+    addressController.dispose();
+    emailRestController.dispose();
+    otpRestController.dispose();
+    newPasswordController.dispose();
+    confirmRestPasswordController.dispose();
+    return super.close();
   }
 }

@@ -1,3 +1,5 @@
+import 'package:easy_life/Core/Helper/dependency_injection_helper.dart';
+import 'package:easy_life/Core/Helper/vendor_service_types.dart';
 import 'package:easy_life/Core/Constant/base_constant.dart';
 import 'package:easy_life/Core/Extentions/center_ext.dart';
 import 'package:easy_life/Core/Extentions/padding_ext.dart';
@@ -19,86 +21,58 @@ class ReversionService extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    return Row(
-      children: [
-        Expanded(
-          child: GestureDetector(
-            onTap: () {
-              reversionCubit.setReversionStatus(servID: 1);
-            },
-            child: Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: serviceID == 1
-                    ? AppColors.primary500
-                    : AppColors.natural200,
-              ),
-              child: Text(
-                LocaleKeys.reversionFilterRestaurant.tr(),
-                style: theme.textTheme.bodySmall?.copyWith(
-                  fontFamily: BaseConstant.cairoBold,
-                  color: serviceID == 1
-                      ? AppColors.natural100
-                      : AppColors.natural500,
+    final vendorTypes = DependencyInjectionHelper().sl<VendorServiceTypes>()
+      ..loadOnce();
+    final labels = {
+      1: LocaleKeys.reversionFilterRestaurant.tr(),
+      2: LocaleKeys.reversionFilterHotel.tr(),
+      3: LocaleKeys.reversionFilterTrip.tr(),
+    };
+    return ValueListenableBuilder(
+      valueListenable: vendorTypes.types,
+      builder: (context, _, _) {
+        // Only the services this vendor runs; leave a tab it does not have
+        final offered = labels.keys
+            .where(vendorTypes.current.contains)
+            .toList();
+        if (offered.isNotEmpty && !offered.contains(serviceID)) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            reversionCubit.setReversionStatus(servID: offered.first);
+          });
+        }
+        return Row(
+          children: [
+            for (var i = 0; i < offered.length; i++) ...[
+              if (i > 0) const SizedBox(width: 10),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    reversionCubit.setReversionStatus(servID: offered[i]);
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: serviceID == offered[i]
+                          ? AppColors.primary500
+                          : AppColors.natural200,
+                    ),
+                    child: Text(
+                      labels[offered[i]]!,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        fontFamily: BaseConstant.cairoBold,
+                        color: serviceID == offered[i]
+                            ? AppColors.natural100
+                            : AppColors.natural500,
+                      ),
+                    ).setCenter(),
+                  ),
                 ),
-              ).setCenter(),
-            ),
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: GestureDetector(
-            onTap: () {
-              reversionCubit.setReversionStatus(servID: 2);
-            },
-            child: Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: serviceID == 2
-                    ? AppColors.primary500
-                    : AppColors.natural200,
               ),
-              child: Text(
-                LocaleKeys.reversionFilterHotel.tr(),
-                style: theme.textTheme.bodySmall?.copyWith(
-                  fontFamily: BaseConstant.cairoBold,
-                  color: serviceID == 2
-                      ? AppColors.natural100
-                      : AppColors.natural500,
-                ),
-              ).setCenter(),
-            ),
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: GestureDetector(
-            onTap: () {
-              reversionCubit.setReversionStatus(servID: 3);
-            },
-            child: Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: serviceID == 3
-                    ? AppColors.primary500
-                    : AppColors.natural200,
-              ),
-              child: Text(
-                LocaleKeys.reversionFilterTrip.tr(),
-                style: theme.textTheme.bodySmall?.copyWith(
-                  fontFamily: BaseConstant.cairoBold,
-                  color: serviceID == 3
-                      ? AppColors.natural100
-                      : AppColors.natural500,
-                ),
-              ).setCenter(),
-            ),
-          ),
-        ),
-      ],
-    ).setHorizontalPadding(context, 15, enableMediaQuery: false);
+            ],
+          ],
+        ).setHorizontalPadding(context, 15, enableMediaQuery: false);
+      },
+    );
   }
 }

@@ -23,7 +23,8 @@ import '../../Domain/Usecases/get_trip_details_usecases.dart';
 
 part 'sevice_state.dart';
 
-class ServiceCubit extends Cubit<ServiceState> with SafeEmitMixin<ServiceState> {
+class ServiceCubit extends Cubit<ServiceState>
+    with SafeEmitMixin<ServiceState> {
   ServiceCubit({
     required this.getResturantDetailsUsecases,
     required this.getHotelDetailsUsecases,
@@ -347,7 +348,7 @@ class ServiceCubit extends Cubit<ServiceState> with SafeEmitMixin<ServiceState> 
         EasyLoading.dismiss();
         tripEntity = trips;
         if (trips.data != null) {
-          AppNavigation.pop();
+          // No sheet is open for trips: popping here closed the details page
           AppNavigation.pushNamed(
             AppRoutes.tripScreen,
             arguments: {

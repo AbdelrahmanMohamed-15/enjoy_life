@@ -3,6 +3,7 @@ import 'package:easy_life/Core/Themes/app_colors.dart';
 import 'package:easy_life/Features/vendorService/Presentation/Widget/global_widget/upload_tile.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'picked_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../Core/Constant/base_constant.dart';
 import '../../cubit/vendor_service_cubit.dart';
@@ -43,7 +44,7 @@ class LogoWidget extends StatelessWidget {
                     )
                   : ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: Image.file(
+                      child: pickedImage(
                         vendorServiceCubit.logoImage!,
                         height: 100,
                         width: 100,

@@ -23,6 +23,7 @@ class _SplachScreenState extends State<SplachScreen> {
   void initState() {
     super.initState();
     Future.delayed(Duration(seconds: 2), () {
+      if (!mounted) return;
       String onBoarding = _di.sl<AuthHandlerInterface>().getBoarding() ?? '';
       if (onBoarding.isEmpty || onBoarding != 'false') {
         AppNavigation.pushReplacementNamed(AppRoutes.onboarding);

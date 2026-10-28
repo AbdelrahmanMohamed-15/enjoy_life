@@ -36,7 +36,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       builder: (context, state) {
         var authCubit = AuthCubit.get(context);
         return PopScope(
-          canPop: false,
+          // Guests reach this from inside the app and must be able to go back
+          canPop: true,
           child: SafeArea(
             child: Scaffold(
               body: Form(

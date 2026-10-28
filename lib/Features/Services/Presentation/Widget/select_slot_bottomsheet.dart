@@ -1,3 +1,4 @@
+import 'package:easy_life/Core/Helper/service_kind.dart';
 import 'package:easy_life/Core/L10n/locale_keys.dart';
 import 'package:easy_life/Core/Themes/app_colors.dart';
 import 'package:easy_localization/easy_localization.dart' hide TextDirection;
@@ -107,130 +108,130 @@ class _BookingTimeBottomSheetState extends State<BookingTimeBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      // RTL support for Arabic
-      textDirection: TextDirection.rtl,
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // From date/time
-              Text(LocaleKeys.servicesBookingDateFrom.tr()),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: InkWell(
-                            onTap: () => _selectDate(context, true),
-                            child: _buildInputBox(
-                              icon: Icons.calendar_today,
-                              text: formatDate(fromDate),
-                            ),
+    // Follows the app language (it was forced right-to-left in English)
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // From date/time
+            Text(LocaleKeys.servicesBookingDateFrom.tr()),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: () => _selectDate(context, true),
+                          child: _buildInputBox(
+                            icon: Icons.calendar_today,
+                            text: formatDate(fromDate),
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: InkWell(
-                            onTap: () => _selectTime(context, true),
-                            child: _buildInputBox(
-                              icon: Icons.access_time,
-                              text: formatTime(fromTime),
-                            ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () => _selectTime(context, true),
+                          child: _buildInputBox(
+                            icon: Icons.access_time,
+                            text: formatTime(fromTime),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              // To date/time
-              Text(LocaleKeys.servicesBookingDateTo.tr()),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: InkWell(
-                            onTap: () => _selectDate(context, false),
-                            child: _buildInputBox(
-                              icon: Icons.calendar_today,
-                              text: formatDate(toDate),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: InkWell(
-                            onTap: () => _selectTime(context, false),
-                            child: _buildInputBox(
-                              icon: Icons.access_time,
-                              text: formatTime(toTime),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 80),
-              // Continue button
-              MainAppButton(
-                bgColor: AppColors.primary400,
-                child: Text(
-                  LocaleKeys.servicesBookingContinue.tr(),
-                  style: const TextStyle(fontSize: 18, color: Colors.white),
                 ),
-                onTap: () {
-                  if (fromDate == null ||
-                      toTime == null ||
-                      fromTime == null ||
-                      toDate == null) {
+              ],
+            ),
+            const SizedBox(height: 20),
+            // To date/time
+            Text(LocaleKeys.servicesBookingDateTo.tr()),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: () => _selectDate(context, false),
+                          child: _buildInputBox(
+                            icon: Icons.calendar_today,
+                            text: formatDate(toDate),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () => _selectTime(context, false),
+                          child: _buildInputBox(
+                            icon: Icons.access_time,
+                            text: formatTime(toTime),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 80),
+            // Continue button
+            MainAppButton(
+              bgColor: AppColors.primary400,
+              child: Text(
+                LocaleKeys.servicesBookingContinue.tr(),
+                style: const TextStyle(fontSize: 18, color: Colors.white),
+              ),
+              onTap: () {
+                if (fromDate == null ||
+                    toTime == null ||
+                    fromTime == null ||
+                    toDate == null) {
+                  showCustomSnackBar(
+                    LocaleKeys.servicesBookingTimeRequired.tr(),
+                    backgroundColor: AppColors.darkRed,
+                  );
+                } else {
+                  DateTime at(DateTime d, TimeOfDay t) =>
+                      DateTime(d.year, d.month, d.day, t.hour, t.minute);
+                  final kind = ServiceKind.of(name: widget.type);
+                  if (!at(toDate!, toTime!).isAfter(at(fromDate!, fromTime!))) {
                     showCustomSnackBar(
-                      LocaleKeys.servicesBookingTimeRequired.tr(),
+                      LocaleKeys.servicesBookingEndBeforeStart.tr(),
                       backgroundColor: AppColors.darkRed,
                     );
-                  } else {
-                    if (widget.type == 'Restaurant'.toUpperCase() ||
-                        widget.type == 'مطعم') {
-                      widget.serviceCubit.getAvaliableTables(
-                        resturantID: widget.serviceID,
-                        startDate:
-                            '${formatDate(fromDate)} ${formatTime24(fromTime)}',
-                        endDate:
-                            '${formatDate(toDate)} ${formatTime24(toTime)}',
-                        title: widget.title,
-                        serviceCubit: widget.serviceCubit,
-                      );
-                    } else if (widget.type == 'Hotel'.toUpperCase() ||
-                        widget.type == 'فندق') {
-                      widget.serviceCubit.getAvaliableRooms(
-                        hotelID: widget.serviceID,
-                        startDate:
-                            '${formatDate(fromDate)} ${formatTime24(fromTime)}',
-                        endDate:
-                            '${formatDate(toDate)} ${formatTime24(toTime)}',
-                        title: widget.title,
-                        serviceCubit: widget.serviceCubit,
-                      );
-                    } else if (widget.type == 'Trip'.toUpperCase() ||
-                        widget.type == 'رحلة') {}
+                  } else if (kind == ServiceKind.restaurant) {
+                    widget.serviceCubit.getAvaliableTables(
+                      resturantID: widget.serviceID,
+                      startDate:
+                          '${formatDate(fromDate)} ${formatTime24(fromTime)}',
+                      endDate: '${formatDate(toDate)} ${formatTime24(toTime)}',
+                      title: widget.title,
+                      serviceCubit: widget.serviceCubit,
+                    );
+                  } else if (kind == ServiceKind.hotel) {
+                    widget.serviceCubit.getAvaliableRooms(
+                      hotelID: widget.serviceID,
+                      startDate:
+                          '${formatDate(fromDate)} ${formatTime24(fromTime)}',
+                      endDate: '${formatDate(toDate)} ${formatTime24(toTime)}',
+                      title: widget.title,
+                      serviceCubit: widget.serviceCubit,
+                    );
                   }
-                },
-              ),
-            ],
-          ),
+                }
+              },
+            ),
+          ],
         ),
       ),
     );

@@ -159,6 +159,9 @@ class Item extends Equatable {
   final String? hotel;
   final String? tripSchedule;
   final String? trip;
+  final String? providerType;
+  final String? providerName;
+  final String? providerImage;
 
   Item({
     this.id,
@@ -181,6 +184,9 @@ class Item extends Equatable {
     this.hotel,
     this.tripSchedule,
     this.trip,
+    this.providerType,
+    this.providerName,
+    this.providerImage,
   });
 
   factory Item.fromJson(Map<String, dynamic> json) => Item(
@@ -206,6 +212,9 @@ class Item extends Equatable {
     hotel: _asString(json["hotel"]),
     tripSchedule: _asString(json["tripSchedule"] ?? json["trip_schedule"]),
     trip: _asString(json["trip"]),
+    providerType: _asString(json["provider_type"]),
+    providerName: _asString(json["provider_name"]),
+    providerImage: _asString(json["provider_image"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -229,6 +238,9 @@ class Item extends Equatable {
     "hotel": hotel,
     "tripSchedule": tripSchedule,
     "trip": trip,
+    "provider_type": providerType,
+    "provider_name": providerName,
+    "provider_image": providerImage,
   };
 
   @override
@@ -254,6 +266,9 @@ class Item extends Equatable {
     hotel,
     tripSchedule,
     trip,
+    providerType,
+    providerName,
+    providerImage,
   ];
 }
 
