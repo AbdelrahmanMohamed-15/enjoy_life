@@ -103,7 +103,7 @@ class SupportScreen extends StatelessWidget {
             _buildSectionTitle(theme, LocaleKeys.supportWhatsapp.tr()),
             const SizedBox(height: 12),
             _ContactTile(
-              icon: FontAwesomeIcons.whatsapp,
+              icon: FontAwesomeIcons.whatsapp.data,
               title: SupportConstant.whatsapp,
               subtitle: LocaleKeys.supportTapWhatsapp.tr(),
               onTap: () => _launchWhatsApp(SupportConstant.whatsapp),
@@ -174,31 +174,31 @@ class SupportScreen extends StatelessWidget {
   Widget _buildSocialLinks(SupportScreen screen) {
     final socialLinks = [
       _SocialLink(
-        icon: FontAwesomeIcons.facebookF,
+        icon: FontAwesomeIcons.facebookF.data,
         label: LocaleKeys.supportFacebook.tr(),
         color: const Color(0xFF1877F2),
         url: SupportConstant.facebookUrl,
       ),
       _SocialLink(
-        icon: FontAwesomeIcons.instagram,
+        icon: FontAwesomeIcons.instagram.data,
         label: LocaleKeys.supportInstagram.tr(),
         color: const Color(0xFFE4405F),
         url: SupportConstant.instagramUrl,
       ),
       _SocialLink(
-        icon: FontAwesomeIcons.xTwitter,
+        icon: FontAwesomeIcons.xTwitter.data,
         label: LocaleKeys.supportTwitter.tr(),
         color: AppColors.black700,
         url: SupportConstant.twitterUrl,
       ),
       _SocialLink(
-        icon: FontAwesomeIcons.youtube,
+        icon: FontAwesomeIcons.youtube.data,
         label: LocaleKeys.supportYoutube.tr(),
         color: const Color(0xFFFF0000),
         url: SupportConstant.youtubeUrl,
       ),
       _SocialLink(
-        icon: FontAwesomeIcons.globe,
+        icon: FontAwesomeIcons.globe.data,
         label: LocaleKeys.supportWebsite.tr(),
         color: AppColors.primary400,
         url: SupportConstant.websiteUrl,

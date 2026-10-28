@@ -22,7 +22,7 @@ dependencies:
   flutter_bloc: ^9.1.1
   #Package for responsive app and fonts
   flutter_screenutil: ^5.9.3
-  font_awesome_flutter: ^10.8.0
+  font_awesome_flutter: ^11.0.0
   carousel_slider: ^5.1.1
   flutter_svg: ^2.2.0
   country_code_picker: ^3.3.0

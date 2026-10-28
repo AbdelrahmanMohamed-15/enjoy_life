@@ -16,7 +16,7 @@ void showCustomSnackBar(
   if (!context.mounted) return;
 
   final snackBar = SnackBar(
-    duration: const Duration(seconds: 2),
+    // duration: const Duration(seconds: 2),
     content: Text(
       message,
       style: TextStyle(
